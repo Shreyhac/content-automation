@@ -1,0 +1,62 @@
+# ---- working directories -------------------------------------------------
+work/
+scratch/
+out/
+
+# ---- render + QA output --------------------------------------------------
+# NB: scoped deliberately. A bare `**/qa/` also matches tools/qa/, which holds
+# the QA tooling and must stay tracked.
+**/renders/
+**/qa[0-9]*/
+work/**/qa/
+reference-builds/**/qa/
+**/stills/
+*.log
+
+# ---- media ---------------------------------------------------------------
+# Nothing heavy in this repo. Reference builds ship code + an ASSETS.md
+# manifest; the 720p proxies in reference-cuts/ are the one exception.
+*.mp4
+*.mov
+*.mkv
+*.webm
+*.wav
+*.m4a
+*.aac
+!reference-cuts/*.mp4
+# the licensed SFX pools are the point of the library, so re-include them.
+# NB: `#` only starts a comment at the START of a line; a trailing comment
+# becomes part of the pattern and silently breaks the negation.
+!library/sfx/**
+!library/templates/**
+
+# per-build media (reference builds ship code only)
+reference-builds/**/assets/*.mp4
+reference-builds/**/assets/aroll/
+reference-builds/**/assets/broll/
+reference-builds/**/assets/sfx/
+reference-builds/**/assets/logo/
+reference-builds/**/assets/ui/
+reference-builds/**/assets/brand/
+reference-builds/**/assets/fonts/
+reference-builds/**/assets/three.min.js
+
+# ---- transcripts + solved data are small and DO belong in git ------------
+# words.json, segments.json, *-transforms.json, face-safe-windows.json,
+# captions.srt: keep them. They are the measurements a rebuild depends on.
+
+# ---- python --------------------------------------------------------------
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# ---- node ----------------------------------------------------------------
+node_modules/
+package-lock.json
+
+# ---- macOS ---------------------------------------------------------------
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
