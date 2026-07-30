@@ -1,0 +1,419 @@
+/* ============================================================================
+   vid46-short v2 — "Signal Blue", vertical.  1080 x 1920 @ 30fps, 1350 frames.
+
+   Derived from hf46/assets/base.css (the 4K 16:9 film) but NOT scaled from it.
+   The palette, the carrier vocabulary and the ground craft carry over unchanged
+   in intent; every dimension is re-derived for the vertical frame, because a
+   0.28x scale of the film's type would put the caption at 23px.
+
+   THE FRAME (Instagram / Shorts, 2026 numbers - see SAFE-ZONES.md), and the three
+   layouts the beat's `mode` selects between:
+
+     SPLIT              GFX                 HERO
+     y150 graphics      y150 graphics       y0   picture (to y1210)
+     y640  "                "               y1250 chip
+     y690 caption       y1380  "            y1350  "
+     y826  "            y1396 caption       y1396 caption
+     y838 FACE CARD     y1560  "            y1560  "
+     y1574  "
+     y1600  Instagram UI band. No FACE below this line, in any layout.
+     x0-60  crop buffer / x>960, y900-1600 like-comment rail: no text.
+   Text column is therefore x72..940. Anything wider is marked and justified.
+
+   THE A-ROLL. The source is 3840x2160 and he already fills 79% of its height, so
+   NO full-bleed treatment of it leaves room for graphics or captions (the full
+   argument is on .aroll below). v2 therefore gives the face a 1080x1000 BAND at
+   y0 and the graphics their own zone under it. There is exactly ONE placement in
+   the whole short and it never moves; only its visibility changes.
+   ============================================================================ */
+
+@font-face{font-family:'Rethink';font-style:normal;font-weight:400 800;font-display:block;
+  src:url(fonts/rethink-sans-var.woff2) format('woff2');}
+@font-face{font-family:'DMSans';font-style:normal;font-weight:400 900;font-display:block;
+  src:url(fonts/dm-sans-var.woff2) format('woff2');}
+@font-face{font-family:'GeistMono';font-style:normal;font-weight:400 700;font-display:block;
+  src:url(fonts/geist-mono.woff2) format('woff2');}
+@font-face{font-family:'Fraunces';font-style:italic;font-weight:400 700;font-display:block;
+  src:url(fonts/fraunces-italic.woff2) format('woff2');}
+
+:root{
+  --ink:#06060A; --ink2:#131317; --ink3:#1B1B20;
+  --line:#2A2A31; --line2:#3A3A43;
+  --fg:#FAFAFA; --fgMut:#B8B8BE; --fgDim:#9A9AA4;
+  --blue:#3555FF; --blueHi:#8EACFF; --blueDeep:#1B2FF5;
+  --navy:#191D8F; --navyDeep:#141457;
+  --violet:#5A3CDC;
+  --green:#158038; --greenDeep:#00834E; --greenText:#4ADE80;
+  --red:#E5372B;
+  --paper:#FFFFFF; --card:#FAFAFA; --sunk:#EBEBEB;
+  --cInk:#000000; --cMut:#454545; --cHair:#E4E4E7;
+  --onBlue:#F0F5FF;
+}
+html,body{margin:0;padding:0;background:var(--ink);}
+#root{position:relative;overflow:hidden;background:var(--ink);
+  font-family:'DMSans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;}
+
+/* ============================================================================
+   THE GROUND - a light rig, not a fill. All ramps RADIAL: linear gradients band
+   in H.264 on near-black. Re-laid for a tall frame - the film's key light was
+   upper-left of a wide frame; here it rakes down the left edge and the stage
+   lift has to cover a much taller bottom third.
+   ============================================================================ */
+#bg{position:absolute;inset:0;background:var(--ink);z-index:0;overflow:hidden;}
+#bg .orb{position:absolute;left:0;top:0;width:1080px;height:1920px;transform-origin:50% 50%;}
+
+/* KEY - the frame's one real light source */
+#bg .gA{position:absolute;width:1900px;height:1900px;left:-680px;top:-700px;
+  background:radial-gradient(circle,
+    rgba(58,92,255,.34) 0%, rgba(52,80,240,.20) 26%, rgba(40,58,180,.098) 46%,
+    rgba(30,40,130,.042) 62%, rgba(24,30,96,0) 76%);}
+
+/* MID - violet, upper right, so the dark half is not merely a dimmer blue */
+#bg .gV{position:absolute;width:1500px;height:1500px;left:340px;top:-560px;
+  background:radial-gradient(circle,
+    rgba(90,60,220,.21) 0%, rgba(76,50,190,.112) 30%, rgba(56,38,140,.048) 52%,
+    rgba(40,28,100,0) 70%);}
+
+/* STAGE - a wide shallow lift along the floor. Stops the bottom third reading as
+   dead black behind the caption band. */
+#bg .gS{position:absolute;width:2100px;height:1500px;left:-520px;top:1000px;
+  background:radial-gradient(50% 50% at 50% 50%,
+    rgba(48,74,220,.18) 0%, rgba(38,56,170,.094) 34%, rgba(28,38,120,.038) 58%,
+    rgba(20,28,84,0) 78%);}
+
+/* COUNTER - green, rationed, opposite the key so the two read as a set */
+#bg .gB{position:absolute;width:1200px;height:1200px;left:420px;top:1180px;
+  background:radial-gradient(circle,rgba(21,128,56,.075),rgba(21,128,56,0) 62%);}
+
+/* NAVY BLOOM, its own slower orbit */
+#bg .gC{position:absolute;width:1250px;height:1250px;left:-260px;top:-180px;
+  background:radial-gradient(circle,rgba(25,29,143,.17),rgba(25,29,143,0) 64%);}
+
+/* SHEEN - one very soft broad ellipse raking across the upper middle. This is
+   what separates "lit" from "tinted". */
+#bg .gSh{position:absolute;width:2200px;height:1100px;left:-560px;top:360px;
+  background:radial-gradient(50% 50% at 50% 50%,
+    rgba(140,170,255,.066) 0%, rgba(110,140,235,.032) 40%, rgba(90,120,210,0) 72%);}
+
+/* TEXTURE - dot grid at the film's density relative to the frame */
+#bg .grid{position:absolute;left:-120px;top:-120px;width:1320px;height:2160px;opacity:.036;
+  background-image:radial-gradient(rgba(190,205,255,.9) 1.2px,transparent 1.3px);
+  background-size:46px 46px;}
+
+/* GRAIN - kills H.264 banding on near-black; the ground has real ramps to dither */
+#bg .grain{position:absolute;inset:0;opacity:.078;background-size:300px 300px;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='300' height='300' filter='url(%23n)'/></svg>");}
+
+/* VIGNETTE - shaping, not just darkening. Elliptical and off-centre, pushing the
+   eye up toward the key light and away from the phone UI. */
+#bg .vig{position:absolute;inset:0;
+  background:radial-gradient(118% 92% at 44% 36%,
+    rgba(6,6,10,0) 32%, rgba(6,6,10,.32) 64%, rgba(6,6,10,.72) 88%, rgba(6,6,10,.90) 100%);}
+
+/* the WebGL field sits above the ground and below every graphic */
+#gl{position:absolute;left:0;top:0;width:1080px;height:1920px;z-index:2;pointer-events:none;}
+
+/* ============================================================================
+   THE A-ROLL — ONE PICTURE, TWO STATES.  v3, vid39's device.
+
+   v1 changed the face's placement five times by CUTS and his head changed size
+   every time he appeared. v2 answered that with one fixed band. v3 keeps the
+   discipline but adopts the grammar the owner asked for by name: the face is one
+   video with two designed states, and it only ever moves between them as a
+   VISIBLE TWEEN (clip-path and scale together, 0.34s), never as a cut.
+
+     HERO   the picture at 1:1, 1080 x 1210 at y0. Chin y954-1100.
+     CARD   the SAME pixels scaled 0.6786 and translated into a rounded portrait
+            at x260-820, y838-1574. Chin y1407-1481 (worst 1545).
+     OFF    collapsed into the card's own rect, so a card-in grows from where the
+            card belongs rather than sliding in from nowhere.
+
+   The source is a tight close-up - 79% of frame height, 239px of collar and no
+   chest - so there is no 9:16 COVER crop of it that leaves room for graphics or
+   captions. Both states are solved from crown.csv / facebox.csv in
+   solve_short.py and baked ONCE at the HERO size by bake_clips.py: the card is a
+   transform of those pixels rather than a second file, because you cannot tween
+   between two files.
+
+   #faceScene carries the clip-path. #faceCam carries the transform, so every clip
+   inside it shares one camera. #faceFx is a SIBLING - a child would be clipped by
+   the very clip-path it exists to dress.
+   ============================================================================ */
+#faceScene{position:absolute;left:0;top:0;width:1080px;height:1920px;z-index:3;
+  clip-path:inset(1920px 260px 346px 260px round 30px);}
+#faceCam{position:absolute;left:0;top:0;width:1080px;height:1210px;
+  transform-origin:0 0;will-change:transform;}
+#faceCam video{position:absolute;left:0;top:0;width:1080px;height:1210px;display:block;}
+
+/* The crop puts fragments of the "incogni" wordmark on the TV behind his head -
+   partial letters read as broken type, so they get pushed down into ambient light
+   shapes. Radial and centred on his face, i.e. a lighting device, not a box. */
+#faceCam .lift{position:absolute;inset:0;
+  background:radial-gradient(74% 64% at 50% 40%,
+    rgba(4,4,9,0) 40%, rgba(4,4,9,.13) 70%, rgba(4,4,9,.32) 90%, rgba(4,4,9,.44) 100%);}
+
+/* HERO ONLY: the picture's foot dissolves into the ground instead of ending on a
+   line. The first v2 render ended it on a hard horizontal cut because a radial only
+   reaches the centre of the frame and sliced the chair and wall off at both edges.
+   The ramp starts at y1050, 79px below the lowest chin measured in the hero block,
+   so it can never eat his jaw. Faded out in CARD mode, where the border does the job. */
+#faceCam .grade{position:absolute;left:0;bottom:0;width:1080px;height:160px;
+  background:linear-gradient(to bottom, rgba(6,6,10,0) 0%, rgba(6,6,10,.50) 44%,
+    rgba(6,6,10,.92) 80%, rgba(6,6,10,1) 100%);}
+#heroEdge{position:absolute;left:0;top:1207px;width:1080px;height:3px;z-index:4;opacity:0;
+  background:linear-gradient(90deg,rgba(142,172,255,0) 0%,rgba(142,172,255,.50) 20%,
+    rgba(196,216,255,.92) 50%,rgba(142,172,255,.50) 80%,rgba(142,172,255,0) 100%);
+  box-shadow:0 8px 34px rgba(58,92,255,.32);}
+
+/* CARD ONLY: the frame around the portrait. */
+#faceFx{position:absolute;left:258px;top:836px;width:564px;height:740px;z-index:4;
+  border-radius:32px;border:2px solid var(--line2);opacity:0;
+  box-shadow:0 34px 90px rgba(0,0,0,.66), inset 0 1px 0 rgba(142,172,255,.20);}
+
+/* ============================================================================
+   CUT DEVICES.  v1 flash-cut at 11 of 12 beat boundaries, which in a 45s piece is
+   a strobe. v3 keeps exactly ONE hard flash and moves everything else onto vid39's
+   skewed band wipe, which is a transition rather than an interruption.
+   ============================================================================ */
+#flash{position:absolute;left:0;top:0;width:1080px;height:1920px;z-index:41;
+  background:#DCE6FF;opacity:0;pointer-events:none;}
+#wipeA{position:absolute;left:0;top:-320px;width:420px;height:2560px;z-index:42;
+  background:var(--blue);transform:skewX(-13deg) translateX(-1900px);opacity:0;}
+#wipeB{position:absolute;left:0;top:-320px;width:120px;height:2560px;z-index:42;
+  background:var(--blueHi);transform:skewX(-13deg) translateX(-1900px);opacity:0;}
+#wipeC{position:absolute;left:0;top:-320px;width:1800px;height:2560px;z-index:42;
+  background:var(--ink);transform:skewX(-13deg) translateX(-2900px);opacity:0;}
+
+#cover{position:absolute;inset:0;background:#000;opacity:0;z-index:40;pointer-events:none;}
+
+/* scenes: CSS-hidden initial state. A zero-duration tl.set at 0 does not reliably
+   paint frame 0 - see put() in chunk.js. */
+.scene{position:absolute;inset:0;visibility:hidden;opacity:0;}
+.scene.first{visibility:visible;opacity:1;}
+
+/* ============================================================================
+   TYPE SCALE - re-derived for 1080 wide, not scaled from the film.
+     Rethink 800   display + numbers      .d1 .d2 .d3 .h1 .h2
+     DM Sans       captions, body, UI     .bd .bd2 .cap
+     Geist Mono    labels, codes, data    .lab .mono .eyebrow
+     Fraunces it.  ATTRIBUTIONS ONLY      .attrib   (4 uses in 40s, never a number)
+   ============================================================================ */
+.d1,.d2,.d3,.h1,.h2{font-family:'Rethink',sans-serif;font-weight:800;color:var(--fg);
+  font-variant-numeric:tabular-nums;line-height:.98;}
+.d1{font-size:300px;letter-spacing:-.048em;}
+.d2{font-size:214px;letter-spacing:-.042em;}
+.d3{font-size:148px;letter-spacing:-.036em;}
+.h1{font-size:76px;letter-spacing:-.032em;line-height:1.06;}
+.h2{font-size:56px;letter-spacing:-.022em;line-height:1.10;}
+.h1 em,.h2 em,.d1 em,.d2 em,.d3 em{font-style:normal;color:var(--blueHi);}
+.h1 i,.h2 i{font-style:normal;color:var(--greenText);}
+
+.bd{font-family:'DMSans',sans-serif;font-weight:400;font-size:38px;line-height:1.36;
+  color:var(--fgMut);}
+.bd2{font-family:'DMSans',sans-serif;font-weight:700;font-size:46px;line-height:1.24;
+  color:var(--fg);}
+
+.lab,.mono{font-family:'GeistMono',monospace;font-size:26px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--fgDim);}
+.mono{text-transform:none;letter-spacing:.04em;}
+
+.eyebrow{position:absolute;font-family:'GeistMono',monospace;font-size:29px;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--blueHi);padding-left:32px;}
+.eyebrow::before{content:"";position:absolute;left:0;top:3px;width:7px;height:31px;
+  border-radius:4px;background:var(--blue);}
+
+/* THE SECOND VOICE - attributions only. It never touches a number or a price. */
+.attrib{font-family:'Fraunces',serif;font-style:italic;font-weight:400;font-size:33px;
+  line-height:1.32;color:var(--fgDim);letter-spacing:0;}
+
+/* ============================================================================
+   TEXT MOTION - one device, repeated. .wr wraps a headline; wordRise() splits it
+   into .wm>.w pairs at parse time. A masked headline needs more leading than an
+   unmasked one so descenders on line 1 clear the caps on line 2.
+   ============================================================================ */
+.wr{line-height:1.22;}
+.wr .wm{display:inline-block;overflow:hidden;vertical-align:top;
+  padding-bottom:.18em;margin-bottom:-.18em;}
+.wr .w{display:inline-block;will-change:transform;}
+
+/* ============================================================================
+   THE CARRIERS - what replaced the box. Same vocabulary as the film.
+   ============================================================================ */
+
+/* --- 1. REDACTION. A value that is already public, with a black bar sliding off
+   it. The bar is the carrier; there is no card. --- */
+.rec{position:absolute;}
+.rec .rw{position:absolute;left:0;height:74px;}
+.rec .rk{position:absolute;left:0;top:0;font-family:'GeistMono',monospace;
+  font-size:24px;letter-spacing:.14em;text-transform:uppercase;color:var(--blueHi);}
+.rec .rv{position:relative;display:inline-block;font-family:'Rethink',sans-serif;
+  font-weight:800;font-size:62px;color:var(--fg);letter-spacing:-.02em;white-space:nowrap;}
+/* the value sits in a self-sizing masked well; the bar covers it and slides RIGHT
+   out of the mask, so the value is revealed behind a travelling glowing edge.
+   xPercent, never `left`: `left` snaps to integer device pixels and stutters under
+   the seek-by-frame capture engine. */
+.rec .rvw{position:absolute;left:0;display:inline-block;overflow:hidden;
+  padding:8px 14px;margin:-8px -14px;}
+/* The bar has to read as REDACTED DATA, not as an empty input. At #0B0B10 on a
+   near-black ground it was neither: the first render's cover frame showed three
+   empty outlined boxes. It is now a hatched slab, a shade lighter than the ground,
+   so the eye sees something deliberately blacked out. */
+.rec .rb{position:absolute;left:0;top:0;right:0;bottom:0;border-radius:6px;
+  background:repeating-linear-gradient(135deg,
+    #191924 0 7px, #10101A 7px 15px);
+  border-left:6px solid var(--blueHi);
+  box-shadow:inset 0 0 0 2px rgba(58,92,255,.38), -6px 0 26px rgba(142,172,255,.55);}
+.rec .rl{position:absolute;left:0;height:2px;
+  background:linear-gradient(90deg,rgba(142,172,255,.44),rgba(142,172,255,.05));}
+
+/* --- 2. RAIL. One shared axis, markers riding it: a gap becomes a LENGTH.
+   Coverage (420 vs 200) and price ($7.99 vs $12). --- */
+.rail{position:absolute;height:4px;background:rgba(142,172,255,.20);border-radius:2px;}
+.rail .fill{position:absolute;left:0;top:0;height:4px;border-radius:2px;
+  background:linear-gradient(90deg,var(--blue),var(--blueHi));transform-origin:0 50%;}
+.rail .tick{position:absolute;top:-9px;width:2px;height:22px;background:rgba(142,172,255,.26);}
+.rail .tlb{position:absolute;top:22px;font-family:'GeistMono',monospace;font-size:22px;
+  letter-spacing:.08em;color:var(--fgDim);transform:translateX(-50%);}
+/* a value riding the rail: no box, a stem and a figure */
+.knob{position:absolute;}
+.knob .stem{position:absolute;left:0;top:0;width:3px;background:var(--blueHi);
+  transform-origin:50% 100%;}
+.knob .dot{position:absolute;left:-9px;top:-9px;width:20px;height:20px;border-radius:50%;
+  background:var(--blueHi);box-shadow:0 0 22px rgba(142,172,255,.85);}
+.knob .fig{position:absolute;font-family:'Rethink',sans-serif;font-weight:800;
+  font-variant-numeric:tabular-nums;white-space:nowrap;line-height:1;letter-spacing:-.03em;
+  /* .knob sets no colour of its own, so without this the figure inherits the UA
+     default black and measures 1.22:1 on the ground (hyperframes validate caught it) */
+  color:var(--fg);text-shadow:0 2px 16px rgba(0,0,0,.75);}
+.knob .sub{position:absolute;font-family:'GeistMono',monospace;font-size:23px;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--fgDim);white-space:nowrap;}
+.knob.neutral .stem,.knob.neutral .dot{background:var(--fgDim);box-shadow:none;}
+.knob.neutral .fig{color:var(--fgMut);}
+
+/* --- 3. FIGURE. A verified number on the bare ground with a rule and its
+   attribution. Numbers ARRIVE (digitSettle); they never count up from 0. --- */
+.figure{position:absolute;}
+.figure .n{font-family:'Rethink',sans-serif;font-weight:800;color:var(--fg);
+  font-variant-numeric:tabular-nums;letter-spacing:-.045em;line-height:.92;}
+.figure .n em{font-style:normal;color:var(--blueHi);}
+.figure .u{position:absolute;font-family:'DMSans',sans-serif;font-weight:700;
+  color:var(--fgMut);}
+.figure .r{position:absolute;height:4px;border-radius:2px;transform-origin:0 50%;
+  background:linear-gradient(90deg,var(--blueHi),rgba(142,172,255,0));}
+
+/* --- 4. SEAL. Verification STAMPS in with an overshoot. --- */
+.seal{position:absolute;width:132px;height:132px;}
+.seal .ring{position:absolute;inset:0;border-radius:50%;border:3px solid var(--greenText);
+  box-shadow:0 0 34px rgba(74,222,128,.32), inset 0 0 22px rgba(74,222,128,.13);}
+.seal .tick{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);}
+.seal .cap2{position:absolute;left:50%;top:142px;transform:translateX(-50%);
+  font-family:'GeistMono',monospace;font-size:22px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--greenText);white-space:nowrap;}
+
+/* --- 5. SPINE. A connector with items hanging off it. Nothing has a fixed
+   height, so copy cannot overflow. --- */
+.spine{position:absolute;width:3px;background:linear-gradient(180deg,
+  rgba(142,172,255,0),rgba(142,172,255,.48) 12%,rgba(142,172,255,.48) 88%,
+  rgba(142,172,255,0));transform-origin:50% 0;}
+.limb{position:absolute;height:2px;transform-origin:0 50%;
+  background:linear-gradient(90deg,rgba(142,172,255,.55),rgba(142,172,255,.12));}
+.item{position:absolute;font-family:'DMSans',sans-serif;font-weight:700;font-size:46px;
+  line-height:1.22;color:var(--fg);white-space:nowrap;}
+.item .m{position:absolute;left:-30px;top:14px;width:12px;height:12px;border-radius:50%;
+  background:var(--blueHi);box-shadow:0 0 16px rgba(142,172,255,.85);}
+.item .sub{font-family:'GeistMono',monospace;font-size:22px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--fgDim);display:block;margin-top:4px;}
+.item.bad{color:var(--red);}
+.item.bad .m{background:var(--red);box-shadow:0 0 18px rgba(229,55,43,.9);}
+.pkt{position:absolute;width:14px;height:14px;border-radius:50%;background:var(--blueHi);
+  box-shadow:0 0 22px rgba(142,172,255,.95);opacity:0;}
+.pkt.red{background:var(--red);box-shadow:0 0 22px rgba(229,55,43,.9);}
+
+/* --- 6. STACK. Real icons on thin slabs that physically pile, with perspective,
+   so the tower gets visibly top-heavy. --- */
+.stack{position:absolute;perspective:1400px;perspective-origin:50% 40%;}
+.slab{position:absolute;left:0;height:104px;border-radius:14px;
+  background:linear-gradient(180deg,rgba(32,34,52,.96),rgba(18,19,30,.96));
+  box-shadow:0 16px 34px rgba(0,0,0,.62), inset 0 2px 0 rgba(142,172,255,.16);
+  transform-style:preserve-3d;}
+.slab .ic{position:absolute;left:22px;top:22px;width:60px;height:60px;}
+.slab .ic svg{width:60px;height:60px;display:block;}
+.slab .nm{position:absolute;left:104px;top:28px;font-family:'DMSans',sans-serif;
+  font-weight:700;font-size:46px;color:var(--fg);white-space:nowrap;}
+.slab .ix{position:absolute;right:24px;top:40px;font-family:'GeistMono',monospace;
+  font-size:23px;letter-spacing:.1em;color:var(--fgDim);}
+.slab .sk{position:absolute;left:96px;top:52px;height:4px;border-radius:2px;
+  background:var(--red);transform:scaleX(0);transform-origin:0 50%;}
+.slab.core{background:linear-gradient(180deg,rgba(30,44,140,.97),rgba(18,26,96,.97));
+  box-shadow:0 20px 44px rgba(0,0,0,.66), inset 0 2px 0 rgba(142,172,255,.34);}
+
+/* --- 7. LEDGER. "You already pay for this": the strike lands on the row that is
+   already there, and the total is the consequence. --- */
+.ldg{position:absolute;}
+.ldg .tot{position:absolute;left:0;font-family:'Rethink',sans-serif;font-weight:800;
+  font-size:82px;letter-spacing:-.03em;color:var(--red);white-space:nowrap;
+  font-variant-numeric:tabular-nums;}
+.ldg .totl{position:absolute;left:0;font-family:'GeistMono',monospace;font-size:24px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--fgMut);white-space:nowrap;}
+
+/* ---------- shared furniture ---------- */
+/* a self-grounded pill. The ONLY graphic permitted over a full-bleed face, and
+   only in measured clear space (crown.csv / facebox.csv), never eyeballed. */
+.chip{position:absolute;font-family:'GeistMono',monospace;font-size:27px;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--fg);
+  background:rgba(9,9,14,.84);border:2px solid var(--line2);padding:13px 22px;
+  border-radius:999px;white-space:nowrap;
+  box-shadow:0 12px 30px rgba(0,0,0,.62), inset 0 1px 0 rgba(142,172,255,.16);}
+.chip.on{border-color:var(--blue);color:var(--blueHi);}
+.chip b{color:var(--blueHi);font-weight:700;}
+.chip.good{border-color:var(--greenText);color:var(--greenText);}
+
+/* THE ONE CARD IN THE SHORT - the coupon. Do not reuse. Stripping the box
+   everywhere else is what lets this one read as the payoff. */
+.wcard{position:absolute;background:var(--paper);border-radius:26px;
+  box-shadow:0 26px 60px rgba(0,0,0,.62);color:var(--cInk);overflow:hidden;}
+
+/* --- 8. STAMP. A verdict punched onto the frame, rotated, with an overshoot.
+   vid39's device: it is the thing that makes a claim feel ADJUDICATED rather than
+   typed. Rationed to three uses. --- */
+.stamp{position:absolute;font-family:'Rethink',sans-serif;font-weight:800;
+  letter-spacing:.03em;text-transform:uppercase;white-space:nowrap;
+  border:3px solid currentColor;border-radius:10px;padding:10px 20px;
+  transform:rotate(-6deg);}
+.stamp.good{color:var(--greenText);box-shadow:0 0 44px rgba(74,222,128,.24);}
+.stamp.bad{color:var(--red);box-shadow:0 0 44px rgba(229,55,43,.26);}
+
+/* --- 9. SHINE. One diagonal specular pass across a surface. The outro device. --- */
+.shine{position:absolute;top:-40%;width:180px;height:180%;opacity:0;
+  background:linear-gradient(90deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.30) 50%,
+    rgba(255,255,255,0) 100%);transform:skewX(-18deg);pointer-events:none;}
+
+/* b-roll is NEVER full-bleed - always a bordered card on the textured ground */
+.bcard{position:absolute;border-radius:22px;overflow:hidden;border:2px solid var(--line2);
+  box-shadow:0 30px 66px rgba(0,0,0,.72), inset 0 2px 0 rgba(142,172,255,.12);}
+.bcard video{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:cover;display:block;}
+.bcard .tint{position:absolute;inset:0;
+  background:radial-gradient(120% 90% at 50% 40%,rgba(6,6,10,0) 40%,rgba(6,6,10,.34) 100%);}
+.bcard .stamp{position:absolute;left:22px;bottom:16px;font-family:'GeistMono',monospace;
+  font-size:23px;letter-spacing:.14em;text-transform:uppercase;color:#E9E9EE;
+  text-shadow:0 2px 12px rgba(0,0,0,.9);}
+
+/* brand wordmarks sit on the ground, not in tiles */
+.mark{position:absolute;}
+.mark img{display:block;}
+.mark .sub{position:absolute;left:0;font-family:'GeistMono',monospace;font-size:24px;
+  letter-spacing:.16em;text-transform:uppercase;white-space:nowrap;}
+
+/* ---------- captions.
+     LOW (default) y1396-1560: clear of the UI band and of the GFX zone.
+     HIGH (.hi, SPLIT beats) y690-826: in the gap between the graphics and the face
+     card, which is where vid39 puts them on its split beats. Without this the
+     caption would print on his jaw, which is the exact defect v1 was rejected for.
+     Two lines max either way. */
+.cap{position:absolute;left:72px;width:936px;top:1396px;text-align:center;
+  font-family:'DMSans',sans-serif;font-weight:800;font-size:58px;line-height:1.2;
+  letter-spacing:-.5px;color:var(--fg);text-shadow:0 3px 16px rgba(0,0,0,.85);z-index:20;}
+.cap.hi{top:674px;font-size:56px;}
+.cap b{color:var(--blueHi);font-weight:800;}
+.cap i{font-style:normal;color:var(--greenText);font-weight:800;}
+.cap s{text-decoration:none;color:var(--red);font-weight:800;}

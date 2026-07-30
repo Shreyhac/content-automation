@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>vid46 c1 — hook + head-to-head (0.00–28.70)</title>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<script src="assets/chunk.js"></script>
+<link rel="stylesheet" href="assets/base.css" />
+<style>
+  /* @font-face must be INLINE in every chunk: the compiler's static scan only sees
+     font declarations in the document itself, not through the <link>. Everything
+     else — palette, ground, carriers, type scale, caption band — lives in
+     assets/base.css so a fix lands once instead of eight times. Round 1 duplicated
+     the whole ground inline per chunk, which is why editing base.css alone did
+     nothing for it. */
+  @font-face{font-family:'Rethink';font-style:normal;font-weight:400 800;font-display:block;src:url(assets/fonts/rethink-sans-var.woff2) format('woff2');}
+  @font-face{font-family:'DMSans';font-style:normal;font-weight:400 900;font-display:block;src:url(assets/fonts/dm-sans-var.woff2) format('woff2');}
+  @font-face{font-family:'GeistMono';font-style:normal;font-weight:400 700;font-display:block;src:url(assets/fonts/geist-mono.woff2) format('woff2');}
+  @font-face{font-family:'Fraunces';font-style:normal;font-weight:400 700;font-display:block;src:url(assets/fonts/fraunces-normal.woff2) format('woff2');}
+  @font-face{font-family:'Fraunces';font-style:italic;font-weight:400 700;font-display:block;src:url(assets/fonts/fraunces-italic.woff2) format('woff2');}
+
+  /* scenes start hidden in CSS — a zero-duration tl.set at 0 does not paint frame 0 */
+  #s2,#s3,#s4,#s5,#s6{visibility:hidden;opacity:0;}
+
+  /* ==========================================================================
+     S1  HOOK — FULL-BLEED face. Two-mode rule: at most ONE self-grounded
+     graphic, in MEASURED clear space.
+
+     His complaint #1 was that round 1 put a 1500x470 white record card at
+     x180-1680 / y1180-1650 over a full-bleed face, so it sat across his chin and
+     mouth. Measured for this window (facebox p05 / crown.swift headL p05), his
+     head and body start at x1301. So the record lives at x180-1140, entirely
+     left of him, and it is a REDACTION STACK rather than a card: values that are
+     already public, with black bars wiping off them on the word.
+     ========================================================================== */
+  #s1{position:absolute;inset:0;z-index:12;}
+  /* The stack sits over the FULL-BLEED A-roll, whose back wall is a light lavender.
+     Bare type on it measured 1.21:1 (hyperframes validate, t=2.87s) — unreadable,
+     and floating text on the A-roll is exactly the ungrounded look that read as
+     cheap in round 1. So the column gets a feathered pool of darkness: a soft
+     radial with no edge anywhere, which is a lighting device rather than another
+     box. Nothing here is a rectangle. */
+  #s1scrim{position:absolute;left:-700px;top:-140px;width:2700px;height:1900px;
+    background:radial-gradient(46% 46% at 38% 50%,rgba(2,2,6,.97) 0%,
+      rgba(2,2,6,.94) 40%,rgba(2,2,6,.72) 62%,rgba(2,2,6,.30) 80%,rgba(2,2,6,0) 93%);}
+  #s1kick{left:180px;top:236px;}
+  #s1rec{left:180px;top:392px;width:1120px;}
+  #s1rec .rw{width:1120px;}
+  #s1rec .rk{top:0;}
+  /* FRAME 0 IS THE FILM'S COVER. A .rvw sizes to its content, so row 1's bar was only
+     as wide as the words "Nader N." — three short dark smudges rather than a redacted
+     record. Each row now has the width of the FIELD it represents, so the bars read as
+     blacked-out data at cover scale and the reveal has somewhere to travel. */
+  #s1rec .rvw{top:46px;}
+  #rv1{min-width:820px;} #rv2{min-width:1060px;} #rv3{min-width:900px;}
+  #s1rec .rl{top:206px;width:1040px;}
+  #s1attr{position:absolute;left:180px;top:1256px;width:1080px;color:var(--fgMut);}
+
+  /* ==========================================================================
+     S2  ONE SEARCH — CARD mode. Graphics own x180-2080, the card owns x2280+,
+     200px gutter between. Nothing overlaps, by construction.
+
+     The search field itself stays a rounded rectangle because a search field IS
+     one — it reads as real UI, not as the house box. The four results below it
+     lost their filled panels and are now rows on hairlines, which is also what a
+     real result page looks like.
+     ========================================================================== */
+  #s2{position:absolute;inset:0;z-index:6;}
+  #s2eye{left:180px;top:286px;}
+  #s2bar{position:absolute;left:180px;top:376px;width:1900px;height:146px;
+    background:var(--paper);border-radius:73px;box-shadow:0 30px 70px rgba(0,0,0,.55);}
+  #s2mag{position:absolute;left:54px;top:46px;width:52px;height:52px;border-radius:50%;
+    border:7px solid var(--cMut);}
+  #s2magh{position:absolute;left:102px;top:96px;width:32px;height:7px;border-radius:4px;
+    background:var(--cMut);transform:rotate(45deg);transform-origin:0 50%;}
+  /* the caret is a flex sibling of the text so it follows the typed query without any
+     DOM measurement — the renderer seeks non-linearly and an offsetWidth read inside
+     an onUpdate is seek-order dependent */
+  #s2line{position:absolute;left:166px;top:34px;height:78px;display:flex;align-items:center;}
+  #s2q{font-family:'Rethink',sans-serif;font-weight:800;font-size:68px;color:var(--cInk);
+    letter-spacing:-1px;white-space:pre;}
+  #s2caret{width:6px;height:68px;background:var(--blue);margin-left:6px;}
+  .sres{position:absolute;left:180px;width:1900px;height:168px;}
+  .sres .fv{position:absolute;left:0;top:26px;width:74px;height:74px;border-radius:16px;
+    background:var(--ink3);border:2px solid var(--line2);}
+  .sres .fv i{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+    font-family:'Rethink',sans-serif;font-weight:800;font-size:38px;font-style:normal;
+    color:var(--fgDim);}
+  .sres .st{position:absolute;left:116px;top:20px;font-family:'DMSans',sans-serif;
+    font-weight:700;font-size:52px;color:var(--fg);}
+  .sres .su{position:absolute;left:116px;top:86px;font-family:'GeistMono',monospace;
+    font-size:32px;color:var(--fgDim);letter-spacing:.04em;}
+  .sres .sx{position:absolute;right:0;top:48px;font-family:'GeistMono',monospace;
+    font-size:30px;letter-spacing:.12em;text-transform:uppercase;color:var(--red);}
+  .sres .sl{position:absolute;left:0;bottom:0;width:1900px;height:2px;transform-origin:0 50%;
+    background:linear-gradient(90deg,rgba(142,172,255,.26),rgba(142,172,255,.02));}
+  /* skeleton: what the page shows before the results resolve */
+  .sres .sk1{position:absolute;left:116px;top:30px;height:48px;border-radius:10px;
+    background:rgba(142,172,255,.13);}
+  .sres .sk2{position:absolute;left:116px;top:96px;height:32px;border-radius:8px;
+    background:rgba(142,172,255,.08);}
+  .sres .skf{position:absolute;left:0;top:26px;width:74px;height:74px;border-radius:16px;
+    background:rgba(142,172,255,.10);}
+  #sr1{top:620px;} #sr2{top:800px;} #sr3{top:980px;} #sr4{top:1160px;}
+  #s2more{position:absolute;left:180px;top:1372px;font-family:'GeistMono',monospace;
+    font-size:38px;letter-spacing:.12em;text-transform:uppercase;color:var(--fgMut);}
+  #s2attr{position:absolute;left:180px;top:1452px;width:1900px;}
+
+  /* ==========================================================================
+     S3  HEAD TO HEAD — full frame, face hidden.
+     Round 1 put each wordmark inside a 1380x820 filled tile with a border. Two
+     more boxes. The marks now sit on the bare lit ground either side of a single
+     hairline, with the VS badge cut into it — the lockup is the composition, not
+     two panels side by side.
+     ========================================================================== */
+  #s3{position:absolute;inset:0;z-index:8;}
+  #s3eye{left:50%;top:400px;transform:translateX(-50%);text-align:center;}
+  .mkw{position:absolute;overflow:hidden;}
+  .mkw img{display:block;}
+  #s3Lw{left:700px;top:790px;width:900px;height:250px;}
+  #s3Lw img{width:900px;}
+  #s3Rw{left:2450px;top:820px;width:620px;height:190px;}
+  #s3Rw img{width:620px;opacity:.9;}
+  #s3div{position:absolute;left:1918px;top:660px;width:3px;height:640px;transform-origin:50% 0;
+    background:linear-gradient(180deg,rgba(142,172,255,0),rgba(142,172,255,.42) 22%,
+      rgba(142,172,255,.42) 78%,rgba(142,172,255,0));}
+  #s3vsr{position:absolute;left:1800px;top:860px;width:240px;height:240px;border-radius:50%;
+    background:var(--ink);border:3px solid var(--line2);z-index:8;
+    box-shadow:0 0 60px rgba(6,6,10,.9);}
+  #s3vs{position:absolute;left:1800px;top:860px;width:240px;height:240px;line-height:240px;
+    text-align:center;font-family:'Rethink',sans-serif;font-weight:800;font-size:104px;
+    color:var(--fg);letter-spacing:-2px;z-index:9;}
+  .s3sub{position:absolute;font-family:'GeistMono',monospace;font-size:38px;
+    letter-spacing:.16em;text-transform:uppercase;}
+  #s3Lsub{left:700px;top:1096px;width:900px;text-align:center;color:var(--blueHi);}
+  #s3Rsub{left:2450px;top:1062px;width:620px;text-align:center;color:var(--fgDim);}
+  /* the underline that marks each brand as he names it */
+  .s3ul{position:absolute;height:7px;border-radius:4px;transform-origin:0 50%;}
+  #s3Lul{left:700px;top:1052px;width:900px;background:var(--blue);}
+  #s3Rul{left:2450px;top:1022px;width:620px;background:var(--line2);}
+
+  /* ==========================================================================
+     S4  THE ONLY QUESTION — CARD mode, type owns the left.
+     ========================================================================== */
+  #s4{position:absolute;inset:0;z-index:6;}
+  #s4eye{left:180px;top:400px;}
+  #s4q{position:absolute;left:180px;top:486px;width:1860px;}
+  #s4rule{left:180px;top:1112px;width:820px;}
+  #s4note{position:absolute;left:180px;top:1188px;width:1740px;}
+
+  /* ==========================================================================
+     S5  the pull quote. The second voice, rationed — this is 1 of 6 uses across
+     the film, and it earns it: "Here's the thing nobody tells you" is the pivot
+     from setup to argument.
+     ========================================================================== */
+  #s5{position:absolute;inset:0;z-index:6;}
+  #s5q{position:absolute;left:180px;top:620px;width:1900px;}
+
+  /* ==========================================================================
+     S6  COLLECT AND SELL — the record is packaged, priced and sold on.
+     Round 1 drew a white card plus three filled "buyer" tiles. Now: the same
+     redaction stack (the record we already met in the hook, returning), a spine,
+     and buyers hanging off it as items — each one receiving a red packet from
+     the record. The carrier is the flight of the data, not a tile.
+     ========================================================================== */
+  #s6{position:absolute;inset:0;z-index:6;}
+  #s6eye{left:180px;top:300px;}
+  #s6rec{left:180px;top:436px;width:1020px;}
+  #s6rec .rw{width:1020px;}
+  #s6rec .rk{top:0;font-size:38px;}
+  #s6rec .rv{font-size:80px;}
+  #s6rec .rvw{top:52px;}
+  #s6rec .rl{top:166px;width:960px;}
+  #s6price{position:absolute;left:180px;top:1244px;font-family:'GeistMono',monospace;
+    font-size:42px;letter-spacing:.12em;text-transform:uppercase;color:#FFF;
+    background:var(--red);padding:16px 32px;border-radius:999px;}
+  #s6spine{left:1392px;top:446px;height:812px;width:6px;
+    background:linear-gradient(180deg,rgba(142,172,255,0),rgba(142,172,255,.75) 12%,
+      rgba(142,172,255,.75) 88%,rgba(142,172,255,0));
+    box-shadow:0 0 34px rgba(142,172,255,.34);}
+  .s6lim{position:absolute;left:1392px;width:128px;height:5px;
+    background:linear-gradient(90deg,rgba(142,172,255,.85),rgba(142,172,255,.28));}
+  .s6lim::after{content:"";position:absolute;right:-9px;top:-7px;width:19px;height:19px;
+    border-radius:50%;background:var(--blueHi);box-shadow:0 0 24px rgba(142,172,255,.85);}
+  #s6b1{left:1524px;top:474px;} #s6b2{left:1524px;top:744px;} #s6b3{left:1524px;top:1014px;}
+  .s6b{position:absolute;width:556px;}
+  .s6b .bn{font-family:'DMSans',sans-serif;font-weight:700;font-size:78px;color:var(--fg);
+    line-height:1.08;}
+  .s6b .bs{font-family:'GeistMono',monospace;font-size:34px;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--fgDim);margin-top:14px;}
+  #s6foot{position:absolute;left:180px;top:1372px;width:1120px;}
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="c1" data-start="0" data-duration="28.700000" data-width="3840" data-height="2160">
+
+  <div id="bg" data-layout-allow-overflow>
+    <div class="orb" id="orbA"><div class="gA"></div></div>
+    <div class="orb" id="orbV"><div class="gV"></div></div>
+    <div class="orb" id="orbB"><div class="gB"></div></div>
+    <div class="orb" id="orbC"><div class="gC"></div></div>
+    <div class="gS"></div>
+    <div class="gSh"></div>
+    <div class="grid" id="bgDots"></div>
+    <div class="grain"></div>
+    <div class="vig"></div>
+  </div>
+
+  <div id="faceWrap">
+    <video id="face" data-start="0" data-duration="28.700" data-track-index="0"
+           src="assets/aroll/c1.mp4" muted playsinline></video>
+  </div>
+  <div id="faceFx"></div>
+
+  <!-- ============================ S1 hook ============================ -->
+  <div id="s1">
+    <div id="s1scrim" data-layout-allow-overflow></div>
+    <div class="chip" id="s1kick">⚠ Already public &nbsp;·&nbsp; <b>right now</b></div>
+    <div class="rec" id="s1rec">
+      <div class="rw" style="top:0">
+        <div class="rk">Full name</div>
+        <div class="rvw" id="rv1" data-layout-allow-overflow data-layout-allow-occlusion><span class="rv">Nader N.</span>
+          <span class="rb"></span></div>
+        <div class="rl"></div>
+      </div>
+      <div class="rw" style="top:272px">
+        <div class="rk">Home address</div>
+        <div class="rvw" id="rv2" data-layout-allow-overflow data-layout-allow-occlusion><span class="rv">•• Bay St, Toronto</span>
+          <span class="rb"></span></div>
+        <div class="rl"></div>
+      </div>
+      <div class="rw" style="top:544px">
+        <div class="rk">Phone</div>
+        <div class="rvw" id="rv3" data-layout-allow-overflow data-layout-allow-occlusion><span class="rv">(416) •••-••••</span>
+          <span class="rb"></span></div>
+        <div class="rl"></div>
+      </div>
+    </div>
+    <div class="attrib" id="s1attr">Representative of what a people-search record
+      actually lists</div>
+  </div>
+
+  <!-- ============================ S2 one search ============================ -->
+  <div id="s2">
+    <div class="eyebrow" id="s2eye">One search</div>
+    <div id="s2bar">
+      <div id="s2mag"></div><div id="s2magh"></div>
+      <div id="s2line"><div id="s2q"></div><div id="s2caret"></div></div>
+    </div>
+    <div class="sres" id="sr1"><div class="skf"></div><div class="sk1" style="width:1180px"></div><div class="sk2" style="width:760px"></div><div class="fv"><i>S</i></div>
+      <div class="st">Public records &amp; background report</div>
+      <div class="su">people-search-site.com/profile</div>
+      <div class="sx">exposed</div><div class="sl"></div></div>
+    <div class="sres" id="sr2"><div class="skf"></div><div class="sk1" style="width:1340px"></div><div class="sk2" style="width:640px"></div><div class="fv"><i>W</i></div>
+      <div class="st">Address history · 11 previous addresses</div>
+      <div class="su">whitepages-style-site.com</div>
+      <div class="sx">exposed</div><div class="sl"></div></div>
+    <div class="sres" id="sr3"><div class="skf"></div><div class="sk1" style="width:1020px"></div><div class="sk2" style="width:700px"></div><div class="fv"><i>B</i></div>
+      <div class="st">Phone, relatives &amp; associates</div>
+      <div class="su">background-check-site.com</div>
+      <div class="sx">exposed</div><div class="sl"></div></div>
+    <div class="sres" id="sr4"><div class="skf"></div><div class="sk1" style="width:1260px"></div><div class="sk2" style="width:580px"></div><div class="fv"><i>D</i></div>
+      <div class="st">Marketing profile · sold by the record</div>
+      <div class="su">data-broker-site.com</div>
+      <div class="sx">for sale</div><div class="sl"></div></div>
+    <div id="s2more">+ hundreds more like these</div>
+    <div class="attrib" id="s2attr">Representative of what a people-search result
+      page actually lists</div>
+  </div>
+
+  <!-- ============================ S3 head to head ============================ -->
+  <div id="s3">
+    <div class="eyebrow" id="s3eye">Head to head</div>
+    <div class="mkw" id="s3Lw" data-layout-allow-overflow><img src="assets/brand/incogni-white.svg" alt="Incogni" /></div>
+    <div class="s3ul" id="s3Lul"></div>
+    <div class="s3sub" id="s3Lsub">data removal, one job</div>
+    <div class="mkw" id="s3Rw" data-layout-allow-overflow><img src="assets/brand/aura-white.svg" alt="Aura" /></div>
+    <div class="s3ul" id="s3Rul"></div>
+    <div class="s3sub" id="s3Rsub">full security suite</div>
+    <div id="s3div"></div>
+    <div id="s3vsr"></div>
+    <div id="s3vs">VS</div>
+  </div>
+
+  <!-- ============================ S4 the question ============================ -->
+  <div id="s4">
+    <div class="eyebrow" id="s4eye">The only question</div>
+    <div id="s4q" class="h1 wr" data-layout-allow-overflow>Which one <em>actually</em> gets your information off the internet?</div>
+    <div class="rulew" id="s4rule"></div>
+    <div id="s4note" class="bd wr" data-layout-allow-overflow>Not which has more features. Which one gets the record taken down.</div>
+  </div>
+
+  <!-- ============================ S5 pull quote ============================ -->
+  <div id="s5">
+    <div id="s5q" class="pull wr" data-layout-allow-overflow>Here&#x27;s the thing nobody tells you.</div>
+  </div>
+
+  <!-- ============================ S6 collect and sell ============================ -->
+  <div id="s6">
+    <div class="eyebrow" id="s6eye">What a data broker does</div>
+    <div class="rec" id="s6rec">
+      <div class="rw" style="top:0"><div class="rk">Name</div>
+        <div class="rvw"><span class="rv">Nader N.</span></div><div class="rl"></div></div>
+      <div class="rw" style="top:196px"><div class="rk">Address</div>
+        <div class="rvw"><span class="rv">•• Bay St, Toronto</span></div><div class="rl"></div></div>
+      <div class="rw" style="top:392px"><div class="rk">Phone</div>
+        <div class="rvw"><span class="rv">(416) •••-••••</span></div><div class="rl"></div></div>
+      <div class="rw" style="top:588px"><div class="rk">Buying habits</div>
+        <div class="rvw"><span class="rv">1,240 signals</span></div><div class="rl"></div></div>
+    </div>
+    <div id="s6price">packaged &amp; priced</div>
+    <div class="spine" id="s6spine"></div>
+    <div class="limb s6lim" id="s6l1" style="top:520px"></div>
+    <div class="limb s6lim" id="s6l2" style="top:790px"></div>
+    <div class="limb s6lim" id="s6l3" style="top:1060px"></div>
+    <div class="s6b" id="s6b1"><div class="bn">Marketers</div><div class="bs">buyer 01</div></div>
+    <div class="s6b" id="s6b2"><div class="bn">Government agencies</div><div class="bs">buyer 02</div></div>
+    <div class="s6b" id="s6b3"><div class="bn">Scammers</div><div class="bs">buyer 03</div></div>
+    <div class="pkt red" id="p1"></div><div class="pkt red" id="p2"></div>
+    <div class="pkt red" id="p3"></div>
+    <div id="s6foot" class="bd wr" data-layout-allow-overflow>Collected while you shop, sign up, or just browse.</div>
+  </div>
+
+  <!-- CAPTIONS -->
+  <div id="c1cap1" class="cap clip" data-start="0.00" data-duration="2.38" data-track-index="9">your name, your address, and even your</div>
+  <div id="c1cap2" class="cap clip" data-start="2.38" data-duration="0.54" data-track-index="9">phone number.</div>
+  <div id="c1cap3" class="cap clip" data-start="3.30" data-duration="1.96" data-track-index="9">Somebody can be pulling it all up</div>
+  <div id="c1cap4" class="cap clip" data-start="5.26" data-duration="1.48" data-track-index="9">in a single search.</div>
+  <div id="c1cap5" class="cap clip" data-start="7.12" data-duration="2.18" data-track-index="9">Today, we&#x27;re putting two of the biggest</div>
+  <div id="c1cap6" class="cap clip" data-start="9.30" data-duration="3.08" data-track-index="9">data <i>removal</i> services head to head.</div>
+  <div id="c1cap7" class="cap clip" data-start="12.82" data-duration="1.62" data-track-index="9">That&#x27;s <b>Incogni</b> and Aura,</div>
+  <div id="c1cap8" class="cap clip" data-start="21.82" data-duration="2.46" data-track-index="9">Data broker sites collect and sell your</div>
+  <div id="c1cap9" class="cap clip" data-start="24.28" data-duration="1.10" data-track-index="9">personal information.</div>
+  <div id="c1cap10" class="cap clip" data-start="25.62" data-duration="2.56" data-track-index="9">They sell your personal details to marketers,</div>
+  <!-- /CAPTIONS -->
+  <div id="cover"></div>
+
+  <!-- SFX -->
+  <audio id="c1sfx1" data-start="0.16" data-duration="0.55" data-track-index="20" src="assets/sfx/slide1.mp3" data-volume="0.08"></audio>
+  <audio id="c1sfx2" data-start="0.22" data-duration="0.30" data-track-index="21" src="assets/sfx/stick1.mp3" data-volume="0.06"></audio>
+  <audio id="c1sfx3" data-start="0.86" data-duration="0.50" data-track-index="22" src="assets/sfx/slide2.mp3" data-volume="0.08"></audio>
+  <audio id="c1sfx4" data-start="0.92" data-duration="0.35" data-track-index="23" src="assets/sfx/sui1.mp3" data-volume="0.06"></audio>
+  <audio id="c1sfx5" data-start="2.40" data-duration="0.55" data-track-index="24" src="assets/sfx/slide1.mp3" data-volume="0.08"></audio>
+  <audio id="c1sfx6" data-start="2.46" data-duration="0.40" data-track-index="25" src="assets/sfx/sclick.mp3" data-volume="0.07"></audio>
+  <audio id="c1sfx7" data-start="3.30" data-duration="0.70" data-track-index="26" src="assets/sfx/swsh1.mp3" data-volume="0.08"></audio>
+  <audio id="c1sfx8" data-start="3.62" data-duration="1.05" data-track-index="27" src="assets/sfx/type1.mp3" data-volume="0.04"></audio>
+  <audio id="c1sfx9" data-start="4.62" data-duration="0.40" data-track-index="28" src="assets/sfx/tick5.mp3" data-volume="0.07"></audio>
+  <audio id="c1sfx10" data-start="4.78" data-duration="0.30" data-track-index="29" src="assets/sfx/sacc1.mp3" data-volume="0.07"></audio>
+  <audio id="c1sfx11" data-start="4.98" data-duration="0.40" data-track-index="30" src="assets/sfx/sacc2.mp3" data-volume="0.07"></audio>
+  <audio id="c1sfx12" data-start="5.18" data-duration="0.35" data-track-index="31" src="assets/sfx/sacc3.mp3" data-volume="0.07"></audio>
+  <audio id="c1sfx13" data-start="5.38" data-duration="0.40" data-track-index="32" src="assets/sfx/pop4.mp3" data-volume="0.07"></audio>
+  <audio id="c1sfx14" data-start="5.66" data-duration="0.40" data-track-index="33" src="assets/sfx/stick1.mp3" data-volume="0.05"></audio>
+  <audio id="c1sfx15" data-start="6.62" data-duration="0.55" data-track-index="34" src="assets/sfx/srise1.mp3" data-volume="0.05"></audio>
+  <audio id="c1sfx16" data-start="7.12" data-duration="1.10" data-track-index="35" src="assets/sfx/simp1.mp3" data-volume="0.10"></audio>
+  <audio id="c1sfx17" data-start="7.62" data-duration="0.60" data-track-index="36" src="assets/sfx/simp2.mp3" data-volume="0.07"></audio>
+  <audio id="c1sfx18" data-start="9.30" data-duration="0.45" data-track-index="37" src="assets/sfx/slide2.mp3" data-volume="0.06"></audio>
+  <audio id="c1sfx19" data-start="10.96" data-duration="0.55" data-track-index="38" src="assets/sfx/wsh4.mp3" data-volume="0.05"></audio>
+  <audio id="c1sfx20" data-start="11.98" data-duration="0.70" data-track-index="39" src="assets/sfx/simp3.mp3" data-volume="0.07"></audio>
+  <audio id="c1sfx21" data-start="13.02" data-duration="0.55" data-track-index="40" src="assets/sfx/srev2.mp3" data-volume="0.07"></audio>
+  <audio id="c1sfx22" data-start="14.14" data-duration="0.35" data-track-index="41" src="assets/sfx/sui1.mp3" data-volume="0.06"></audio>
+  <audio id="c1sfx23" data-start="14.86" data-duration="0.50" data-track-index="42" src="assets/sfx/wsh2.mp3" data-volume="0.08"></audio>
+  <audio id="c1sfx24" data-start="16.90" data-duration="0.45" data-track-index="43" src="assets/sfx/swsh1.mp3" data-volume="0.06"></audio>
+  <audio id="c1sfx25" data-start="19.84" data-duration="0.85" data-track-index="44" src="assets/sfx/imp2.mp3" data-volume="0.09"></audio>
+  <audio id="c1sfx26" data-start="21.82" data-duration="0.55" data-track-index="45" src="assets/sfx/wsh4.mp3" data-volume="0.08"></audio>
+  <audio id="c1sfx27" data-start="21.90" data-duration="0.60" data-track-index="46" src="assets/sfx/sgear.mp3" data-volume="0.06"></audio>
+  <audio id="c1sfx28" data-start="23.64" data-duration="0.70" data-track-index="47" src="assets/sfx/simp1.mp3" data-volume="0.08"></audio>
+  <audio id="c1sfx29" data-start="24.30" data-duration="0.95" data-track-index="48" src="assets/sfx/wsh5.mp3" data-volume="0.05"></audio>
+  <audio id="c1sfx30" data-start="27.50" data-duration="0.55" data-track-index="49" src="assets/sfx/data2.mp3" data-volume="0.06"></audio>
+  <audio id="c1sfx31" data-start="27.72" data-duration="0.30" data-track-index="50" src="assets/sfx/sclick.mp3" data-volume="0.06"></audio>
+  <!-- /SFX -->
+</div>
+
+<script>
+  window.__timelines = window.__timelines || {};
+  const tl = gsap.timeline({paused:true});
+  const T0 = 0.0, DUR = 28.700000;
+
+  mountGround(tl, T0, DUR);
+  const K = chunkKit(tl, T0);
+
+  /* solved windows that fall inside this chunk (from card-transforms.json —
+     rewritten by inject_windows.py, never hand-typed) */
+  const W1={a:0.00,b:11.70,s:0.5966,tx:1919.6,ty:431.4,ok:true,resid:28};
+  const W2={a:13.70,b:34.10,s:0.5966,tx:1902.1,ty:440.0,ok:true,resid:62};
+  /* =========================================================================
+     S1  0.00–3.30   HOOK — the line plays on the CLEAN full-bleed face.
+     FRAME 0 IS THE FILM'S COVER, so the whole redaction stack exists at t=0
+     with its bars DOWN. A blacked-out name/address/phone record is a composed
+     cover image; a half-entered card is not.
+     ========================================================================= */
+  K.faceFull(0);
+  tl.fromTo("#face",{scale:1},{scale:1.035,duration:3.30,ease:"none"},0);
+  /* the kicker is PRESENT at frame 0 — it only settles. Round 2's first render had
+     it fading in from 0.06, so the film's cover frame was missing its claim pill. */
+  tl.fromTo("#s1kick",{y:14},{y:0,duration:.9,ease:"power3.out"},0);
+  /* each bar slides right out of its mask, so the value is revealed left-to-right
+     behind the bar's own glowing left edge. Bars are in place at frame 0 —
+     nothing is drawn from nothing, and the cover frame reads as a redacted record. */
+  function unredact(sel, t){
+    tl.set(sel+" .rb",{xPercent:0},0);
+    tl.to(sel+" .rb",{xPercent:100,duration:.44,ease:"power3.inOut"},t);
+  }
+  unredact("#rv1", 0.16);   /* "name,"          */
+  unredact("#rv2", 0.86);   /* "address,"       */
+  unredact("#rv3", 2.40);   /* "phone number."  */
+  tl.fromTo("#s1attr",{opacity:0,y:10},{opacity:1,y:0,duration:.5,ease:"power2.out"},2.86);
+
+  /* =========================================================================
+     S2  3.30–7.12   "somebody can be pulling it all up in a single search"
+     CARD mode. W1 cards (resid 28px). Graphics own x180–2080; the card owns
+     x2280–3660. The 200px gutter is the whole point — there is no geometry in
+     which a result row can land on his face.
+     ========================================================================= */
+  K.cut(3.30, "#s1", "#s2");
+  K.faceCard(3.30, W1);
+  tl.fromTo("#s2eye",{y:18,opacity:0},{y:0,opacity:1,duration:.38,ease:"power2.out"},3.30);
+  tl.fromTo("#s2bar",{y:24,opacity:0},{y:0,opacity:1,duration:.46,ease:"expo.out"},3.30);
+  /* the query types itself. textContent is written from tween progress only, so the
+     value is a pure function of time and survives non-linear seeking. */
+  (function(){
+    const q="Nader Nadernejad", el=document.getElementById("s2q");
+    const st=3.62, en=4.62, p={n:0};
+    el.textContent="";
+    tl.fromTo(p,{n:0},{n:q.length,duration:en-st,ease:"none",immediateRender:true,
+      onUpdate:function(){ el.textContent=q.slice(0,Math.round(p.n)); }},st);
+    tl.to("#s2caret",{opacity:0,duration:.2,ease:"none"},en+0.06);
+  })();
+  /* results arrive on "pulling it all up" — hairline draws first, then the row
+     rises into it. Two different eases so four rows do not read as one block. */
+  /* the four slots are held by their hairlines from the cut, so the column is never
+     an empty rectangle while the query types — then each row LIGHTS into place. */
+  tl.set(["#sr1","#sr2","#sr3","#sr4"],{opacity:1},3.30);
+  tl.set([".sres .fv",".sres .st",".sres .su",".sres .sx"],{opacity:0},3.30);
+  ["#sr1","#sr2","#sr3","#sr4"].forEach(function(s,i){
+    const t = 4.78 + i*0.20;
+    /* the skeleton hands over to the real row rather than cross-fading with it */
+    tl.to([s+" .sk1",s+" .sk2",s+" .skf"],{opacity:0,duration:.22,ease:"power2.in"},t);
+    tl.fromTo(s+" .sl",{scaleX:.34},{scaleX:1,duration:.44,ease:"power2.out"},t);
+    tl.fromTo([s+" .fv",s+" .st",s+" .su"],{y:22,opacity:0},
+      {y:0,opacity:1,duration:.40,ease:"expo.out",stagger:.03},t+0.06);
+    tl.fromTo(s+" .sx",{opacity:0,scale:.9},{opacity:1,scale:1,duration:.3,
+      ease:"back.out(2.4)",transformOrigin:"100% 50%"},t+0.20);
+  });
+  tl.fromTo("#s2more",{opacity:0,y:14},{opacity:1,y:0,duration:.4,ease:"power2.out"},5.66);
+  tl.fromTo("#s2attr",{opacity:0,y:10},{opacity:1,y:0,duration:.42,ease:"power2.out"},5.96);
+
+  /* =========================================================================
+     S3  7.12–14.86  "two of the biggest data removal services head to head"
+     Full frame, face hidden — which also covers the 11.70–13.70 gap between
+     W1 and W2 where he glances down, so the hidden face costs nothing here.
+     Real wordmarks, both captured from the live sites. Aura stays NEUTRAL: it is
+     a competitor in a sponsored film, not the alert colour.
+     ========================================================================= */
+  K.cut(7.12, "#s2", "#s3");
+  K.hideFace(7.12);
+  tl.fromTo("#s3eye",{y:20,opacity:0},{y:0,opacity:1,duration:.4,ease:"power2.out"},7.16);
+  /* the marks rise out of their own mask — the same masked-rise device the
+     typography uses, applied to an image */
+  tl.fromTo("#s3Lw img",{yPercent:110},{yPercent:0,duration:.72,ease:"expo.out"},7.20);
+  tl.fromTo("#s3Rw img",{yPercent:110},{yPercent:0,duration:.72,ease:"expo.out"},7.34);
+  tl.fromTo("#s3div",{scaleY:0,opacity:0},{scaleY:1,opacity:1,duration:.66,ease:"power3.out"},7.28);
+  tl.fromTo("#s3vsr",{scale:0},{scale:1,duration:.52,ease:"back.out(2)",
+    transformOrigin:"50% 50%"},7.62);
+  tl.fromTo("#s3vs",{scale:0},{scale:1,duration:.52,ease:"back.out(2.4)",
+    transformOrigin:"50% 50%"},7.70);
+  tl.fromTo("#s3Lsub",{opacity:0},{opacity:1,duration:.4,ease:"none"},7.92);
+  tl.fromTo("#s3Rsub",{opacity:0},{opacity:1,duration:.4,ease:"none"},8.04);
+
+  /* Everything above lands by 8.44, and the next authored beat used to be the
+     "Incogni" underline at 13.02 — a FIVE-SECOND still frame on a lockup, which
+     is both the "nothing static >1s" rule and the reason round 1 read as boring.
+     A footnote reading "two of the biggest data removal services" used to sit at
+     y1420, but the caption says those same words at the same moment, so it broke
+     the vid39 no-duplicate-words rule as well. Removed, and the gap is now filled
+     by accents on the words that actually carry them:
+
+        9.30 "data" / 9.82 "removal"  -> Incogni's descriptor is what he just said
+       10.96 "head" / 11.98 "head."   -> the two marks close on the VS
+       13.02 "Incogni" / 14.14 "Aura" -> each mark pops on its own name
+
+     Longest remaining still stretch: 1.24s. */
+  tl.fromTo("#s3Lul",{scaleX:0},{scaleX:1,duration:.46,ease:"power3.out"},9.30);
+  tl.fromTo("#s3Lsub",{color:"#8EACFF"},{color:"#C9D6FF",duration:.34,ease:"none"},9.82);
+
+  /* "head to head" — the only moment the two marks are allowed to move toward
+     each other. 18px is deliberately small: it has to read as pressure, not as a
+     layout shift, and the marks must return to their measured positions. */
+  tl.to("#s3Lw",{x:18,duration:.42,ease:"power2.inOut"},10.96);
+  tl.to("#s3Rw",{x:-18,duration:.42,ease:"power2.inOut"},10.96);
+  /* out-and-back as ONE yoyo tween: a separate return tween starting exactly where
+     the first ends is flagged as overlapping (they share the boundary frame) */
+  tl.fromTo("#s3vsr",{scale:1},{scale:1.07,duration:.22,ease:"power2.inOut",
+    transformOrigin:"50% 50%",yoyo:true,repeat:1},11.98);
+  tl.to("#s3Lw",{x:0,duration:.5,ease:"power2.inOut"},11.98);
+  tl.to("#s3Rw",{x:0,duration:.5,ease:"power2.inOut"},11.98);
+
+  /* Each name gets a pop on its own word. The pop scales the MASK, not the <img>:
+     .mkw is overflow:hidden and the image fills it exactly, so scaling the image
+     would crop 1.75% off both ends of the wordmark instead of enlarging it. */
+  tl.fromTo("#s3Lw",{scale:1},{scale:1.035,duration:.26,ease:"power2.inOut",
+    transformOrigin:"50% 50%",yoyo:true,repeat:1},13.02);
+  tl.fromTo("#s3Rul",{scaleX:0},{scaleX:1,duration:.46,ease:"power3.out"},14.14);
+  tl.fromTo("#s3Rw",{scale:1},{scale:1.035,duration:.26,ease:"power2.inOut",
+    transformOrigin:"50% 50%",yoyo:true,repeat:1},14.14);
+
+  /* =========================================================================
+     S4  14.86–19.84  "to figure out which one actually gets your information
+     off the internet." Per-word masked rise — the film's one text entrance.
+     ========================================================================= */
+  K.cut(14.86, "#s3", "#s4");
+  K.faceCard(14.86, W2);
+  tl.fromTo("#s4eye",{y:18,opacity:0},{y:0,opacity:1,duration:.36,ease:"power2.out"},14.88);
+  wordRise(tl, "#s4q", 14.94, {dur:.52, stagger:.028});
+  tl.fromTo("#s4rule",{scaleX:0},{scaleX:1,duration:.52,ease:"power3.out",
+    transformOrigin:"0% 50%"},16.90);
+  wordRise(tl, "#s4note", 17.20, {dur:.46, stagger:.016});
+
+  /* =========================================================================
+     S5  19.84–21.82  "Here's the thing nobody tells you."
+     ========================================================================= */
+  K.cut(19.84, "#s4", "#s5");
+  wordRise(tl, "#s5q", 19.88, {dur:.52, stagger:.028, ease:"expo.out"});
+
+  /* =========================================================================
+     S6  21.82–28.70  "Data broker sites collect and sell your personal
+     information. They sell your personal details to marketers, ..."
+     The record assembles, gets priced, and sells into named buyers. c1 ends
+     mid-list: "marketers," lands at 27.66 and "government agencies" is the
+     first thing in c2, so buyer 02 and 03 are laid out here but arrive there.
+     Identical markup and geometry on both sides of the join.
+     ========================================================================= */
+  K.cut(21.82, "#s5", "#s6");
+  tl.fromTo("#s6eye",{y:18,opacity:0},{y:0,opacity:1,duration:.36,ease:"power2.out"},21.84);
+  /* the record's four rows land on "collect" */
+  tl.fromTo("#s6rec .rw",{opacity:0,x:-26},{opacity:1,x:0,duration:.42,
+    ease:"expo.out",stagger:.075},21.90);
+  tl.fromTo("#s6rec .rl",{scaleX:0},{scaleX:1,duration:.5,ease:"power2.out",
+    transformOrigin:"0% 50%",stagger:.075},21.94);
+  wordRise(tl, "#s6foot", 22.40, {dur:.46, stagger:.016});
+  /* "sell" 23.64 — the record gets a price on it */
+  tl.fromTo("#s6price",{opacity:0,scale:.88},{opacity:1,scale:1,duration:.38,
+    ease:"back.out(2.2)",transformOrigin:"0% 50%"},23.64);
+  /* the spine grows, then buyer 01 hangs off it on "marketers," 27.66 */
+  tl.fromTo("#s6spine",{scaleY:0},{scaleY:1,duration:.6,ease:"power3.out"},24.30);
+  function buyer(n, t){
+    tl.fromTo("#s6l"+n,{scaleX:0},{scaleX:1,duration:.3,ease:"power2.out"},t);
+    tl.fromTo("#s6b"+n,{opacity:0,x:28},{opacity:1,x:0,duration:.42,ease:"expo.out"},t+0.08);
+  }
+  tl.set(["#s6b1","#s6b2","#s6b3","#s6l1","#s6l2","#s6l3"],{opacity:0},0);
+  buyer(1, 27.66);
+  K.packet("#p1", 27.50, 1120, 700, 1520, 540);
+
+  window.__timelines.c1 = tl;
+</script>
+</body>
+</html>

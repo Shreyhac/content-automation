@@ -1,0 +1,3302 @@
+[
+{
+"start": 0.0,
+"end": 0.16,
+"word": "your"
+},
+{
+"start": 0.16,
+"end": 0.48,
+"word": "name,"
+},
+{
+"start": 0.76,
+"end": 0.82,
+"word": "your"
+},
+{
+"start": 0.82,
+"end": 1.32,
+"word": "address,"
+},
+{
+"start": 1.56,
+"end": 1.98,
+"word": "and"
+},
+{
+"start": 1.98,
+"end": 2.18,
+"word": "even"
+},
+{
+"start": 2.18,
+"end": 2.38,
+"word": "your"
+},
+{
+"start": 2.38,
+"end": 2.62,
+"word": "phone"
+},
+{
+"start": 2.62,
+"end": 2.92,
+"word": "number."
+},
+{
+"start": 3.3,
+"end": 3.84,
+"word": "Somebody"
+},
+{
+"start": 3.84,
+"end": 4.2,
+"word": "can"
+},
+{
+"start": 4.2,
+"end": 4.34,
+"word": "be"
+},
+{
+"start": 4.34,
+"end": 4.6,
+"word": "pulling"
+},
+{
+"start": 4.6,
+"end": 4.78,
+"word": "it"
+},
+{
+"start": 4.78,
+"end": 4.96,
+"word": "all"
+},
+{
+"start": 4.96,
+"end": 5.26,
+"word": "up"
+},
+{
+"start": 5.26,
+"end": 5.52,
+"word": "in"
+},
+{
+"start": 5.52,
+"end": 5.64,
+"word": "a"
+},
+{
+"start": 5.64,
+"end": 6.08,
+"word": "single"
+},
+{
+"start": 6.08,
+"end": 6.74,
+"word": "search."
+},
+{
+"start": 7.12,
+"end": 7.4,
+"word": "Today,"
+},
+{
+"start": 7.54,
+"end": 7.7,
+"word": "we're"
+},
+{
+"start": 7.7,
+"end": 7.92,
+"word": "putting"
+},
+{
+"start": 7.92,
+"end": 8.4,
+"word": "two"
+},
+{
+"start": 8.4,
+"end": 8.74,
+"word": "of"
+},
+{
+"start": 8.74,
+"end": 8.88,
+"word": "the"
+},
+{
+"start": 8.88,
+"end": 9.3,
+"word": "biggest"
+},
+{
+"start": 9.3,
+"end": 9.82,
+"word": "data"
+},
+{
+"start": 9.82,
+"end": 10.24,
+"word": "removal"
+},
+{
+"start": 10.24,
+"end": 10.96,
+"word": "services"
+},
+{
+"start": 10.96,
+"end": 11.66,
+"word": "head"
+},
+{
+"start": 11.66,
+"end": 11.98,
+"word": "to"
+},
+{
+"start": 11.98,
+"end": 12.38,
+"word": "head."
+},
+{
+"start": 12.82,
+"end": 13.02,
+"word": "That's"
+},
+{
+"start": 13.02,
+"end": 13.76,
+"word": "Incogni"
+},
+{
+"start": 13.76,
+"end": 14.14,
+"word": "and"
+},
+{
+"start": 14.14,
+"end": 14.44,
+"word": "Aura,"
+},
+{
+"start": 14.86,
+"end": 14.88,
+"word": "to"
+},
+{
+"start": 14.88,
+"end": 15.14,
+"word": "figure"
+},
+{
+"start": 15.14,
+"end": 15.46,
+"word": "out"
+},
+{
+"start": 15.46,
+"end": 15.8,
+"word": "which"
+},
+{
+"start": 15.8,
+"end": 16.24,
+"word": "one"
+},
+{
+"start": 16.24,
+"end": 16.82,
+"word": "actually"
+},
+{
+"start": 16.82,
+"end": 17.16,
+"word": "gets"
+},
+{
+"start": 17.16,
+"end": 17.5,
+"word": "your"
+},
+{
+"start": 17.5,
+"end": 18.16,
+"word": "information"
+},
+{
+"start": 18.16,
+"end": 18.88,
+"word": "off"
+},
+{
+"start": 18.88,
+"end": 19.06,
+"word": "the"
+},
+{
+"start": 19.06,
+"end": 19.36,
+"word": "internet."
+},
+{
+"start": 19.84,
+"end": 20.18,
+"word": "Here's"
+},
+{
+"start": 20.18,
+"end": 20.3,
+"word": "the"
+},
+{
+"start": 20.3,
+"end": 20.52,
+"word": "thing"
+},
+{
+"start": 20.52,
+"end": 20.76,
+"word": "nobody"
+},
+{
+"start": 20.76,
+"end": 21.2,
+"word": "tells"
+},
+{
+"start": 21.2,
+"end": 21.48,
+"word": "you."
+},
+{
+"start": 21.82,
+"end": 22.02,
+"word": "Data"
+},
+{
+"start": 22.02,
+"end": 22.26,
+"word": "broker"
+},
+{
+"start": 22.26,
+"end": 22.74,
+"word": "sites"
+},
+{
+"start": 22.74,
+"end": 23.28,
+"word": "collect"
+},
+{
+"start": 23.28,
+"end": 23.64,
+"word": "and"
+},
+{
+"start": 23.64,
+"end": 24.06,
+"word": "sell"
+},
+{
+"start": 24.06,
+"end": 24.28,
+"word": "your"
+},
+{
+"start": 24.28,
+"end": 24.78,
+"word": "personal"
+},
+{
+"start": 24.78,
+"end": 25.38,
+"word": "information."
+},
+{
+"start": 25.62,
+"end": 25.74,
+"word": "They"
+},
+{
+"start": 25.74,
+"end": 26.0,
+"word": "sell"
+},
+{
+"start": 26.0,
+"end": 26.14,
+"word": "your"
+},
+{
+"start": 26.14,
+"end": 26.54,
+"word": "personal"
+},
+{
+"start": 26.54,
+"end": 27.06,
+"word": "details"
+},
+{
+"start": 27.06,
+"end": 27.66,
+"word": "to"
+},
+{
+"start": 27.66,
+"end": 28.18,
+"word": "marketers,"
+},
+{
+"start": 28.7,
+"end": 29.02,
+"word": "government"
+},
+{
+"start": 29.02,
+"end": 29.84,
+"word": "agencies,"
+},
+{
+"start": 30.2,
+"end": 30.3,
+"word": "and"
+},
+{
+"start": 30.3,
+"end": 30.46,
+"word": "get"
+},
+{
+"start": 30.46,
+"end": 30.8,
+"word": "this,"
+},
+{
+"start": 31.0,
+"end": 31.22,
+"word": "even"
+},
+{
+"start": 31.22,
+"end": 31.68,
+"word": "scammers."
+},
+{
+"start": 32.1,
+"end": 32.26,
+"word": "Every"
+},
+{
+"start": 32.26,
+"end": 32.46,
+"word": "time"
+},
+{
+"start": 32.46,
+"end": 32.58,
+"word": "you"
+},
+{
+"start": 32.58,
+"end": 32.76,
+"word": "buy"
+},
+{
+"start": 32.76,
+"end": 32.98,
+"word": "something"
+},
+{
+"start": 32.98,
+"end": 33.48,
+"word": "online,"
+},
+{
+"start": 33.82,
+"end": 34.24,
+"word": "sign"
+},
+{
+"start": 34.24,
+"end": 34.4,
+"word": "up"
+},
+{
+"start": 34.4,
+"end": 34.58,
+"word": "for"
+},
+{
+"start": 34.58,
+"end": 34.74,
+"word": "an"
+},
+{
+"start": 34.74,
+"end": 34.9,
+"word": "app"
+},
+{
+"start": 34.9,
+"end": 35.04,
+"word": "or"
+},
+{
+"start": 35.04,
+"end": 35.24,
+"word": "just"
+},
+{
+"start": 35.24,
+"end": 35.56,
+"word": "browse,"
+},
+{
+"start": 36.12,
+"end": 36.26,
+"word": "that"
+},
+{
+"start": 36.26,
+"end": 36.78,
+"word": "information"
+},
+{
+"start": 36.78,
+"end": 37.12,
+"word": "can"
+},
+{
+"start": 37.12,
+"end": 37.4,
+"word": "end"
+},
+{
+"start": 37.4,
+"end": 37.54,
+"word": "up"
+},
+{
+"start": 37.54,
+"end": 37.68,
+"word": "for"
+},
+{
+"start": 37.68,
+"end": 37.98,
+"word": "sale"
+},
+{
+"start": 37.98,
+"end": 38.58,
+"word": "somewhere."
+},
+{
+"start": 38.86,
+"end": 38.96,
+"word": "And"
+},
+{
+"start": 38.96,
+"end": 39.14,
+"word": "it's"
+},
+{
+"start": 39.14,
+"end": 39.26,
+"word": "a"
+},
+{
+"start": 39.26,
+"end": 39.46,
+"word": "much"
+},
+{
+"start": 39.46,
+"end": 39.76,
+"word": "bigger"
+},
+{
+"start": 39.76,
+"end": 40.26,
+"word": "problem"
+},
+{
+"start": 40.26,
+"end": 40.64,
+"word": "than"
+},
+{
+"start": 40.64,
+"end": 40.98,
+"word": "most"
+},
+{
+"start": 40.98,
+"end": 41.28,
+"word": "people"
+},
+{
+"start": 41.28,
+"end": 41.78,
+"word": "realize."
+},
+{
+"start": 42.16,
+"end": 42.6,
+"word": "Privacy"
+},
+{
+"start": 42.6,
+"end": 42.82,
+"word": "Rights"
+},
+{
+"start": 42.82,
+"end": 43.52,
+"word": "Clearinghouse,"
+},
+{
+"start": 43.66,
+"end": 43.9,
+"word": "working"
+},
+{
+"start": 43.9,
+"end": 44.08,
+"word": "with"
+},
+{
+"start": 44.08,
+"end": 44.2,
+"word": "the"
+},
+{
+"start": 44.2,
+"end": 44.54,
+"word": "EFF,"
+},
+{
+"start": 44.82,
+"end": 44.9,
+"word": "has"
+},
+{
+"start": 44.9,
+"end": 45.42,
+"word": "identified"
+},
+{
+"start": 45.42,
+"end": 45.72,
+"word": "at"
+},
+{
+"start": 45.72,
+"end": 45.84,
+"word": "least"
+},
+{
+"start": 45.84,
+"end": 46.8,
+"word": "750"
+},
+{
+"start": 46.8,
+"end": 47.7,
+"word": "unique"
+},
+{
+"start": 47.7,
+"end": 47.96,
+"word": "data"
+},
+{
+"start": 47.96,
+"end": 48.32,
+"word": "broker"
+},
+{
+"start": 48.32,
+"end": 48.78,
+"word": "groups,"
+},
+{
+"start": 49.04,
+"end": 49.58,
+"word": "registered"
+},
+{
+"start": 49.58,
+"end": 50.04,
+"word": "across"
+},
+{
+"start": 50.04,
+"end": 50.4,
+"word": "the"
+},
+{
+"start": 50.4,
+"end": 50.66,
+"word": "US."
+},
+{
+"start": 51.02,
+"end": 51.2,
+"word": "And"
+},
+{
+"start": 51.2,
+"end": 51.52,
+"word": "that's"
+},
+{
+"start": 51.52,
+"end": 51.7,
+"word": "only"
+},
+{
+"start": 51.7,
+"end": 52.02,
+"word": "counting"
+},
+{
+"start": 52.02,
+"end": 52.2,
+"word": "the"
+},
+{
+"start": 52.2,
+"end": 52.42,
+"word": "ones"
+},
+{
+"start": 52.42,
+"end": 52.56,
+"word": "that"
+},
+{
+"start": 52.56,
+"end": 52.66,
+"word": "are"
+},
+{
+"start": 52.66,
+"end": 52.98,
+"word": "actually"
+},
+{
+"start": 52.98,
+"end": 53.4,
+"word": "registered"
+},
+{
+"start": 53.4,
+"end": 53.58,
+"word": "at"
+},
+{
+"start": 53.58,
+"end": 53.78,
+"word": "all."
+},
+{
+"start": 54.04,
+"end": 54.38,
+"word": "Here's"
+},
+{
+"start": 54.38,
+"end": 54.48,
+"word": "the"
+},
+{
+"start": 54.48,
+"end": 54.76,
+"word": "coverage"
+},
+{
+"start": 54.76,
+"end": 55.2,
+"word": "of"
+},
+{
+"start": 55.2,
+"end": 55.92,
+"word": "Incogni"
+},
+{
+"start": 55.92,
+"end": 56.12,
+"word": "versus"
+},
+{
+"start": 56.12,
+"end": 56.52,
+"word": "Aura."
+},
+{
+"start": 56.52,
+"end": 57.34,
+"word": "Incogni"
+},
+{
+"start": 57.34,
+"end": 57.58,
+"word": "goes"
+},
+{
+"start": 57.58,
+"end": 57.96,
+"word": "deep"
+},
+{
+"start": 57.96,
+"end": 58.28,
+"word": "on"
+},
+{
+"start": 58.28,
+"end": 58.66,
+"word": "one"
+},
+{
+"start": 58.66,
+"end": 59.14,
+"word": "thing,"
+},
+{
+"start": 59.36,
+"end": 59.36,
+"word": "and"
+},
+{
+"start": 59.36,
+"end": 59.54,
+"word": "that"
+},
+{
+"start": 59.54,
+"end": 59.78,
+"word": "one"
+},
+{
+"start": 59.78,
+"end": 60.0,
+"word": "thing"
+},
+{
+"start": 60.0,
+"end": 60.16,
+"word": "is"
+},
+{
+"start": 60.16,
+"end": 60.36,
+"word": "data"
+},
+{
+"start": 60.36,
+"end": 60.78,
+"word": "removal."
+},
+{
+"start": 61.04,
+"end": 61.18,
+"word": "An"
+},
+{
+"start": 61.18,
+"end": 61.7,
+"word": "independent"
+},
+{
+"start": 61.7,
+"end": 62.28,
+"word": "Deloitte"
+},
+{
+"start": 62.28,
+"end": 62.66,
+"word": "Assurance"
+},
+{
+"start": 62.66,
+"end": 63.08,
+"word": "Report,"
+},
+{
+"start": 63.32,
+"end": 63.72,
+"word": "confirmed"
+},
+{
+"start": 63.72,
+"end": 64.4,
+"word": "Incogni"
+},
+{
+"start": 64.4,
+"end": 64.64,
+"word": "covers"
+},
+{
+"start": 64.64,
+"end": 64.9,
+"word": "at"
+},
+{
+"start": 64.9,
+"end": 65.04,
+"word": "least"
+},
+{
+"start": 65.04,
+"end": 66.32,
+"word": "420"
+},
+{
+"start": 66.32,
+"end": 66.78,
+"word": "data"
+},
+{
+"start": 66.78,
+"end": 67.1,
+"word": "broker"
+},
+{
+"start": 67.1,
+"end": 67.66,
+"word": "websites"
+},
+{
+"start": 67.66,
+"end": 68.0,
+"word": "and"
+},
+{
+"start": 68.0,
+"end": 68.32,
+"word": "private"
+},
+{
+"start": 68.32,
+"end": 68.92,
+"word": "databases."
+},
+{
+"start": 69.36,
+"end": 69.44,
+"word": "That"
+},
+{
+"start": 69.44,
+"end": 69.74,
+"word": "includes"
+},
+{
+"start": 69.74,
+"end": 70.24,
+"word": "people's"
+},
+{
+"start": 70.24,
+"end": 70.42,
+"word": "search"
+},
+{
+"start": 70.42,
+"end": 70.86,
+"word": "sites,"
+},
+{
+"start": 71.22,
+"end": 71.62,
+"word": "marketing"
+},
+{
+"start": 71.62,
+"end": 72.02,
+"word": "brokers,"
+},
+{
+"start": 72.62,
+"end": 72.7,
+"word": "and"
+},
+{
+"start": 72.7,
+"end": 72.88,
+"word": "even"
+},
+{
+"start": 72.88,
+"end": 73.2,
+"word": "risk"
+},
+{
+"start": 73.2,
+"end": 73.64,
+"word": "mitigation"
+},
+{
+"start": 73.64,
+"end": 74.06,
+"word": "and"
+},
+{
+"start": 74.06,
+"end": 74.6,
+"word": "financial"
+},
+{
+"start": 74.6,
+"end": 75.0,
+"word": "information"
+},
+{
+"start": 75.0,
+"end": 75.56,
+"word": "brokers."
+},
+{
+"start": 75.92,
+"end": 76.04,
+"word": "And"
+},
+{
+"start": 76.04,
+"end": 76.3,
+"word": "they've"
+},
+{
+"start": 76.3,
+"end": 76.76,
+"word": "processed"
+},
+{
+"start": 76.76,
+"end": 77.16,
+"word": "over"
+},
+{
+"start": 77.16,
+"end": 78.88,
+"word": "245"
+},
+{
+"start": 78.88,
+"end": 79.34,
+"word": "million"
+},
+{
+"start": 79.34,
+"end": 79.88,
+"word": "removal"
+},
+{
+"start": 79.88,
+"end": 80.4,
+"word": "requests"
+},
+{
+"start": 80.4,
+"end": 80.72,
+"word": "and"
+},
+{
+"start": 80.72,
+"end": 81.1,
+"word": "counting."
+},
+{
+"start": 81.4,
+"end": 81.7,
+"word": "Aura,"
+},
+{
+"start": 81.78,
+"end": 81.9,
+"word": "on"
+},
+{
+"start": 81.9,
+"end": 82.0,
+"word": "the"
+},
+{
+"start": 82.0,
+"end": 82.12,
+"word": "other"
+},
+{
+"start": 82.12,
+"end": 82.42,
+"word": "hand,"
+},
+{
+"start": 82.64,
+"end": 82.86,
+"word": "works"
+},
+{
+"start": 82.86,
+"end": 83.16,
+"word": "differently."
+},
+{
+"start": 83.62,
+"end": 83.8,
+"word": "It's"
+},
+{
+"start": 83.8,
+"end": 83.96,
+"word": "more"
+},
+{
+"start": 83.96,
+"end": 84.06,
+"word": "of"
+},
+{
+"start": 84.06,
+"end": 84.14,
+"word": "a"
+},
+{
+"start": 84.14,
+"end": 84.38,
+"word": "full"
+},
+{
+"start": 84.38,
+"end": 84.84,
+"word": "security"
+},
+{
+"start": 84.84,
+"end": 85.22,
+"word": "suite."
+},
+{
+"start": 85.22,
+"end": 85.4,
+"word": "But"
+},
+{
+"start": 85.4,
+"end": 85.52,
+"word": "when"
+},
+{
+"start": 85.52,
+"end": 85.62,
+"word": "you"
+},
+{
+"start": 85.62,
+"end": 85.78,
+"word": "look"
+},
+{
+"start": 85.78,
+"end": 86.34,
+"word": "specifically"
+},
+{
+"start": 86.34,
+"end": 86.74,
+"word": "at"
+},
+{
+"start": 86.74,
+"end": 87.0,
+"word": "broker"
+},
+{
+"start": 87.0,
+"end": 87.62,
+"word": "coverage,"
+},
+{
+"start": 87.78,
+"end": 87.98,
+"word": "third"
+},
+{
+"start": 87.98,
+"end": 88.22,
+"word": "-party"
+},
+{
+"start": 88.22,
+"end": 88.74,
+"word": "reviews"
+},
+{
+"start": 88.74,
+"end": 88.98,
+"word": "put"
+},
+{
+"start": 88.98,
+"end": 89.38,
+"word": "Aura's"
+},
+{
+"start": 89.38,
+"end": 89.66,
+"word": "list"
+},
+{
+"start": 89.66,
+"end": 89.84,
+"word": "at"
+},
+{
+"start": 89.84,
+"end": 90.06,
+"word": "over"
+},
+{
+"start": 90.06,
+"end": 90.46,
+"word": "200"
+},
+{
+"start": 90.46,
+"end": 90.84,
+"word": "sites."
+},
+{
+"start": 91.4,
+"end": 91.44,
+"word": "So"
+},
+{
+"start": 91.44,
+"end": 91.56,
+"word": "if"
+},
+{
+"start": 91.56,
+"end": 91.66,
+"word": "your"
+},
+{
+"start": 91.66,
+"end": 91.88,
+"word": "goal"
+},
+{
+"start": 91.88,
+"end": 92.04,
+"word": "is"
+},
+{
+"start": 92.04,
+"end": 92.22,
+"word": "getting"
+},
+{
+"start": 92.22,
+"end": 92.4,
+"word": "your"
+},
+{
+"start": 92.4,
+"end": 92.62,
+"word": "name"
+},
+{
+"start": 92.62,
+"end": 92.9,
+"word": "off"
+},
+{
+"start": 92.9,
+"end": 93.28,
+"word": "as"
+},
+{
+"start": 93.28,
+"end": 93.5,
+"word": "many"
+},
+{
+"start": 93.5,
+"end": 93.88,
+"word": "sites"
+},
+{
+"start": 93.88,
+"end": 94.02,
+"word": "as"
+},
+{
+"start": 94.02,
+"end": 94.5,
+"word": "possible"
+},
+{
+"start": 94.5,
+"end": 94.76,
+"word": "and"
+},
+{
+"start": 94.76,
+"end": 94.94,
+"word": "as"
+},
+{
+"start": 94.94,
+"end": 95.14,
+"word": "many"
+},
+{
+"start": 95.14,
+"end": 95.5,
+"word": "types"
+},
+{
+"start": 95.5,
+"end": 95.7,
+"word": "of"
+},
+{
+"start": 95.7,
+"end": 95.94,
+"word": "sites"
+},
+{
+"start": 95.94,
+"end": 96.14,
+"word": "as"
+},
+{
+"start": 96.14,
+"end": 96.6,
+"word": "possible,"
+},
+{
+"start": 97.16,
+"end": 97.64,
+"word": "Incogni"
+},
+{
+"start": 97.64,
+"end": 98.06,
+"word": "currently"
+},
+{
+"start": 98.06,
+"end": 98.58,
+"word": "covers"
+},
+{
+"start": 98.58,
+"end": 98.9,
+"word": "more"
+},
+{
+"start": 98.9,
+"end": 99.3,
+"word": "ground."
+},
+{
+"start": 99.52,
+"end": 99.58,
+"word": "Now,"
+},
+{
+"start": 99.66,
+"end": 99.82,
+"word": "Aura"
+},
+{
+"start": 99.82,
+"end": 100.06,
+"word": "does"
+},
+{
+"start": 100.06,
+"end": 100.3,
+"word": "throw"
+},
+{
+"start": 100.3,
+"end": 100.4,
+"word": "in"
+},
+{
+"start": 100.4,
+"end": 100.48,
+"word": "a"
+},
+{
+"start": 100.48,
+"end": 100.7,
+"word": "lot"
+},
+{
+"start": 100.7,
+"end": 100.82,
+"word": "of"
+},
+{
+"start": 100.82,
+"end": 101.16,
+"word": "extras."
+},
+{
+"start": 101.62,
+"end": 101.72,
+"word": "It"
+},
+{
+"start": 101.72,
+"end": 102.0,
+"word": "includes"
+},
+{
+"start": 102.0,
+"end": 102.2,
+"word": "a"
+},
+{
+"start": 102.2,
+"end": 102.54,
+"word": "VPN,"
+},
+{
+"start": 102.9,
+"end": 103.02,
+"word": "a"
+},
+{
+"start": 103.02,
+"end": 103.34,
+"word": "password"
+},
+{
+"start": 103.34,
+"end": 103.84,
+"word": "manager,"
+},
+{
+"start": 104.16,
+"end": 104.74,
+"word": "antivirus"
+},
+{
+"start": 104.74,
+"end": 105.22,
+"word": "protection,"
+},
+{
+"start": 105.68,
+"end": 105.84,
+"word": "Wi"
+},
+{
+"start": 105.84,
+"end": 106.08,
+"word": "-Fi"
+},
+{
+"start": 106.08,
+"end": 106.48,
+"word": "security"
+},
+{
+"start": 106.48,
+"end": 107.06,
+"word": "scanning,"
+},
+{
+"start": 107.36,
+"end": 107.52,
+"word": "and"
+},
+{
+"start": 107.52,
+"end": 107.92,
+"word": "financial"
+},
+{
+"start": 107.92,
+"end": 108.36,
+"word": "transaction"
+},
+{
+"start": 108.36,
+"end": 108.96,
+"word": "monitoring"
+},
+{
+"start": 108.96,
+"end": 109.34,
+"word": "on"
+},
+{
+"start": 109.34,
+"end": 109.64,
+"word": "top"
+},
+{
+"start": 109.64,
+"end": 109.86,
+"word": "of"
+},
+{
+"start": 109.86,
+"end": 110.34,
+"word": "identity"
+},
+{
+"start": 110.34,
+"end": 110.96,
+"word": "and"
+},
+{
+"start": 110.96,
+"end": 111.3,
+"word": "credit"
+},
+{
+"start": 111.3,
+"end": 111.86,
+"word": "monitoring."
+},
+{
+"start": 112.06,
+"end": 112.12,
+"word": "Now,"
+},
+{
+"start": 112.14,
+"end": 112.26,
+"word": "that"
+},
+{
+"start": 112.26,
+"end": 112.52,
+"word": "sounds"
+},
+{
+"start": 112.52,
+"end": 112.74,
+"word": "good"
+},
+{
+"start": 112.74,
+"end": 112.88,
+"word": "on"
+},
+{
+"start": 112.88,
+"end": 113.14,
+"word": "paper,"
+},
+{
+"start": 113.24,
+"end": 113.44,
+"word": "but"
+},
+{
+"start": 113.44,
+"end": 113.68,
+"word": "don't"
+},
+{
+"start": 113.68,
+"end": 113.82,
+"word": "you"
+},
+{
+"start": 113.82,
+"end": 114.02,
+"word": "already"
+},
+{
+"start": 114.02,
+"end": 114.24,
+"word": "have"
+},
+{
+"start": 114.24,
+"end": 114.32,
+"word": "a"
+},
+{
+"start": 114.32,
+"end": 114.66,
+"word": "VPN?"
+},
+{
+"start": 114.66,
+"end": 115.0,
+"word": "A"
+},
+{
+"start": 115.0,
+"end": 115.38,
+"word": "password"
+},
+{
+"start": 115.38,
+"end": 116.06,
+"word": "manager,"
+},
+{
+"start": 116.3,
+"end": 116.44,
+"word": "an"
+},
+{
+"start": 116.44,
+"end": 117.1,
+"word": "antivirus?"
+},
+{
+"start": 117.38,
+"end": 117.5,
+"word": "If"
+},
+{
+"start": 117.5,
+"end": 117.62,
+"word": "you"
+},
+{
+"start": 117.62,
+"end": 117.78,
+"word": "do,"
+},
+{
+"start": 117.98,
+"end": 118.06,
+"word": "you're"
+},
+{
+"start": 118.06,
+"end": 118.4,
+"word": "basically"
+},
+{
+"start": 118.4,
+"end": 118.68,
+"word": "paying"
+},
+{
+"start": 118.68,
+"end": 118.94,
+"word": "twice"
+},
+{
+"start": 118.94,
+"end": 119.18,
+"word": "for"
+},
+{
+"start": 119.18,
+"end": 119.48,
+"word": "tools"
+},
+{
+"start": 119.48,
+"end": 119.64,
+"word": "you"
+},
+{
+"start": 119.64,
+"end": 119.88,
+"word": "don't"
+},
+{
+"start": 119.88,
+"end": 120.08,
+"word": "need."
+},
+{
+"start": 120.36,
+"end": 120.44,
+"word": "Now,"
+},
+{
+"start": 120.5,
+"end": 120.82,
+"word": "Incogni"
+},
+{
+"start": 120.82,
+"end": 121.22,
+"word": "doesn't"
+},
+{
+"start": 121.22,
+"end": 121.44,
+"word": "bundle"
+},
+{
+"start": 121.44,
+"end": 121.64,
+"word": "in"
+},
+{
+"start": 121.64,
+"end": 122.04,
+"word": "everything."
+},
+{
+"start": 122.3,
+"end": 122.42,
+"word": "They"
+},
+{
+"start": 122.42,
+"end": 122.72,
+"word": "focus"
+},
+{
+"start": 122.72,
+"end": 122.98,
+"word": "on"
+},
+{
+"start": 122.98,
+"end": 123.28,
+"word": "removal"
+},
+{
+"start": 123.28,
+"end": 123.62,
+"word": "and"
+},
+{
+"start": 123.62,
+"end": 123.76,
+"word": "they"
+},
+{
+"start": 123.76,
+"end": 124.02,
+"word": "back"
+},
+{
+"start": 124.02,
+"end": 124.24,
+"word": "that"
+},
+{
+"start": 124.24,
+"end": 124.6,
+"word": "focus"
+},
+{
+"start": 124.6,
+"end": 124.96,
+"word": "with"
+},
+{
+"start": 124.96,
+"end": 125.1,
+"word": "a"
+},
+{
+"start": 125.1,
+"end": 125.38,
+"word": "30"
+},
+{
+"start": 125.38,
+"end": 125.66,
+"word": "-day"
+},
+{
+"start": 125.66,
+"end": 125.94,
+"word": "money"
+},
+{
+"start": 125.94,
+"end": 126.2,
+"word": "-back"
+},
+{
+"start": 126.2,
+"end": 126.62,
+"word": "guarantee."
+},
+{
+"start": 126.86,
+"end": 127.0,
+"word": "So"
+},
+{
+"start": 127.0,
+"end": 127.14,
+"word": "you"
+},
+{
+"start": 127.14,
+"end": 127.26,
+"word": "can"
+},
+{
+"start": 127.26,
+"end": 127.5,
+"word": "test"
+},
+{
+"start": 127.5,
+"end": 127.7,
+"word": "the"
+},
+{
+"start": 127.7,
+"end": 127.96,
+"word": "coverage"
+},
+{
+"start": 127.96,
+"end": 128.32,
+"word": "claims"
+},
+{
+"start": 128.32,
+"end": 128.78,
+"word": "yourself"
+},
+{
+"start": 128.78,
+"end": 129.26,
+"word": "before"
+},
+{
+"start": 129.26,
+"end": 129.82,
+"word": "deciding"
+},
+{
+"start": 129.82,
+"end": 130.0,
+"word": "if"
+},
+{
+"start": 130.0,
+"end": 130.14,
+"word": "it's"
+},
+{
+"start": 130.14,
+"end": 130.34,
+"word": "worth"
+},
+{
+"start": 130.34,
+"end": 130.56,
+"word": "it."
+},
+{
+"start": 130.7,
+"end": 130.82,
+"word": "Now,"
+},
+{
+"start": 130.82,
+"end": 131.04,
+"word": "let's"
+},
+{
+"start": 131.04,
+"end": 131.2,
+"word": "talk"
+},
+{
+"start": 131.2,
+"end": 131.56,
+"word": "numbers"
+},
+{
+"start": 131.56,
+"end": 131.82,
+"word": "because"
+},
+{
+"start": 131.82,
+"end": 132.22,
+"word": "here"
+},
+{
+"start": 132.22,
+"end": 132.5,
+"word": "is"
+},
+{
+"start": 132.5,
+"end": 132.7,
+"word": "where"
+},
+{
+"start": 132.7,
+"end": 132.84,
+"word": "it"
+},
+{
+"start": 132.84,
+"end": 133.02,
+"word": "gets"
+},
+{
+"start": 133.02,
+"end": 133.5,
+"word": "interesting."
+},
+{
+"start": 133.76,
+"end": 133.98,
+"word": "Aura"
+},
+{
+"start": 133.98,
+"end": 134.22,
+"word": "typically"
+},
+{
+"start": 134.22,
+"end": 134.56,
+"word": "starts"
+},
+{
+"start": 134.56,
+"end": 134.74,
+"word": "at"
+},
+{
+"start": 134.74,
+"end": 135.0,
+"word": "$12"
+},
+{
+"start": 135.0,
+"end": 135.4,
+"word": "a"
+},
+{
+"start": 135.4,
+"end": 135.66,
+"word": "month"
+},
+{
+"start": 135.66,
+"end": 136.1,
+"word": "for"
+},
+{
+"start": 136.1,
+"end": 136.42,
+"word": "annual"
+},
+{
+"start": 136.42,
+"end": 136.8,
+"word": "billing"
+},
+{
+"start": 136.8,
+"end": 137.1,
+"word": "and"
+},
+{
+"start": 137.1,
+"end": 137.38,
+"word": "that's"
+},
+{
+"start": 137.38,
+"end": 137.64,
+"word": "before"
+},
+{
+"start": 137.64,
+"end": 138.04,
+"word": "adding"
+},
+{
+"start": 138.04,
+"end": 138.3,
+"word": "any"
+},
+{
+"start": 138.3,
+"end": 138.58,
+"word": "family"
+},
+{
+"start": 138.58,
+"end": 138.9,
+"word": "members."
+},
+{
+"start": 139.22,
+"end": 139.7,
+"word": "Incogni"
+},
+{
+"start": 139.7,
+"end": 139.96,
+"word": "starts"
+},
+{
+"start": 139.96,
+"end": 140.2,
+"word": "at"
+},
+{
+"start": 140.2,
+"end": 140.44,
+"word": "only"
+},
+{
+"start": 140.44,
+"end": 140.86,
+"word": "$7"
+},
+{
+"start": 140.86,
+"end": 141.36,
+"word": ".99"
+},
+{
+"start": 141.36,
+"end": 141.7,
+"word": "a"
+},
+{
+"start": 141.7,
+"end": 141.92,
+"word": "month"
+},
+{
+"start": 141.92,
+"end": 142.2,
+"word": "on"
+},
+{
+"start": 142.2,
+"end": 142.32,
+"word": "their"
+},
+{
+"start": 142.32,
+"end": 142.6,
+"word": "annual"
+},
+{
+"start": 142.6,
+"end": 142.94,
+"word": "plan,"
+},
+{
+"start": 142.94,
+"end": 143.2,
+"word": "which"
+},
+{
+"start": 143.2,
+"end": 143.58,
+"word": "covers"
+},
+{
+"start": 143.58,
+"end": 144.18,
+"word": "automated"
+},
+{
+"start": 144.18,
+"end": 144.7,
+"word": "removal"
+},
+{
+"start": 144.7,
+"end": 145.0,
+"word": "from"
+},
+{
+"start": 145.0,
+"end": 145.24,
+"word": "over"
+},
+{
+"start": 145.24,
+"end": 146.34,
+"word": "420"
+},
+{
+"start": 146.34,
+"end": 146.66,
+"word": "broker"
+},
+{
+"start": 146.66,
+"end": 147.06,
+"word": "sites."
+},
+{
+"start": 147.46,
+"end": 147.5,
+"word": "If"
+},
+{
+"start": 147.5,
+"end": 147.6,
+"word": "you"
+},
+{
+"start": 147.6,
+"end": 147.8,
+"word": "want"
+},
+{
+"start": 147.8,
+"end": 148.14,
+"word": "custom"
+},
+{
+"start": 148.14,
+"end": 148.7,
+"word": "removals"
+},
+{
+"start": 148.7,
+"end": 149.02,
+"word": "beyond"
+},
+{
+"start": 149.02,
+"end": 149.34,
+"word": "that"
+},
+{
+"start": 149.34,
+"end": 149.66,
+"word": "list,"
+},
+{
+"start": 149.86,
+"end": 150.08,
+"word": "sites"
+},
+{
+"start": 150.08,
+"end": 150.3,
+"word": "the"
+},
+{
+"start": 150.3,
+"end": 150.54,
+"word": "standard"
+},
+{
+"start": 150.54,
+"end": 150.86,
+"word": "plan"
+},
+{
+"start": 150.86,
+"end": 151.24,
+"word": "doesn't"
+},
+{
+"start": 151.24,
+"end": 151.78,
+"word": "automatically"
+},
+{
+"start": 151.78,
+"end": 152.14,
+"word": "cover,"
+},
+{
+"start": 152.44,
+"end": 152.8,
+"word": "that's"
+},
+{
+"start": 152.8,
+"end": 153.24,
+"word": "available"
+},
+{
+"start": 153.24,
+"end": 153.56,
+"word": "on"
+},
+{
+"start": 153.56,
+"end": 153.72,
+"word": "the"
+},
+{
+"start": 153.72,
+"end": 154.06,
+"word": "unlimited"
+},
+{
+"start": 154.06,
+"end": 154.52,
+"word": "plan,"
+},
+{
+"start": 154.66,
+"end": 155.06,
+"word": "starting"
+},
+{
+"start": 155.06,
+"end": 155.24,
+"word": "at"
+},
+{
+"start": 155.24,
+"end": 155.64,
+"word": "$14"
+},
+{
+"start": 155.64,
+"end": 156.22,
+"word": ".99"
+},
+{
+"start": 156.22,
+"end": 156.4,
+"word": "a"
+},
+{
+"start": 156.4,
+"end": 156.58,
+"word": "month."
+},
+{
+"start": 156.68,
+"end": 156.9,
+"word": "Either"
+},
+{
+"start": 156.9,
+"end": 157.18,
+"word": "way,"
+},
+{
+"start": 157.3,
+"end": 157.86,
+"word": "Incogni's"
+},
+{
+"start": 157.86,
+"end": 158.18,
+"word": "entry"
+},
+{
+"start": 158.18,
+"end": 158.64,
+"word": "price"
+},
+{
+"start": 158.64,
+"end": 158.94,
+"word": "is"
+},
+{
+"start": 158.94,
+"end": 159.2,
+"word": "lower"
+},
+{
+"start": 159.2,
+"end": 159.44,
+"word": "than"
+},
+{
+"start": 159.44,
+"end": 159.94,
+"word": "Aura's"
+},
+{
+"start": 159.94,
+"end": 160.22,
+"word": "and"
+},
+{
+"start": 160.22,
+"end": 160.36,
+"word": "you're"
+},
+{
+"start": 160.36,
+"end": 160.6,
+"word": "getting"
+},
+{
+"start": 160.6,
+"end": 161.2,
+"word": "broader"
+},
+{
+"start": 161.2,
+"end": 161.7,
+"word": "broker"
+},
+{
+"start": 161.7,
+"end": 162.1,
+"word": "-type"
+},
+{
+"start": 162.1,
+"end": 162.54,
+"word": "coverage"
+},
+{
+"start": 162.54,
+"end": 162.82,
+"word": "for"
+},
+{
+"start": 162.82,
+"end": 163.0,
+"word": "it."
+},
+{
+"start": 163.18,
+"end": 163.34,
+"word": "Now,"
+},
+{
+"start": 163.38,
+"end": 163.66,
+"word": "here"
+},
+{
+"start": 163.66,
+"end": 164.04,
+"word": "is"
+},
+{
+"start": 164.04,
+"end": 164.26,
+"word": "the"
+},
+{
+"start": 164.26,
+"end": 164.7,
+"word": "honest"
+},
+{
+"start": 164.7,
+"end": 165.18,
+"word": "trade"
+},
+{
+"start": 165.18,
+"end": 165.42,
+"word": "-off"
+},
+{
+"start": 165.42,
+"end": 165.64,
+"word": "because"
+},
+{
+"start": 165.64,
+"end": 165.84,
+"word": "there"
+},
+{
+"start": 165.84,
+"end": 166.08,
+"word": "isn't"
+},
+{
+"start": 166.08,
+"end": 166.32,
+"word": "just"
+},
+{
+"start": 166.32,
+"end": 166.66,
+"word": "one"
+},
+{
+"start": 166.66,
+"end": 167.02,
+"word": "size"
+},
+{
+"start": 167.02,
+"end": 167.32,
+"word": "fits"
+},
+{
+"start": 167.32,
+"end": 167.64,
+"word": "all"
+},
+{
+"start": 167.64,
+"end": 167.98,
+"word": "answer."
+},
+{
+"start": 168.26,
+"end": 168.48,
+"word": "If"
+},
+{
+"start": 168.48,
+"end": 168.7,
+"word": "you"
+},
+{
+"start": 168.7,
+"end": 168.92,
+"word": "have"
+},
+{
+"start": 168.92,
+"end": 169.4,
+"word": "already"
+},
+{
+"start": 169.4,
+"end": 169.7,
+"word": "dealt"
+},
+{
+"start": 169.7,
+"end": 169.9,
+"word": "with"
+},
+{
+"start": 169.9,
+"end": 170.46,
+"word": "identity"
+},
+{
+"start": 170.46,
+"end": 170.8,
+"word": "theft"
+},
+{
+"start": 170.8,
+"end": 171.08,
+"word": "or"
+},
+{
+"start": 171.08,
+"end": 171.22,
+"word": "you"
+},
+{
+"start": 171.22,
+"end": 171.44,
+"word": "want"
+},
+{
+"start": 171.44,
+"end": 171.72,
+"word": "credit"
+},
+{
+"start": 171.72,
+"end": 172.28,
+"word": "monitoring"
+},
+{
+"start": 172.28,
+"end": 172.68,
+"word": "or"
+},
+{
+"start": 172.68,
+"end": 172.82,
+"word": "you"
+},
+{
+"start": 172.82,
+"end": 173.04,
+"word": "want"
+},
+{
+"start": 173.04,
+"end": 173.6,
+"word": "insurance"
+},
+{
+"start": 173.6,
+"end": 174.22,
+"word": "bundled"
+},
+{
+"start": 174.22,
+"end": 174.42,
+"word": "into"
+},
+{
+"start": 174.42,
+"end": 174.64,
+"word": "one"
+},
+{
+"start": 174.64,
+"end": 175.08,
+"word": "subscription"
+},
+{
+"start": 175.08,
+"end": 175.62,
+"word": "or"
+},
+{
+"start": 175.62,
+"end": 175.78,
+"word": "it"
+},
+{
+"start": 175.78,
+"end": 175.92,
+"word": "does"
+},
+{
+"start": 175.92,
+"end": 176.16,
+"word": "have"
+},
+{
+"start": 176.16,
+"end": 176.28,
+"word": "its"
+},
+{
+"start": 176.28,
+"end": 176.58,
+"word": "place,"
+},
+{
+"start": 176.78,
+"end": 176.96,
+"word": "but"
+},
+{
+"start": 176.96,
+"end": 177.08,
+"word": "if"
+},
+{
+"start": 177.08,
+"end": 177.22,
+"word": "you"
+},
+{
+"start": 177.22,
+"end": 177.62,
+"word": "actually"
+},
+{
+"start": 177.62,
+"end": 177.92,
+"word": "wanna"
+},
+{
+"start": 177.92,
+"end": 178.12,
+"word": "get"
+},
+{
+"start": 178.12,
+"end": 178.28,
+"word": "your"
+},
+{
+"start": 178.28,
+"end": 178.56,
+"word": "info"
+},
+{
+"start": 178.56,
+"end": 178.86,
+"word": "off"
+},
+{
+"start": 178.86,
+"end": 179.14,
+"word": "as"
+},
+{
+"start": 179.14,
+"end": 179.62,
+"word": "many"
+},
+{
+"start": 179.62,
+"end": 179.92,
+"word": "broker"
+},
+{
+"start": 179.92,
+"end": 180.38,
+"word": "sites"
+},
+{
+"start": 180.38,
+"end": 180.66,
+"word": "as"
+},
+{
+"start": 180.66,
+"end": 181.22,
+"word": "possible,"
+},
+{
+"start": 181.22,
+"end": 181.92,
+"word": "that"
+},
+{
+"start": 181.92,
+"end": 182.12,
+"word": "is"
+},
+{
+"start": 182.12,
+"end": 182.26,
+"word": "your"
+},
+{
+"start": 182.26,
+"end": 182.54,
+"word": "number"
+},
+{
+"start": 182.54,
+"end": 182.82,
+"word": "one"
+},
+{
+"start": 182.82,
+"end": 183.18,
+"word": "goal"
+},
+{
+"start": 183.18,
+"end": 183.48,
+"word": "and"
+},
+{
+"start": 183.48,
+"end": 183.64,
+"word": "you"
+},
+{
+"start": 183.64,
+"end": 183.94,
+"word": "don't"
+},
+{
+"start": 183.94,
+"end": 184.14,
+"word": "wanna"
+},
+{
+"start": 184.14,
+"end": 184.56,
+"word": "overpay"
+},
+{
+"start": 184.56,
+"end": 184.72,
+"word": "for"
+},
+{
+"start": 184.72,
+"end": 185.04,
+"word": "tools"
+},
+{
+"start": 185.04,
+"end": 185.26,
+"word": "that"
+},
+{
+"start": 185.26,
+"end": 185.4,
+"word": "you"
+},
+{
+"start": 185.4,
+"end": 185.68,
+"word": "already"
+},
+{
+"start": 185.68,
+"end": 186.14,
+"word": "have,"
+},
+{
+"start": 186.44,
+"end": 186.86,
+"word": "Incogni"
+},
+{
+"start": 186.86,
+"end": 187.04,
+"word": "does"
+},
+{
+"start": 187.04,
+"end": 187.28,
+"word": "come"
+},
+{
+"start": 187.28,
+"end": 187.44,
+"word": "out"
+},
+{
+"start": 187.44,
+"end": 187.78,
+"word": "ahead"
+},
+{
+"start": 187.78,
+"end": 188.02,
+"word": "in"
+},
+{
+"start": 188.02,
+"end": 188.24,
+"word": "that"
+},
+{
+"start": 188.24,
+"end": 188.64,
+"word": "specific"
+},
+{
+"start": 188.64,
+"end": 189.22,
+"word": "comparison."
+},
+{
+"start": 189.44,
+"end": 189.6,
+"word": "We're"
+},
+{
+"start": 189.6,
+"end": 189.86,
+"word": "talking"
+},
+{
+"start": 189.86,
+"end": 190.14,
+"word": "about"
+},
+{
+"start": 190.14,
+"end": 190.58,
+"word": "broader"
+},
+{
+"start": 190.58,
+"end": 191.28,
+"word": "coverage,"
+},
+{
+"start": 191.6,
+"end": 191.86,
+"word": "lower"
+},
+{
+"start": 191.86,
+"end": 192.28,
+"word": "starting"
+},
+{
+"start": 192.28,
+"end": 192.76,
+"word": "price,"
+},
+{
+"start": 193.02,
+"end": 193.2,
+"word": "and"
+},
+{
+"start": 193.2,
+"end": 193.3,
+"word": "a"
+},
+{
+"start": 193.3,
+"end": 193.62,
+"word": "guarantee"
+},
+{
+"start": 193.62,
+"end": 193.86,
+"word": "that"
+},
+{
+"start": 193.86,
+"end": 194.1,
+"word": "lets"
+},
+{
+"start": 194.1,
+"end": 194.22,
+"word": "you"
+},
+{
+"start": 194.22,
+"end": 194.54,
+"word": "test"
+},
+{
+"start": 194.54,
+"end": 194.76,
+"word": "it"
+},
+{
+"start": 194.76,
+"end": 195.06,
+"word": "risk"
+},
+{
+"start": 195.06,
+"end": 195.34,
+"word": "-free"
+},
+{
+"start": 195.34,
+"end": 195.54,
+"word": "and"
+},
+{
+"start": 195.54,
+"end": 195.86,
+"word": "that's"
+},
+{
+"start": 195.86,
+"end": 196.1,
+"word": "why"
+},
+{
+"start": 196.1,
+"end": 196.4,
+"word": "after"
+},
+{
+"start": 196.4,
+"end": 196.82,
+"word": "testing"
+},
+{
+"start": 196.82,
+"end": 197.18,
+"word": "both,"
+},
+{
+"start": 197.48,
+"end": 198.08,
+"word": "Incogni"
+},
+{
+"start": 198.08,
+"end": 198.3,
+"word": "is"
+},
+{
+"start": 198.3,
+"end": 198.42,
+"word": "the"
+},
+{
+"start": 198.42,
+"end": 198.62,
+"word": "one"
+},
+{
+"start": 198.62,
+"end": 198.8,
+"word": "I"
+},
+{
+"start": 198.8,
+"end": 198.92,
+"word": "would"
+},
+{
+"start": 198.92,
+"end": 199.18,
+"word": "point"
+},
+{
+"start": 199.18,
+"end": 199.64,
+"word": "most"
+},
+{
+"start": 199.64,
+"end": 199.96,
+"word": "people"
+},
+{
+"start": 199.96,
+"end": 200.42,
+"word": "towards"
+},
+{
+"start": 200.42,
+"end": 200.8,
+"word": "first"
+},
+{
+"start": 200.8,
+"end": 201.14,
+"word": "if"
+},
+{
+"start": 201.14,
+"end": 201.26,
+"word": "you're"
+},
+{
+"start": 201.26,
+"end": 201.44,
+"word": "looking"
+},
+{
+"start": 201.44,
+"end": 201.64,
+"word": "to"
+},
+{
+"start": 201.64,
+"end": 201.76,
+"word": "get"
+},
+{
+"start": 201.76,
+"end": 201.9,
+"word": "your"
+},
+{
+"start": 201.9,
+"end": 202.34,
+"word": "information"
+},
+{
+"start": 202.34,
+"end": 202.76,
+"word": "off"
+},
+{
+"start": 202.76,
+"end": 202.9,
+"word": "the"
+},
+{
+"start": 202.9,
+"end": 203.16,
+"word": "internet."
+},
+{
+"start": 203.4,
+"end": 203.42,
+"word": "You"
+},
+{
+"start": 203.42,
+"end": 203.56,
+"word": "can"
+},
+{
+"start": 203.56,
+"end": 203.7,
+"word": "use"
+},
+{
+"start": 203.7,
+"end": 203.82,
+"word": "the"
+},
+{
+"start": 203.82,
+"end": 204.02,
+"word": "code"
+},
+{
+"start": 204.02,
+"end": 204.46,
+"word": "NAUTTER"
+},
+{
+"start": 204.46,
+"end": 204.68,
+"word": "for"
+},
+{
+"start": 204.68,
+"end": 205.06,
+"word": "60"
+},
+{
+"start": 205.06,
+"end": 205.34,
+"word": "%"
+},
+{
+"start": 205.34,
+"end": 205.78,
+"word": "off"
+},
+{
+"start": 205.78,
+"end": 206.58,
+"word": "Incogni's"
+},
+{
+"start": 206.58,
+"end": 206.96,
+"word": "annual"
+},
+{
+"start": 206.96,
+"end": 207.4,
+"word": "plan."
+},
+{
+"start": 207.56,
+"end": 207.66,
+"word": "It's"
+},
+{
+"start": 207.66,
+"end": 207.82,
+"word": "on"
+},
+{
+"start": 207.82,
+"end": 207.96,
+"word": "the"
+},
+{
+"start": 207.96,
+"end": 208.26,
+"word": "screen"
+},
+{
+"start": 208.26,
+"end": 208.46,
+"word": "right"
+},
+{
+"start": 208.46,
+"end": 208.76,
+"word": "now"
+},
+{
+"start": 208.76,
+"end": 209.12,
+"word": "and"
+},
+{
+"start": 209.12,
+"end": 209.3,
+"word": "it's"
+},
+{
+"start": 209.3,
+"end": 209.62,
+"word": "also"
+},
+{
+"start": 209.62,
+"end": 209.92,
+"word": "in"
+},
+{
+"start": 209.92,
+"end": 210.02,
+"word": "the"
+},
+{
+"start": 210.02,
+"end": 210.4,
+"word": "description"
+},
+{
+"start": 210.4,
+"end": 210.84,
+"word": "down"
+},
+{
+"start": 210.84,
+"end": 211.14,
+"word": "below"
+},
+{
+"start": 211.14,
+"end": 211.38,
+"word": "and"
+},
+{
+"start": 211.38,
+"end": 211.48,
+"word": "it"
+},
+{
+"start": 211.48,
+"end": 211.72,
+"word": "comes"
+},
+{
+"start": 211.72,
+"end": 211.9,
+"word": "with"
+},
+{
+"start": 211.9,
+"end": 212.04,
+"word": "a"
+},
+{
+"start": 212.04,
+"end": 212.44,
+"word": "30"
+},
+{
+"start": 212.44,
+"end": 212.8,
+"word": "-day"
+},
+{
+"start": 212.8,
+"end": 213.16,
+"word": "money"
+},
+{
+"start": 213.16,
+"end": 213.44,
+"word": "-back"
+},
+{
+"start": 213.44,
+"end": 213.94,
+"word": "guarantee"
+},
+{
+"start": 213.94,
+"end": 214.4,
+"word": "so"
+},
+{
+"start": 214.4,
+"end": 214.64,
+"word": "there's"
+},
+{
+"start": 214.64,
+"end": 214.86,
+"word": "no"
+},
+{
+"start": 214.86,
+"end": 215.14,
+"word": "risk"
+},
+{
+"start": 215.14,
+"end": 215.32,
+"word": "in"
+},
+{
+"start": 215.32,
+"end": 215.6,
+"word": "trying"
+},
+{
+"start": 215.6,
+"end": 215.84,
+"word": "it."
+},
+{
+"start": 216.02,
+"end": 216.12,
+"word": "Your"
+},
+{
+"start": 216.12,
+"end": 216.46,
+"word": "data"
+},
+{
+"start": 216.46,
+"end": 216.8,
+"word": "is"
+},
+{
+"start": 216.8,
+"end": 217.22,
+"word": "already"
+},
+{
+"start": 217.22,
+"end": 217.52,
+"word": "out"
+},
+{
+"start": 217.52,
+"end": 217.76,
+"word": "there"
+},
+{
+"start": 217.76,
+"end": 218.08,
+"word": "whether"
+},
+{
+"start": 218.08,
+"end": 218.46,
+"word": "you"
+},
+{
+"start": 218.46,
+"end": 218.76,
+"word": "like"
+},
+{
+"start": 218.76,
+"end": 218.92,
+"word": "it"
+},
+{
+"start": 218.92,
+"end": 219.02,
+"word": "or"
+},
+{
+"start": 219.02,
+"end": 219.22,
+"word": "not."
+},
+{
+"start": 219.36,
+"end": 219.38,
+"word": "So"
+},
+{
+"start": 219.38,
+"end": 219.48,
+"word": "the"
+},
+{
+"start": 219.48,
+"end": 219.84,
+"word": "question"
+},
+{
+"start": 219.84,
+"end": 220.18,
+"word": "is,"
+},
+{
+"start": 220.22,
+"end": 220.54,
+"word": "what"
+},
+{
+"start": 220.54,
+"end": 220.66,
+"word": "are"
+},
+{
+"start": 220.66,
+"end": 220.9,
+"word": "you"
+},
+{
+"start": 220.9,
+"end": 221.22,
+"word": "going"
+},
+{
+"start": 221.22,
+"end": 221.4,
+"word": "to"
+},
+{
+"start": 221.4,
+"end": 221.54,
+"word": "do"
+},
+{
+"start": 221.54,
+"end": 221.8,
+"word": "about"
+},
+{
+"start": 221.8,
+"end": 221.98,
+"word": "it?"
+},
+{
+"start": 222.08,
+"end": 222.18,
+"word": "We'll"
+},
+{
+"start": 222.18,
+"end": 222.38,
+"word": "see"
+},
+{
+"start": 222.38,
+"end": 222.46,
+"word": "you"
+},
+{
+"start": 222.46,
+"end": 222.54,
+"word": "in"
+},
+{
+"start": 222.54,
+"end": 222.62,
+"word": "the"
+},
+{
+"start": 222.62,
+"end": 222.78,
+"word": "next"
+},
+{
+"start": 222.78,
+"end": 223.1,
+"word": "video."
+}
+]

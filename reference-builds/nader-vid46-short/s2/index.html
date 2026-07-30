@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>vid46-short v3 · s2 — the bundle · paying twice · the code · the close (29.200–45.000)</title>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<script src="assets/three.min.js"></script>
+<script src="assets/field.js"></script>
+<script src="assets/chunk.js"></script>
+<link rel="stylesheet" href="assets/base.css" />
+<style>
+  /* @font-face must be INLINE in every chunk: the compiler's static scan only sees
+     font declarations in the document itself, not through the <link>. */
+  @font-face{font-family:'Rethink';font-style:normal;font-weight:400 800;font-display:block;src:url(assets/fonts/rethink-sans-var.woff2) format('woff2');}
+  @font-face{font-family:'DMSans';font-style:normal;font-weight:400 900;font-display:block;src:url(assets/fonts/dm-sans-var.woff2) format('woff2');}
+  @font-face{font-family:'GeistMono';font-style:normal;font-weight:400 700;font-display:block;src:url(assets/fonts/geist-mono.woff2) format('woff2');}
+  @font-face{font-family:'Fraunces';font-style:italic;font-weight:400 700;font-display:block;src:url(assets/fonts/fraunces-italic.woff2) format('woff2');}
+
+  #g5,#g6,#g7{visibility:hidden;opacity:0;}
+  #a5v,#g4bv2{visibility:hidden;opacity:0;}
+
+  /* ==========================================================================
+     A4 · b6 + b7 · local 0.000–5.500 · GFX  (graphics own y150–1380)
+     "Now, that sounds good on paper, but don't you already have a VPN?"
+     "If you do, you're basically paying twice for tools you don't need."
+
+     Real b-roll on top, the stack under it, the consequence under that. The slabs
+     pile with perspective so the tower becomes visibly top-heavy, then the strike
+     lands on the slab that ALREADY EXISTS — the ledger does not introduce a new
+     object, it marks the ones on screen. That is what stops this being a text card.
+
+     No face here: 112.06–120.11 on the film's clock sits between note-reading runs
+     and the gaze map gives only a 2.0s island inside it, under the 3.2s floor.
+     ========================================================================== */
+  #g4{position:absolute;inset:0;z-index:12;}
+  #g4eye{left:72px;top:200px;}
+  #g4h{position:absolute;left:72px;top:258px;width:900px;}
+  #g4bc{left:72px;top:470px;width:936px;height:300px;}
+  #g4bcl{position:absolute;left:22px;bottom:14px;font-family:'GeistMono',monospace;
+    font-size:23px;letter-spacing:.14em;text-transform:uppercase;color:#E9E9EE;
+    text-shadow:0 2px 12px rgba(0,0,0,.9);}
+  #g4stack{left:72px;top:820px;width:880px;height:360px;}
+  .slab{width:880px;}
+  #sl1{top:0;} #sl2{top:126px;} #sl3{top:252px;}
+  #g4tot{left:72px;top:1240px;}
+  #g4tot .tot{top:0;}
+  #g4tot .totl{top:104px;}
+
+  /* ==========================================================================
+     B8 · local 5.500–9.600 · GFX · "You can use the code NADER for 60% off
+     Incogni's annual plan."
+
+     THE ONE CARD IN THE SHORT. Every other beat is a rail, a stack, a spine, a
+     record or a figure on the bare ground; stripping the box everywhere else is
+     exactly what lets this one read as the payoff instead of the default.
+
+     He does not say "30-day money-back guarantee" in this cut and the URL is not
+     spoken, so both are on the card, and so is the paid-promotion line.
+
+     The card is 880 wide, not 940: at 940 its right edge crossed x960 in the
+     y900–1600 band, i.e. straight under Instagram's like/comment stack.
+     ========================================================================== */
+  #g5{position:absolute;inset:0;z-index:13;}
+  #g5card{left:70px;top:420px;width:880px;height:600px;}
+  #g5mk{position:absolute;left:52px;top:44px;}
+  #g5mk img{width:230px;}
+  #g5off{position:absolute;left:52px;top:132px;font-family:'Rethink',sans-serif;
+    font-weight:800;font-size:124px;letter-spacing:-.04em;color:var(--cInk);
+    line-height:1;font-variant-numeric:tabular-nums;}
+  #g5offs{position:absolute;left:52px;top:272px;font-family:'DMSans',sans-serif;
+    font-weight:700;font-size:38px;color:var(--cMut);}
+  #g5codel{position:absolute;left:52px;top:360px;font-family:'GeistMono',monospace;
+    font-size:24px;letter-spacing:.16em;text-transform:uppercase;color:var(--cMut);}
+  #g5code{position:absolute;left:52px;top:400px;font-family:'GeistMono',monospace;
+    font-weight:700;font-size:88px;letter-spacing:.08em;color:var(--cInk);
+    border:4px dashed #C9C9CF;border-radius:16px;padding:8px 30px;}
+  #g5code span{display:inline-block;}
+  #g5gtee{position:absolute;left:560px;top:400px;width:268px;
+    font-family:'DMSans',sans-serif;font-weight:700;font-size:34px;line-height:1.24;
+    color:var(--cMut);}
+  #g5gtee b{color:var(--green);}
+  #g5plan{position:absolute;left:52px;top:540px;font-family:'GeistMono',monospace;
+    font-size:23px;letter-spacing:.1em;text-transform:uppercase;color:#6E6E76;}
+  #g5shine{left:-260px;}
+
+  /* ==========================================================================
+     A5 · b9 · local 9.600–12.933 · HERO
+     "Your data is already out there whether you like it or not."
+
+     The picture opens all the way out for the close: 1080x1210 at y0, chin y971.
+     This is the only HERO beat in the short, and the move into it — from the
+     collapsed card rect to full frame over 0.40s — is the same clip-path-plus-scale
+     tween that runs everywhere else, so the language never breaks.
+
+     The face leads the audio by nine frames (the gaze map is safe from 215.3) and
+     closes at 218.72, a fifth of a second before his gaze drops to his notes.
+     The coupon holds as a chip below the picture the whole way through.
+     ========================================================================== */
+  #g6{position:absolute;inset:0;z-index:14;}
+  #g6chip{left:50%;top:1250px;font-size:32px;padding:16px 30px;}
+  #g6gt{position:absolute;left:0;top:1338px;width:1080px;text-align:center;
+    font-family:'GeistMono',monospace;font-size:24px;letter-spacing:.13em;
+    text-transform:uppercase;color:var(--greenText);}
+
+  /* ==========================================================================
+     B10 · local 12.933–15.800 · GFX · "So the question is, what are you going to
+     do about it?"
+
+     The gaze map is unambiguous: safe ends at 219.3 and does not resume until
+     221.7, so the closing question CANNOT carry his face. v1 solved that by cutting
+     to a static offer card for the last 14 frames, mid-sentence, and the owner said
+     "the ending seems very off" — because it amputated a sentence.
+
+     v3's fix is structural: the closing question is its own complete-sentence beat,
+     and it is a graphics beat, so the offer lockup IS that beat. It holds to frame
+     1349, which is both the loop point and the correct last frame for a paid
+     placement, with one shine pass across it.
+     ========================================================================== */
+  #g7{position:absolute;inset:0;z-index:16;overflow:hidden;}
+  #g7mk{left:50%;top:600px;}
+  #g7mk img{width:340px;}
+  #g7code{position:absolute;left:50%;top:756px;
+    font-family:'GeistMono',monospace;font-weight:700;font-size:84px;letter-spacing:.1em;
+    color:var(--fg);white-space:nowrap;
+    border:3px dashed var(--line2);border-radius:18px;padding:14px 40px;}
+  #g7code b{color:var(--blueHi);}
+  #g7off{position:absolute;left:50%;top:934px;
+    font-family:'Rethink',sans-serif;font-weight:800;font-size:96px;letter-spacing:-.03em;
+    color:var(--blueHi);white-space:nowrap;}
+  #g7sub{position:absolute;left:50%;top:1072px;
+    font-family:'GeistMono',monospace;font-size:28px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--greenText);white-space:nowrap;}
+  #g7plan{position:absolute;left:0;top:1140px;width:1080px;text-align:center;
+    font-family:'GeistMono',monospace;font-size:23px;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--fgDim);}
+  #g7shine{left:-300px;top:520px;height:700px;}
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="s2" data-start="0" data-duration="15.800000" data-width="1080" data-height="1920">
+
+  <div id="bg" data-layout-allow-overflow>
+    <div class="orb" id="orbA"><div class="gA"></div></div>
+    <div class="orb" id="orbV"><div class="gV"></div></div>
+    <div class="orb" id="orbB"><div class="gB"></div></div>
+    <div class="orb" id="orbC"><div class="gC"></div></div>
+    <div class="gS"></div>
+    <div class="gSh"></div>
+    <div class="grid" id="bgDots"></div>
+    <div class="grain"></div>
+    <div class="vig"></div>
+  </div>
+
+  <canvas id="gl" width="1080" height="1920"></canvas>
+
+  <div id="faceScene">
+    <div id="faceCam">
+      <video id="a5v" data-start="9.300" data-duration="3.333" data-track-index="0"
+             src="assets/aroll/a5.mp4" muted playsinline></video>
+      <div class="lift"></div>
+      <div class="grade"></div>
+    </div>
+  </div>
+  <div id="faceFx"></div>
+  <div id="heroEdge"></div>
+
+  <!-- ==================== A4 · the bundle, and paying twice ==================== -->
+  <div id="g4">
+    <div class="eyebrow" id="g4eye">What Aura bundles in</div>
+    <div id="g4h" class="h1 wr" data-layout-allow-overflow>Do you <em>already</em> pay for these?</div>
+
+    <div class="bcard" id="g4bc">
+      <video id="g4bv1" data-start="0.000" data-duration="4.200" data-track-index="1"
+             src="assets/broll/b6-bundle.mp4" muted playsinline></video>
+      <video id="g4bv2" data-start="4.067" data-duration="1.433" data-track-index="2"
+             src="assets/broll/b7-pricing.mp4" muted playsinline></video>
+      <div class="tint"></div>
+      <div id="g4bcl">tools you already pay for</div>
+    </div>
+
+    <div class="stack" id="g4stack">
+      <div class="slab" id="sl1">
+        <div class="ic">
+          <!-- VPN: a shield with a tunnel through it -->
+          <svg viewBox="0 0 60 60" fill="none">
+            <path d="M30 5 L52 14 V32 C52 44 42 52 30 56 C18 52 8 44 8 32 V14 Z"
+                  stroke="#8EACFF" stroke-width="4" stroke-linejoin="round"/>
+            <path d="M20 30 H40" stroke="#8EACFF" stroke-width="4" stroke-linecap="round"/>
+            <path d="M33 23 L40 30 L33 37" stroke="#8EACFF" stroke-width="4"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="nm">VPN</div><div class="ix">01</div>
+        <div class="sk" id="sk1" style="width:700px"></div>
+      </div>
+      <div class="slab" id="sl2">
+        <div class="ic">
+          <!-- password manager: a key -->
+          <svg viewBox="0 0 60 60" fill="none">
+            <circle cx="20" cy="24" r="11" stroke="#8EACFF" stroke-width="4"/>
+            <path d="M28 32 L48 52 M42 46 L48 40 M36 40 L42 34" stroke="#8EACFF"
+                  stroke-width="4" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="nm">Password manager</div><div class="ix">02</div>
+        <div class="sk" id="sk2" style="width:700px"></div>
+      </div>
+      <div class="slab" id="sl3">
+        <div class="ic">
+          <!-- antivirus: a bug with a slash -->
+          <svg viewBox="0 0 60 60" fill="none">
+            <rect x="18" y="20" width="24" height="26" rx="12" stroke="#8EACFF" stroke-width="4"/>
+            <path d="M30 20 V12 M24 14 L20 8 M36 14 L40 8 M18 28 H8 M18 38 H8 M42 28 H52 M42 38 H52"
+                  stroke="#8EACFF" stroke-width="4" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="nm">Antivirus</div><div class="ix">03</div>
+        <div class="sk" id="sk3" style="width:700px"></div>
+      </div>
+    </div>
+
+    <div class="ldg" id="g4tot">
+      <div class="tot" id="g4totn">paying twice</div>
+      <div class="totl">for tools you already have</div>
+    </div>
+  </div>
+
+  <!-- ==================== B8 · the code ==================== -->
+  <div id="g5">
+    <!-- the card is 12% opaque behind the chip for the six frames of the morph;
+         the occlusion is the transition, not a layout fault -->
+    <div class="wcard" id="g5card" data-layout-allow-occlusion>
+      <div class="mark" id="g5mk"><img src="assets/brand/incogni-wordmark.svg" alt="Incogni" /></div>
+      <div id="g5off">60% off</div>
+      <div id="g5offs">Incogni annual plan</div>
+      <div id="g5codel">use code</div>
+      <div id="g5code"><span>NADER</span></div>
+      <div id="g5gtee"><b>30-day</b> money-back guarantee</div>
+      <div id="g5plan">incogni.com/nader &nbsp;·&nbsp; paid promotion</div>
+      <div class="shine" id="g5shine" data-layout-allow-overflow></div>
+    </div>
+  </div>
+
+  <!-- ==================== A5 · the sign-off ==================== -->
+  <div id="g6">
+    <div class="chip on" id="g6chip" data-layout-allow-overlap>Code <b>NADER</b> &nbsp;·&nbsp; 60% off</div>
+    <div id="g6gt">30-day money-back guarantee</div>
+  </div>
+
+  <!-- ==================== B10 · the offer lockup ==================== -->
+  <div id="g7">
+    <div class="mark" id="g7mk"><img src="assets/brand/incogni-white.svg" alt="Incogni" /></div>
+    <div id="g7code" data-layout-allow-overlap>CODE <b>NADER</b></div>
+    <div id="g7off">60% off</div>
+    <div id="g7sub">30-day money-back guarantee</div>
+    <div id="g7plan">incogni.com/nader &nbsp;·&nbsp; paid promotion</div>
+    <div class="shine" id="g7shine" data-layout-allow-overflow></div>
+  </div>
+
+  <!-- CAPTIONS -->
+  <div id="s2cap1" class="cap clip" data-start="0.000" data-duration="1.967" data-track-index="9">Now, that sounds good on paper, but don&#x27;t you already</div>
+  <div id="s2cap2" class="cap clip" data-start="1.967" data-duration="0.700" data-track-index="9">have a VPN?</div>
+  <div id="s2cap3" class="cap clip" data-start="2.767" data-duration="2.266" data-track-index="9">If you do, you&#x27;re basically paying <s>twice</s> for tools you</div>
+  <div id="s2cap4" class="cap clip" data-start="5.033" data-duration="0.467" data-track-index="9">don&#x27;t need.</div>
+  <div id="s2cap5" class="cap clip" data-start="5.500" data-duration="2.367" data-track-index="9">You can use the code <b>NADER</b> for <b>60%</b> off</div>
+  <div id="s2cap6" class="cap clip" data-start="7.867" data-duration="1.700" data-track-index="9"><b>Incogni&#x27;s</b> annual plan.</div>
+  <div id="s2cap7" class="cap clip" data-start="9.600" data-duration="2.433" data-track-index="9">Your data is already out there whether you</div>
+  <div id="s2cap8" class="cap clip" data-start="12.033" data-duration="0.834" data-track-index="9">like it or not.</div>
+  <div id="s2cap9" class="cap clip" data-start="12.933" data-duration="2.167" data-track-index="9">So the question is, what are you going to do</div>
+  <div id="s2cap10" class="cap clip" data-start="15.100" data-duration="0.500" data-track-index="9">about it?</div>
+  <!-- /CAPTIONS -->
+  <div id="cover"></div>
+  <div id="flash"></div>
+  <div id="wipeC"></div><div id="wipeA"></div><div id="wipeB"></div>
+
+  <!-- SFX -->
+  <audio id="s2sfx1" data-start="0.000" data-duration="0.55" data-track-index="40" src="assets/sfx/wsh3.mp3" data-volume="0.056"></audio>
+  <audio id="s2sfx2" data-start="0.460" data-duration="0.40" data-track-index="41" src="assets/sfx/stap1.mp3" data-volume="0.050"></audio>
+  <audio id="s2sfx3" data-start="0.820" data-duration="0.40" data-track-index="42" src="assets/sfx/sacc1.mp3" data-volume="0.050"></audio>
+  <audio id="s2sfx4" data-start="2.260" data-duration="0.35" data-track-index="43" src="assets/sfx/sui1.mp3" data-volume="0.046"></audio>
+  <audio id="s2sfx5" data-start="3.787" data-duration="0.20" data-track-index="44" src="assets/sfx/tick1.mp3" data-volume="0.044"></audio>
+  <audio id="s2sfx6" data-start="3.907" data-duration="0.30" data-track-index="45" src="assets/sfx/tick2.mp3" data-volume="0.044"></audio>
+  <audio id="s2sfx7" data-start="4.027" data-duration="0.30" data-track-index="46" src="assets/sfx/tick4.mp3" data-volume="0.044"></audio>
+  <audio id="s2sfx8" data-start="4.067" data-duration="0.95" data-track-index="47" src="assets/sfx/simp1.mp3" data-volume="0.078"></audio>
+  <audio id="s2sfx9" data-start="4.150" data-duration="0.50" data-track-index="48" src="assets/sfx/srev1.mp3" data-volume="0.046"></audio>
+  <audio id="s2sfx10" data-start="5.500" data-duration="0.55" data-track-index="49" src="assets/sfx/wsh1.mp3" data-volume="0.058"></audio>
+  <audio id="s2sfx11" data-start="5.540" data-duration="1.10" data-track-index="50" src="assets/sfx/scount.mp3" data-volume="0.038"></audio>
+  <audio id="s2sfx12" data-start="6.120" data-duration="0.55" data-track-index="51" src="assets/sfx/stamp1.mp3" data-volume="0.066"></audio>
+  <audio id="s2sfx13" data-start="6.150" data-duration="0.70" data-track-index="52" src="assets/sfx/simp2.mp3" data-volume="0.062"></audio>
+  <audio id="s2sfx14" data-start="6.780" data-duration="0.35" data-track-index="53" src="assets/sfx/sacc2.mp3" data-volume="0.048"></audio>
+  <audio id="s2sfx15" data-start="7.900" data-duration="0.85" data-track-index="54" src="assets/sfx/shine2.mp3" data-volume="0.050"></audio>
+  <audio id="s2sfx16" data-start="8.980" data-duration="0.50" data-track-index="55" src="assets/sfx/srev2.mp3" data-volume="0.048"></audio>
+  <audio id="s2sfx17" data-start="9.300" data-duration="0.55" data-track-index="56" src="assets/sfx/wsh5.mp3" data-volume="0.056"></audio>
+  <audio id="s2sfx18" data-start="12.300" data-duration="0.52" data-track-index="57" src="assets/sfx/wsh2.mp3" data-volume="0.054"></audio>
+  <audio id="s2sfx19" data-start="12.780" data-duration="0.70" data-track-index="58" src="assets/sfx/simp3.mp3" data-volume="0.066"></audio>
+  <audio id="s2sfx20" data-start="13.413" data-duration="0.60" data-track-index="59" src="assets/sfx/sgear.mp3" data-volume="0.042"></audio>
+  <audio id="s2sfx21" data-start="13.793" data-duration="0.35" data-track-index="60" src="assets/sfx/sclick.mp3" data-volume="0.044"></audio>
+  <audio id="s2sfx22" data-start="14.500" data-duration="0.95" data-track-index="61" src="assets/sfx/shine1.mp3" data-volume="0.048"></audio>
+  <audio id="s2sfx23" data-start="14.900" data-duration="0.35" data-track-index="62" src="assets/sfx/sacc3.mp3" data-volume="0.042"></audio>
+  <!-- /SFX -->
+</div>
+
+<script>
+  window.__timelines = window.__timelines || {};
+  const FLD = createField({canvas:document.getElementById("gl"), width:1080, height:1920});
+  const P = FLD.P;
+  const tl = gsap.timeline({paused:true, onUpdate:FLD.paint});
+  /* T0 is this chunk's start on the FILM timeline: the ground rig is phased off
+     absolute time so the two chunks meet mid-orbit with no visible jump. */
+  const T0 = 29.200000, DUR = 15.800000;
+
+  mountGround(tl, T0, DUR);
+  const K = shortKit(tl, T0);
+
+  /* =========================================================================
+     A4 · b6 · local 0.000–2.767 · "Now, that sounds good on paper, but don't you
+     already have a VPN?"
+
+     FRAME 0 IS A JOIN. s1 ends with the face already closed, so this frame is
+     ground plus graphics on both sides of the cut. The eyebrow, the headline, the
+     b-roll and the first slab are COMPOSED here and only settle; anything
+     mid-entrance at t=0 shows as a one-frame flash at the join.
+     ========================================================================= */
+  K.faceSet("off", 0);
+  K.faceClip(0, null);
+  K.put("#g4", {autoAlpha:1}, 0);
+  /* alpha opens at .50 and settles to .22 over eight frames: the far side of the
+     light bump s1 starts at 28.933. Same value, same linear rate, so the two
+     compositions meet mid-swell instead of on a bare cut. */
+  gsap.set(P, {alpha:0.50, a:"scatter", b:"scatter", k:0, colour:"neutral", lit:1,
+               ox:0, oy:-60, scale:.86, rotX:0, rotY:0, rotZ:0, sweep:0, ringOn:0});
+  tl.set(P, {alpha:0.50, a:"scatter", b:"scatter", k:0, colour:"neutral", lit:1,
+             ox:0, oy:-60, scale:.86, rotX:0, rotY:0, rotZ:0, sweep:0, ringOn:0}, 0);
+  tl.to(P, {alpha:0.22, duration:.267, ease:"none"}, 0);
+  tl.to(P, {rotY:0.52, duration:5.50, ease:"none"}, 0);
+
+  tl.fromTo("#g4eye", {y:8}, {y:0, duration:.42, ease:"power3.out"}, 0);
+  tl.fromTo("#g4h", {y:14}, {y:0, duration:.52, ease:"power3.out"}, 0);
+  tl.fromTo("#g4bc", {scale:.985, transformOrigin:"50% 0"},
+    {scale:1, duration:.52, ease:"expo.out"}, 0);
+  tl.fromTo("#sl1", {y:-12, scale:.99, transformOrigin:"50% 0"},
+    {y:0, scale:1, duration:.46, ease:"expo.out"}, 0);
+
+  /* "that sounds good on paper" — the rest of the bundle piles on, each slab
+     landing from above with perspective so the tower gets visibly top-heavy */
+  function slab(sel, t){
+    tl.fromTo(sel, {opacity:0, y:-70, z:-260, rotationX:-34},
+      {opacity:1, y:0, z:0, rotationX:0, duration:.44, ease:"expo.out"}, t);
+  }
+  slab("#sl2", 0.460);   /* "good"   */
+  slab("#sl3", 0.820);   /* "paper," */
+
+  /* "don't you already have a VPN?" — the question lands on the slab he names.
+     Nothing new arrives; the object already on screen is pointed at. */
+  tl.fromTo("#sl1", {scale:1, transformOrigin:"50% 50%"},
+    {scale:1.04, duration:.18, ease:"power2.out"}, 2.260);
+  tl.to("#sl1", {scale:1, duration:.34, ease:"power2.inOut"}, 2.440);
+  tl.fromTo("#sl1 .nm", {color:"#FAFAFA"}, {color:"#8EACFF", duration:.20,
+    ease:"power2.out"}, 2.260);
+
+  /* =========================================================================
+     b7 · local 2.767–5.500 · "If you do, you're basically paying twice for tools
+     you don't need."
+
+     THE ONE HARD FLASH OF THE SHORT, on "twice". v1 fired one at 11 of its 12 beat
+     boundaries, which in a forty-five-second piece is a strobe. Here it is the
+     single punctuation mark in the film, it lands on the word the whole beat
+     exists for, and the b-roll cuts under it from the tools you own to the card
+     that pays for them again.
+     ========================================================================= */
+  tl.fromTo("#sk1", {scaleX:0}, {scaleX:1, duration:.26, ease:"power2.in"}, 3.787);
+  tl.fromTo("#sk2", {scaleX:0}, {scaleX:1, duration:.26, ease:"power2.in"}, 3.907);
+  tl.fromTo("#sk3", {scaleX:0}, {scaleX:1, duration:.26, ease:"power2.in"}, 4.027);
+  tl.to(["#sl1 .nm", "#sl2 .nm", "#sl3 .nm"],
+    {color:"#9A9AA4", duration:.28, ease:"none", stagger:.12}, 3.827);
+
+  K.flash(4.067, 0.82);                       /* "twice" — the only flash */
+  tl.set("#g4bv1", {autoAlpha:0}, 4.067);
+  tl.set("#g4bv2", {autoAlpha:1}, 4.067);
+  tl.fromTo("#g4totn", {opacity:0, scale:1.24, y:16},
+    {opacity:1, scale:1, y:0, duration:.38, ease:"back.out(2)"}, 4.067);
+  K.shake("#g4", 4.090, 16);
+  tl.fromTo("#g4tot .totl", {opacity:0, y:10},
+    {opacity:1, y:0, duration:.34, ease:"power2.out"}, 4.567);
+  /* the field takes the alert colour for this one beat: "paying twice" is one of
+     exactly three places red is permitted in this film */
+  tl.set(P, {colour:"exposed"}, 4.067);
+  tl.to(P, {alpha:.34, duration:.40, ease:"power2.out"}, 4.067);
+
+  /* =========================================================================
+     b8 · local 5.500–9.600 · "You can use the code NADER for 60% off Incogni's
+     annual plan."  THE ONE CARD, behind the short's second band wipe.
+
+     The card arrives COMPOSED, carrying its offer, and only settles. Its empty
+     dashed box is the one thing waiting to be filled, and the code stamps into it
+     on the word.
+     ========================================================================= */
+  K.wipe(5.500, 0.58);
+  K.swap(5.500, "#g4", "#g5");
+  tl.set(P, {a:"scatter", b:"converge", k:0, colour:"verified", lit:1,
+             ox:0, oy:0, scale:1}, 5.500);
+  tl.to(P, {alpha:.32, duration:.26, ease:"none"}, 5.500);
+  tl.to(P, {k:1, duration:1.10, ease:"power2.in"}, 5.540);
+  tl.to(P, {alpha:0, duration:.50, ease:"power2.in"}, 6.900);
+
+  tl.fromTo("#g5card", {y:22, scale:.975, transformOrigin:"50% 20%"},
+    {y:0, scale:1, duration:.42, ease:"expo.out"}, 5.500);
+  tl.fromTo("#g5mk", {y:-10}, {y:0, duration:.36, ease:"power3.out"}, 5.500);
+  tl.fromTo("#g5off", {yPercent:22}, {yPercent:0, duration:.46, ease:"expo.out"}, 5.500);
+  tl.fromTo("#g5offs", {y:10}, {y:0, duration:.40, ease:"power3.out"}, 5.520);
+  tl.fromTo("#g5codel", {opacity:0}, {opacity:1, duration:.26}, 5.660);
+  /* the code STAMPS into the box that has been waiting for it, and the card takes
+     the hit */
+  tl.fromTo("#g5code span", {scale:1.5, opacity:0, transformOrigin:"50% 50%"},
+    {scale:1, opacity:1, duration:.40, ease:"back.out(2.4)"}, 6.120);
+  K.shake("#g5", 6.150, 11);
+  /* "60% off" is spoken here; the figure is already on the card, so it PULSES
+     rather than arriving late */
+  tl.fromTo("#g5off", {scale:1, transformOrigin:"0% 50%"},
+    {scale:1.045, duration:.18, ease:"power2.out"}, 6.780);
+  tl.to("#g5off", {scale:1, duration:.34, ease:"power2.inOut"}, 6.960);
+  /* the two claims the CUT removed from the audio */
+  tl.fromTo("#g5gtee", {opacity:0, x:18}, {opacity:1, x:0, duration:.38,
+    ease:"power2.out"}, 7.600);
+  tl.fromTo("#g5plan", {opacity:0}, {opacity:1, duration:.30}, 8.100);
+  K.shine("#g5shine", 7.900, -260, 1000, 0.80);
+
+  /* =========================================================================
+     A5 · b9 · local 9.600–12.933 · HERO
+
+     THE CARD SHRINKS INTO THE CHIP, then the picture OPENS ALL THE WAY OUT. The
+     card and the chip tween on the same half second with the same ease and the
+     same centre travel, so it reads as one object changing size rather than a card
+     leaving and a pill arriving — and the code is therefore continuously on screen
+     from 6.12 to the last frame of the short.
+     ========================================================================= */
+  K.swap(8.980, null, "#g6");
+  tl.to("#g5card", {scale:.40, x:30, y:565, opacity:0, transformOrigin:"50% 50%",
+    duration:.30, ease:"power2.inOut"}, 8.980);
+  tl.fromTo("#g6chip", {xPercent:-50, scale:1.9, opacity:0, transformOrigin:"50% 50%"},
+    {xPercent:-50, scale:1, opacity:1, duration:.30, ease:"power2.inOut"}, 8.980);
+  tl.fromTo("#g6gt", {opacity:0, y:8}, {opacity:1, y:0, duration:.28,
+    ease:"power2.out"}, 9.180);
+  K.swap(9.290, "#g5", null);
+
+  K.faceClip(9.280, "a5v");
+  K.faceTo("hero", 9.300, 0.40);
+  /* punch and hold, the same device as the hook, at hero scale */
+  K.punch(9.720, 3.20, 1.0, 1.045);
+
+  tl.set(P, {a:"converge", b:"converge", k:1, colour:"verified",
+             ox:0, oy:-560, scale:.9}, 9.300);
+  tl.to(P, {alpha:.14, duration:.50, ease:"none"}, 9.300);
+
+  /* the chip is the only thing on the ground under him, and it holds: no exit, no
+     drift. v1's close flew it upward and left 0.47s of empty ground as the last
+     thing on screen. */
+  tl.to("#g6chip", {scale:1.035, duration:.50, ease:"power2.out"}, 11.900);
+
+  /* THE FACE CLOSES on "like", 218.72 on the film's clock — a fifth of a second
+     before his gaze drops to his notes on 218.9. */
+  K.faceTo("off", 12.300, 0.30);
+
+  /* =========================================================================
+     b10 · local 12.933–15.800 · "So the question is, what are you going to do
+     about it?"
+
+     The chip expands back into the full lockup, on the same device that shrank it,
+     and then it HOLDS to the last frame: this is the loop point, the cover frame,
+     and for a paid placement the correct thing to end on.
+     ========================================================================= */
+  K.swap(12.780, null, "#g7");
+  tl.to("#g6chip", {xPercent:-50, scale:2.3, y:-460, opacity:0,
+    transformOrigin:"50% 50%", duration:.36, ease:"power2.inOut"}, 12.780);
+  tl.to("#g6gt", {opacity:0, duration:.20, ease:"none"}, 12.780);
+  tl.set("#g6gt", {opacity:0}, 12.933);      /* hard kill on the beat boundary */
+  tl.fromTo("#g7code", {xPercent:-50, scale:.44, y:494, opacity:0,
+    transformOrigin:"50% 50%"},
+    {xPercent:-50, scale:1, y:0, opacity:1, duration:.36, ease:"power2.inOut"}, 12.780);
+  tl.fromTo("#g7mk", {xPercent:-50, opacity:0, y:20},
+    {xPercent:-50, opacity:1, y:0, duration:.40, ease:"expo.out"}, 12.980);
+  tl.fromTo("#g7off", {xPercent:-50, yPercent:30, opacity:0},
+    {xPercent:-50, yPercent:0, opacity:1, duration:.44, ease:"expo.out"}, 13.413);
+  tl.fromTo("#g7sub", {xPercent:-50, opacity:0, y:12},
+    {xPercent:-50, opacity:1, y:0, duration:.36, ease:"power2.out"}, 13.793);
+  tl.fromTo("#g7plan", {opacity:0}, {opacity:1, duration:.32}, 14.173);
+  /* vid39's outro device: one specular pass across the finished lockup */
+  K.shine("#g7shine", 14.500, -300, 1180, 0.95);
+
+  /* the field blooms back out of the converge as the lockup opens: the recurring
+     object's last act is to agree with the offer */
+  tl.set(P, {a:"converge", b:"scatter", k:0, colour:"verified",
+             ox:0, oy:0, scale:.92}, 12.780);
+  tl.to(P, {alpha:.26, duration:.40, ease:"none"}, 12.780);
+  tl.to(P, {k:1, duration:1.60, ease:"power2.out"}, 12.820);
+  tl.to(P, {rotY:0.34, duration:3.00, ease:"none"}, 12.820);
+
+  window.__timelines["s2"] = tl;
+</script>
+</body>
+</html>
