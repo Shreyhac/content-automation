@@ -1,0 +1,10 @@
+{
+  "name": "vidNN-REPLACE",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "npx --yes hyperframes preview",
+    "check": "npx --yes hyperframes lint && npx --yes hyperframes validate && npx --yes hyperframes inspect",
+    "render": "HF_DE_STALL_MS=420000 npx --yes hyperframes render -q high --workers 2 --video-bitrate 16M"
+  }
+}

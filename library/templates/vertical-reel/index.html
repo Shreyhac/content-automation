@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1080, height=1920" />
+<title>REPLACE · vidNN (creator)</title>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<!-- three.js, if used, is VENDORED and UMD. Never a CDN request, never an ES module:
+     a module defers and the capture engine reads window.__timelines synchronously,
+     which silently produces a dead page that every gate reports as passing.
+<script src="assets/three.min.js"></script>
+-->
+<style>
+  /* ══════════ FONTS ══════════
+     Copy the faces this build needs from library/fonts/ into assets/fonts/.
+     Declare every one here: the static guard only resolves faces it can see in
+     the document, and an external stylesheet alone silently falls back. */
+  @font-face{font-family:'Display';font-weight:700;font-display:block;src:url(assets/fonts/REPLACE.woff2) format('woff2');}
+  @font-face{font-family:'Body';font-weight:500;font-display:block;src:url(assets/fonts/REPLACE.woff2) format('woff2');}
+  @font-face{font-family:'Geist Mono';font-weight:400 700;font-display:block;src:url(assets/fonts/geist-mono.woff2) format('woff2');}
+
+  /* ══════════ THEME ══════════
+     Theme follows the SUBJECT, type and layout follow the CREATOR.
+     Sample the subject's own CSS :root, charts, or supplied footage. Do not invent.
+     One saturated accent carries every number, bar and border; every rival and
+     every label is neutral. Treatment rules, non-negotiable:
+       no gradient display type · no glow on type · hairlines not coloured borders
+       one background wash · radial gradients only (linear bands in H.264) */
+  :root{
+    --bg:#REPLACE; --card:#REPLACE; --ink:#REPLACE; --mute:#REPLACE;
+    --accent:#REPLACE;        /* fills, bars, borders */
+    --accentText:#REPLACE;    /* the darker step, for type: an accent that works
+                                 as a fill usually fails WCAG as small text */
+    --line:rgba(0,0,0,.12);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{width:1080px;height:1920px;overflow:hidden;background:#000;}
+  #stage{position:relative;width:1080px;height:1920px;background:var(--bg);
+    font-family:'Body',system-ui,sans-serif;-webkit-font-smoothing:antialiased;}
+  .mono{font-family:'Geist Mono',ui-monospace,monospace;}
+  .tnum{font-variant-numeric:tabular-nums;}
+
+  /* ══════════ GROUND ══════════
+     Backgrounds are never flat. ONE global stack, not per-scene grounds:
+     per-band grounds silently cover the ambient layers and push the
+     heavy-overlay count past ~40, where the renderer produces solid black.
+     Any band ABOVE the face layer is the exception: it needs its own opaque bg. */
+  #ground{position:absolute;inset:0;z-index:1;
+    background:
+      radial-gradient(120% 80% at 50% 0%, rgba(0,0,0,.00) 0%, rgba(0,0,0,.06) 100%);}
+  #grid{position:absolute;inset:0;z-index:3;opacity:.5;
+    /* hard-stop = a LINE, not a ramp, so the no-linear-gradients rule does not apply.
+       Never stop at `transparent`: it is rgba(0,0,0,0) and premultiplies to a dark fringe. */
+    background:
+      linear-gradient(var(--line) 2px, rgba(0,0,0,0) 2px) 0 0/100% 64px;}
+
+  /* ══════════ SAFE ZONES (1080x1920) ══════════
+       TOP        y0–150      no text
+       BOTTOM     y1600–1920  no faces, captions or key UI
+       RIGHT RAIL x960–1080 in y900–1600
+       LEFT       x0–60
+     Hook and title band: y200–600. Chin at or above y1600.
+     Audit EVERY render round. text-shadow counts toward the box. */
+  .safe-debug{position:absolute;z-index:9999;pointer-events:none;display:none;}
+  /* flip to display:block while composing, then remove */
+  #z-top   {top:0;left:0;width:1080px;height:150px;background:rgba(255,0,0,.18);}
+  #z-bottom{top:1600px;left:0;width:1080px;height:320px;background:rgba(255,0,0,.18);}
+  #z-rail  {top:900px;left:960px;width:120px;height:700px;background:rgba(255,0,0,.18);}
+
+  /* ══════════ FACE ══════════
+     A beat is either CARD mode or FULL-BLEED mode. There is no third mode.
+     Never a full-width band across the torso: a card is a frame, a slab is a cover.
+     Solve the geometry from a Vision measurement (tools/vision/), per take.
+     Every clip-path number must stay non-collapsible: browsers collapse inset()
+     shorthand when serializing, and GSAP mispairs the numbers by index. */
+  #faceVid{position:absolute;left:0;top:0;width:1080px;height:1920px;
+    object-fit:cover;z-index:8;
+    clip-path:inset(0.1px 0.2px 0.3px 0.4px round 0.5px);}
+
+  /* ══════════ CAPTIONS ══════════ */
+  #capwrap{position:absolute;inset:0;z-index:30;}  /* last in DOM: stacking follows
+                                                       DOM order, not data-track-index */
+</style>
+</head>
+<body>
+<div id="stage">
+
+  <div id="ground"></div>
+  <div id="grid"></div>
+
+  <!-- safe-zone guides: enable while composing -->
+  <div class="safe-debug" id="z-top"></div>
+  <div class="safe-debug" id="z-bottom"></div>
+  <div class="safe-debug" id="z-rail"></div>
+
+  <!-- A-roll. Every media element NEEDS an id or video renders FROZEN and audio SILENT.
+       A <video> with data-start cannot be nested inside another element with data-start. -->
+  <video id="faceVid" class="clip" data-start="0" data-duration="0" muted src="assets/aroll.mp4"></video>
+
+  <!-- scenes go here -->
+
+  <div id="capwrap">
+    <!-- CAPTIONS -->
+    <!-- /* CAPTIONS */ -->
+  </div>
+
+</div>
+
+<script>
+/* ══════════ INITIAL STATES ══════════
+   gsap.set() OUTSIDE the timeline for every initial hidden state.
+   A zero-duration tl.set(sel,{opacity:0},0) does not reliably paint while the
+   playhead sits exactly on 0, so it breaks the cover frame. lint flags it as
+   gsap_timeline_set_initial_hide: that is a wrong frame, not a style nit.
+
+   After adding a blanket hide-guard, DIFF the guard list against the entrance
+   tweens. An element in the guard with no reveal tween never appears, and lint,
+   validate and inspect all pass it. */
+gsap.set([
+  // "#everyLateElement",
+], { autoAlpha: 0 });
+
+/* ══════════ TIMELINE ══════════ */
+const tl = gsap.timeline({ paused: true });
+
+/* Scene windows LEAD the spoken word so the entrance finishes UNDER the
+   transition and the first visible frame is settled. Opening on the word ships
+   one empty frame per cut, and lint/validate/inspect all pass it. */
+const LEAD = 0.20;
+
+/* Cut helper: wipe peaks AT the cut by construction (run the band symmetrically
+   around t). Wipe colour must CONTRAST the scene it covers, not match the world. */
+function cut(t){
+  // tl.fromTo("#wipe", {xPercent:-120}, {xPercent:120, duration:0.44, ease:"power2.inOut"}, t - 0.22);
+  // flash cuts sit at t - 0.04, opacity 0.42 over 0.13s (0.80 blows the frame to white)
+}
+
+/* three.js, if used: one timeline onUpdate driver. It fires after that tick's
+   tweens apply, so it is order-safe by construction. Never requestAnimationFrame,
+   never Date.now, seeded PRNG only, and derive every pixel from t.
+   Verify determinism by rendering twice and diffing per-frame SHAs.
+   Size against the screen: px_per_unit = frame_height / (2 * cam.z * tan(fov/2)). */
+
+window.__timelines = { main: tl };
+</script>
+</body>
+</html>
