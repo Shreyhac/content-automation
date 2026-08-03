@@ -32,7 +32,9 @@ form it needs.
 
 Each has a folder under `creators/` with three files: `PROFILE.md` (who they are and their
 hard rules), `GRAMMAR.md` (the approved visual system, with measured numbers), and
-`HISTORY.md` (every video shipped for them and what each review round changed).
+`HISTORY.md` (every video shipped for them and what each review round changed). A creator with
+unanswered review notes also has an `open-notes/` folder holding the marked-up frames; read it
+before you start on them.
 
 | Folder | Who | Format | Signature |
 |---|---|---|---|

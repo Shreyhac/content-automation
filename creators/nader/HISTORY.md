@@ -2,6 +2,33 @@
 
 Newest first. **The most recent approved grammar supersedes older entries.**
 
+> **Open before you start.** Two client notes on vid46 have never been answered. See
+> "Round 4" below and `open-notes/`.
+
+---
+
+## vid56, Incogni vs DeleteMe, sponsored 16:9 long-form (IN FLIGHT, from 2026-08-03)
+
+Fourth Nader production, third long-form, second Incogni sponsorship. **243.6s of A-roll**, 44
+segments. Scaffolded directly off vid46: same toolchain, same brand assets, vid46's design doc
+carried in as the reference.
+
+Solved so far: crown, face box and gaze. The **three-mode** thresholds from vid46 transfer
+unchanged (`eye_threshold 0.32`, `pad 0.9`, `min_run 2`, `min_sustain 4`, `min_window 1.6`, 5fps)
+and give **46.1% face-safe coverage** across 8 confirmed glances, so he reads about as much as he
+did on vid46. Nothing composed yet.
+
+The subject is a **head-to-head between two paid services**, which is the vid46 comparison problem
+again and a harder version of it: DeleteMe is a named competitor in a sponsored film. Every rule in
+PROFILE.md section 8 applies, plus the vid46 grammar rules that came out of the Aura comparison:
+the competitor's figures are attributed to the competitor, rendered in neutral grey and never in
+the alert colour, and a verdict carries the VO's own qualifier. The VO's own framing ("they don't
+even measure themselves in the same way") is the honest spine of the film; do not flatten it into
+a winner.
+
+The opening also cites **Privacy Rights Clearinghouse with the EFF, 750 registered broker groups**.
+Verify against the primary source before it goes on screen.
+
 ---
 
 ## vid46, Incogni vs Aura, sponsored 16:9 long-form (2026-07-30)
@@ -69,6 +96,38 @@ round-1 film. Systemic defects every gate had passed:
 
 Also: "stuck at frame 851/888" six times was the CLI's 60-second watchdog killing a healthy
 render, not disk pressure. `HF_DE_STALL_MS=420000`.
+
+### Round 4: TWO CLIENT NOTES, STILL OPEN
+
+**Rounds 1 to 3 were the owner. These two are Nader himself**, left on the round-3 final through
+the hosted review link on 2026-07-30 at 20:09, three minutes after it was shared. They were never
+answered: both still sit at `status: "open"` with a null `reply`, and the film was archived to an
+external drive the next day. **Anyone picking up Nader work opens with these.**
+
+Frames are in `open-notes/`. Link: `reel-review.shreyansh-reels.workers.dev/v/vid46`.
+
+| t | Frame | Note | What is on screen |
+|---|---|---|---|
+| 63.886 | 1917 | "make this better" (red box) | c3's Deloitte beat: eyebrow "THE COVERAGE CLAIM, CHECKED", a green ring with a check and a two-line `INDEPENDENTLY ASSESSED` label, attribution in Fraunces italic below |
+| 78.633 | 2359 | "this is looking off need to rework on this please" (yellow circle, with a hook drawn at the object's top-left) | c?'s 245M beat: "245" at display scale far left under "REMOVALS ACTUALLY PROCESSED", the three.js dome420 hard against the right frame edge |
+
+Both frames are the same composition problem, and it is the **round-1 "cheap" diagnosis in its
+last unfixed form**: one small object, alone, in a mostly empty 4K frame.
+
+- The seal occupies about 17% of frame width, sits left of centre, and the entire right half of a
+  3840px frame is bare ground. It is also **static** at that instant, in a film whose one praised
+  device moves.
+- The 245 beat splits into a far-left figure and a far-right object with a dead gutter between
+  them, and the dome runs to within about 190px of the right edge with no counterweight. He
+  circled the object, not the number.
+
+**The nuance that matters: the boxed dome is the same `field.js` device he praised** ("the globe
+animations are nice"). A device being right does not make every instance of it right. What he is
+reacting to here is placement and balance, not the object. **Do not redesign `field.js` on the
+strength of this note.**
+
+Neither note has been diagnosed with him, so treat the reading above as a diagnosis and not as his
+words. His words are in the table.
 
 ---
 

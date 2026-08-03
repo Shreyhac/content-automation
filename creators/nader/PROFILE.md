@@ -9,6 +9,7 @@ of every factual error.
 | Primary format | 16:9 YouTube long-form, 3 to 4 minutes, 3840x2160 at 30fps |
 | Secondary | 9:16 vertical cutdowns derived from the long-form, about 45s |
 | Shipped | vid39 (9:16 short), vid44 (16:9 long-form), vid46 (16:9 sponsored long-form plus a 9:16 short) |
+| In flight | vid56, Incogni vs DeleteMe, 16:9 sponsored long-form, 243.6s |
 | Studio | Seated at a desk, tight to medium close-up, a wall-mounted screen behind him |
 
 ---
@@ -91,6 +92,14 @@ He gives a feeling plus an itemised list, and the list is usually a symptom of o
 fault. On the round that mattered most, he disliked almost everything and offered one positive:
 "the globe animations are nice." That single positive was the whole diagnosis, because the 3D
 field was the only device in the film that was not a rounded rectangle.
+
+**There are two review channels and they are not the same person.** The owner reviews locally and
+his notes are the ones the round numbers count. Nader reviews through the hosted share link, and
+his notes arrive as `source: "client"` in `review/data/<slug>/comments.json` with a markup frame
+each. They can land minutes after a share and they are easy to miss while a cutdown is in flight,
+which is exactly how two of them went unanswered on vid46. **Run the inbox before starting, and
+write a `status` and a `reply` back for every client note you address**. He sees the reply, and a
+note left open reads as ignored.
 
 **He also reverses decisions, and that is the expensive kind.** He chose to keep a duplicated
 take, then wanted the repeated line cut, which invalidated the chunk map, every T0, every caption

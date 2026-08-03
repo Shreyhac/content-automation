@@ -129,7 +129,37 @@ Caption pack notes:
 
 ---
 
-## 8. Close the loop
+## 8. The review round
+
+**The review tooling is not in this repo.** It lives in the production repo as `review/` plus the
+`./rr` CLI, backed by a Cloudflare worker that serves the same player to a client on a private
+link. This section is the contract, not the manual.
+
+Two channels, and they are not the same reviewer:
+
+| Channel | Who | How notes arrive |
+|---|---|---|
+| Local | The owner | `./rr out/vidNN-final.mp4`, then "Send to editor" writes `vidNN-feedback-roundN.md` |
+| Hosted | The client (Nader, gaurav) | `./rr share out/vidNN-final.mp4 --name "<client>"` prints one private link; `./rr pull vidNN` brings notes and markup frames in as `source: "client"` |
+
+Rules that cost real rework when skipped:
+
+- **Run the inbox at the start of any session where a cut is out for review.** Client notes land
+  whenever the client watches, which is often while you are already building the next thing.
+- **Read every markup frame as an image.** The drawing is the note; the text is a caption on it.
+- **Notes come in two kinds.** A frame note (timecode + drawing) is a local fix. A whole-video note
+  ("change the theme", "SFX too loud") applies to the whole cut regardless of the timecode it was
+  written at.
+- **Write `status` and `reply` back for every note you address**, then push. Both render on the
+  card, so the next round opens with the old notes answered. **A note left `open` reads as
+  ignored**. That is how two Nader notes on vid46 sat unanswered, see
+  `creators/nader/HISTORY.md`.
+- Re-sharing a new render stacks as v2 on the **same** link, so the reviewer can wipe the old cut
+  against the new one. Never hand-edit an existing `-feedback-roundN.md`.
+
+---
+
+## 9. Close the loop
 
 Update `creators/<creator>/HISTORY.md` with what each review round actually changed, and promote
 anything reusable into `playbooks/`. A lesson that stays in a chat log gets paid for twice.
