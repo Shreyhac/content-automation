@@ -41,6 +41,53 @@ An SFX-heavy mix measures quieter than the VO's own target, because the bed sits
 a VO normalised to -16 LUFS came out at -16.7 integrated. Re-normalise the delivery, do not chase
 per-cue volumes.
 
+### The render's own audio track is late, by a real and re-measured amount
+
+Confirmed across several separate builds: the renderer's muxed audio track lands **behind** a
+picture that is itself frame-accurate against the source. The number is the AAC encoder's priming
+delay and it is not one fixed constant: measured at exactly 2048 samples (42.67ms) on some
+renders and 1024 samples (21.3ms, half that) on others. **Measure it every time**, do not assume
+the value from a previous project:
+
+- **Correlate the raw waveform over a speech window, not the envelope, and not the whole file.**
+  Envelope correlation over a full file gives a low-confidence peak (~1.03x the runner-up); the
+  same test on the raw waveform over a ~10s speech window gives a decisive peak (10x+) at the true
+  lag.
+- **The reliable fix is to never ship the render's own audio track.** Take only the video stream
+  from the render; build the final audio fresh (source-aligned VO + the separately-built SFX bed,
+  see `playbooks/longform-chunking.md`) and mux that in. This also sidesteps needing to know the
+  exact delay at all.
+- Where remuxing isn't practical, `-af "atrim=start_sample=<N>,asetpts=PTS-STARTPTS,apad=pad_dur=<N/48000>"`
+  before `loudnorm`, or an `-itsoffset` on a second audio input, both work once the real sample
+  count is measured.
+
+### An HDR/HLG source clip silently forces the WHOLE composition into HDR output
+
+One 10-bit HEVC B-roll clip tagged `bt2020nc`/`arib-std-b67` (HLG) made HyperFrames auto-detect and
+render the **entire** composition as `yuv420p10le`/HLG: shifting every other clip's colour,
+**including untouched A-roll that had no filter applied to it**, by ~50 units on G/B versus the
+source file. `ffprobe` every non-generated source clip's `color_transfer`/`color_primaries` before
+compositing; if any read `arib-std-b67`/`bt2020`, either strip and re-tag to `bt709`
+(`ffmpeg ... -vf format=yuv420p,setparams=color_primaries=bt709:color_trc=bt709:colorspace=bt709:range=tv`)
+or pass `--sdr` to `hyperframes render`: on at least one project the shift persisted with only one
+of the two applied, so do both. **Diff the A-roll's rendered pixels against the source file every
+round**, not just eyeball it: a 2–3% RGB delta is normal encoder drift, a 15–50 unit delta is a
+colour-pipeline bug, not a grade.
+
+### The compositing path itself shifts colour, independent of any grade applied
+
+Measuring the same face-band crop at every stage of the pipeline (master → project transcode →
+after `hyperframes render` → after a delivery pass) on more than one project shows the transcode
+and delivery steps are colour-**exact**, and the shift happens entirely inside the renderer's
+browser-compositing-to-encode path: roughly 10/255 on R at the high end, 3–4 on G/B (a highlight
+roll-off, not a hue rotation), present even with identical `bt709`/`tv` colour metadata at every
+stage. A second, distinct effect measured on another project: delivered files tagged `tv` (limited
+range) against `pc` (full range) source/asset show a further **range squeeze** (R−12/G−6/B−2 in
+one measurement) with zero grading filters applied anywhere in the chain. **Always measure a crop
+of pure, ungraphic'd source footage** (a face band with no cards/text on it) when comparing colour
+across pipeline stages: a full composed frame samples your own graphics, not his footage, and
+will report numbers that look catastrophic and mean nothing.
+
 ---
 
 ## 3. Match the original file size (both Instagram creators)
@@ -60,6 +107,74 @@ within 1 to 2% of the original. Resolution, duration and content do not change; 
 bitrate rises.
 
 Do the loudnorm pass after this. `-c:v copy` does not change the size.
+
+### Hitting an exact byte count, not just an approximate one
+
+A two-pass x264 encode cannot land on a byte by formula alone; it takes an iteration loop:
+
+1. **Fit the bitrate by iteration, aiming ~40KB under the target.** Run pass 1 + pass 2 once,
+   measure the actual output, then rescale `bitrate *= (target − headroom) / actual` and re-run
+   **pass 2 only** against the same stats log (≤5 attempts). Reusing a stats log written for a very
+   different bitrate is what makes an early attempt overshoot badly: regenerate pass 1 when the
+   first guess is far off.
+2. **Close the last few KB with an ISO-BMFF `free` box**, appended after all QA:
+   `struct.pack('>I', gap) + b'free' + b'\x00'*(gap-8)`. `free` is defined as ignorable padding;
+   every player skips it, `ffprobe` still reports the correct duration and streams, and decode
+   stays clean. Do this last: it changes the byte count and nothing else.
+3. **A near-flat, mostly-vector film can hit a quality ceiling before the byte target**, because
+   there is no more real detail to spend bits on: raising the bitrate barely moves the file size
+   and the gap has to be closed almost entirely with `free`-box padding. A **deterministic
+   per-frame grain layer** (small canvas, frame-indexed PRNG, scaled up,
+   `mix-blend-mode:overlay` at ~0.075 opacity) gives the encoder real high-frequency data to spend
+   bits on, which shrinks the padding needed and also fixes the H.264 banding that large radial
+   gradients cause on a dark ground: worth doing on any near-flat film regardless of the byte
+   rule. **Keep the grain layer below any face card or product UI in z-order**: at the very top of
+   the stack it makes a real face read as a noisy, low-quality video, the opposite of the intent.
+
+### CRF is a quality target; it is not a delivery contract
+
+The same `--crf` value on the same resolution and duration can land on very different bitrates
+depending on content: one round measured 36.8 Mbps against a 36.25 Mbps master (a match) at a
+given CRF, and the next round at the **identical CRF** landed at 24.9 Mbps because the content got
+cheaper to encode (an intricate drawn scene replaced by a static screen recording). Nothing was
+broken; CRF simply spent fewer bits to hit the same quality target.
+
+**When matching a specific master's data rate is the actual requirement, pin the rate, not the
+quality**: `--video-bitrate <N>M` at the master's own measured bitrate, not a CRF guessed from a
+different production. Use CRF when the goal is a quality floor; use a bitrate target when the
+number itself is the deliverable. And the CRF that matches one master is not portable to
+another: measure the new master's bitrate first, pick CRF (or bitrate) for it specifically, then
+verify the delivered file with `ffprobe` rather than assuming the last project's number still
+applies.
+
+### Rendering genuinely native at a higher output resolution
+
+A composition authored in 1080×1920 logical px and delivered by upscaling in the encode carries the
+master's byte count and dimensions with only 1080p of actual detail: a byte-match is not a
+resolution claim. To render genuinely native at 2160×3840 without re-authoring geometry, wrap the
+whole composition in a 2× scale:
+
+```css
+#root{width:2160px;height:3840px;}                       /* data-width/height */
+#stage{width:1080px;height:1920px;transform:scale(2);transform-origin:0 0;}
+```
+
+The browser then rasterises every glyph, border and card at 4K instead of ffmpeg interpolating them
+after the fact: measured **+7–9% edge energy** over the equivalent upscaled cut on code-heavy
+scenes. Any pixel-based gate (safe-zone constants, viewport size assumptions) needs its zone
+constants and viewport doubled and its reported values halved; nothing else in the composition
+changes.
+
+**Budget for it: 4× the pixels hits render time and delivery time both**, and delivery is the
+expensive half because hitting an exact byte count at native resolution means a two-pass encode,
+measurement, correction, and a pass-2 re-run, each retry a full high-resolution encode. `preset
+slow` does not finish in reasonable time at 2160×3840: drop to `preset medium` and remove any
+redundant `scale` filter once the composition itself is already native. **When an iteration cycle
+gets several times more expensive, front-load the frame QA**: run the cheap lower-resolution pass,
+fix everything visible, and only then switch to the expensive native render. **When a step is
+about to take noticeably longer than the last one, say the new expected time before running it, not
+after being asked**: a genuinely-running multi-minute encode with no status update reads as an
+identical hang.
 
 ---
 
@@ -133,7 +248,9 @@ Caption pack notes:
 
 **The review tooling is not in this repo.** It lives in the production repo as `review/` plus the
 `./rr` CLI, backed by a Cloudflare worker that serves the same player to a client on a private
-link. This section is the contract, not the manual.
+link. This section is the contract; **`docs/08-review-workflow.md` is the manual**: read it before
+running any `./rr` command for the first time on a machine, and whenever the local/hosted review
+loop is behaving unexpectedly.
 
 Two channels, and they are not the same reviewer:
 
@@ -156,6 +273,15 @@ Rules that cost real rework when skipped:
   `creators/nader/HISTORY.md`.
 - Re-sharing a new render stacks as v2 on the **same** link, so the reviewer can wipe the old cut
   against the new one. Never hand-edit an existing `-feedback-roundN.md`.
+- **The fix → reply/status → push → share sequence is order-sensitive, not a list of steps to do
+  eventually.** Sharing a new render before writing `resolved`/`reply` into the previous round's
+  `comments.json` and pushing means the reviewer's next open of the link shows all prior notes
+  still flagged open: reasonably read as "my feedback was ignored," even though it wasn't.
+- **A review tool's "version" can be metadata pointing at a shared file path, not an independent
+  copy.** If every version row points at the same `out/<slug>-final.mp4` and a new render
+  overwrites that file, every prior version silently becomes the new render too: there is nothing
+  left to diff the new cut against. Confirm (or fix) that the tool copies the outgoing file to a
+  version-specific path before a new one lands at the shared path.
 
 ---
 

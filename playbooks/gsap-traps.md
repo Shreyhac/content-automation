@@ -59,6 +59,84 @@ six other scenes, up to 0.4s of pre-visible content each.
   as the **starting** value; the proxy tween owns the rest. Seeking fires `onUpdate` at progress 0,
   so an end-value DOM shows the wrong number on every pre-tween frame.
 
+### `fromTo` on a shared element flattens the whole film, and passes every gate (vid48)
+
+Five wipe transitions reused two shared panels (`#w1`, `#w2`) with `fromTo` on each cut:
+
+```js
+tl.fromTo(el, { yPercent: from }, { yPercent: 0, duration: 0.20 }, t - 0.20);  // WRONG
+```
+
+`fromTo` defaults `immediateRender:true`. On a **paused timeline the renderer seeks**, five
+overlapping `fromTo`s targeting the same two elements all resolve at build time to the
+*last-written* tween's FROM value, not the one whose position the playhead is actually at. `#w2`
+sat at `yPercent:0`, covering the canvas, for all 816 frames. Every frame was identical and
+`lint`, `validate` and `inspect` all passed clean; nothing was malformed, the composition was
+simply wrong.
+
+- **The tell is the render's file size.** 2.1 MB for 27s at 1080x1920 where 39 MB was expected,
+  a near-constant frame compresses to almost nothing. Check output size before extracting frames;
+  it is a one-second check that catches this whole class. Second tell: sample two distant frames'
+  mean RGB: they were byte-identical.
+- **The rule: never target one element with two `fromTo`s in a seeked timeline.** One element per
+  transition (`#wp1..#wp5`), initial state via `gsap.set()` **outside** the timeline, and only
+  `to()` tweens inside it. `to()` resolves its start lazily and unwinds correctly on a backward
+  seek.
+
+### The trap is broader than "two `fromTo`s on one element," and it hit the SAME film twice
+
+Round 1's fix ("never two `fromTo`s on one shared element") was too narrow. Round 2's rebuild put
+a **single** `fromTo` on `#faceframe` for a beat at 24.52s, on an element that also had a plain
+`to()` at 4.00s, and the card was invisible from frame 0 through the entire film, because a
+`fromTo` **anywhere** on the timeline applies its FROM state at build time, regardless of its
+position. Recurred at least twice more (vid52's CTA card blanked for the first half of its film;
+vid58s's close-camera `scale/x/y` stamped itself onto `#faceCam` before frame 0 rendered, so the
+cover shipped at the wrong size with the eyebrow at opacity 0).
+
+> **The real rule: in a paused-and-seeked timeline, a `fromTo` anywhere applies its FROM state at
+> build time.** If the element must be visible before the tween's position, the FROM state wins
+> at t=0. For any entrance later than t=0, use `tl.set(el, fromState, t - 0.02)` then
+> `tl.to(el, toState, t)`.
+>
+> **Generalised: an element NOT inside a `class="clip"` has no framework-managed visibility, so it
+> must never be driven by `fromTo`.** Use an explicit `set` + `to` pair for every state change.
+> Clip children are safe because the framework hides them until their window.
+
+**File size does not catch the partial case.** Round 1 was 2.1 MB of flat colour and file size
+caught it instantly. Round 2 rendered a healthy-looking 34.3 MB and only reading frame 0 as an
+image showed the card missing. **File size catches "the whole film is one element"; frame QA is
+still the only thing that catches "one element is gone."**
+
+### The mirror fault: `immediateRender:false` fixes the pop and introduces a snap-back
+
+Setting `defaults:{immediateRender:false}` on the timeline stops the from-state stamping the
+cover, and now an element sits at its **final** tween value from frame 0 (inherited from CSS or
+a later state) until its tween actually starts, at which point it **snaps back** to the from-state
+and replays. A rule drawn full across the frame from t=0 vanished at 4.92s and drew itself again.
+Neither default is safe unmonitored; render both ways and read frame 0 and every tween-start frame.
+
+### `gsap.from()` reads the element's CURRENT value as its target, not a fixed one
+
+Every scene in one film started at `opacity:0` in CSS (because a zero-duration `tl.set` at
+position 0 does not reliably paint at frame 0: see above). `gsap.from(sel, {opacity: .58})` on
+such a scene animates **.58 → 0**: it renders perfectly at the cut frame, then fades to nothing
+half a second later and stays gone for the rest of the chunk. It is `from()`, not `fromTo()`, that
+has no defined "current" state independent of the DOM: **use `fromTo()` for anything whose CSS
+start state might be hidden.**
+
+`gsap.from()` combined with a `keyframes` array is separately unreliable (no well-defined start
+state): use `fromTo()` with the keyframe array in the *to* vars instead.
+
+### `.stg`/hide state on a parent does not stage its children
+
+With `immediateRender:false`, a hidden **parent** does not cascade its hidden state to a child's
+own computed style. A row's numeral child computed `opacity:1` the instant the row arrived, so
+"60" and "90" were on screen a full second before he said either number, then snapped to zero and
+re-entered on the word. Staging belongs in CSS **on the element that animates**, never assumed
+from its parent: this is the same fault as the "late children" section above, found again a
+chunk later, 75ms under a 0.5s stillness detector's window (a near-miss is a reason to trust the
+detector, not loosen it).
+
 ---
 
 ## Transforms
@@ -71,12 +149,24 @@ six other scenes, up to 0.4s of pre-visible content each.
   scaleX-from-0 reveal fires before the transform applies and the bar flashes horizontal.
 - **`transformOrigin` in px on an SVG `<g>` is measured from the bbox corner, not user space.** It
   threw a whole gate across the frame and put a stray ring 600px from where it belonged. Use
-  `svgOrigin:"540 1120"`, or avoid the transform (an `attr:{r}` pulse worked).
+  `svgOrigin:"540 1120"`, or avoid the transform (an `attr:{r}` pulse worked). Same fault on a
+  per-limb SVG `<path>`: `transformOrigin:'84px 108px'` on a walking figure's leg resolves against
+  that path's own bounding box, so each limb pivots about a different point and the legs detach
+  and fly off at the hip. `svgOrigin:'84 108'` is the SVG-specific API and takes **user units**;
+  never combine the two APIs on the same element.
 - **Switch transform-origin only at scale 1.** An origin swap at scale != 1 jumps the frame.
 - **Tween x/y transforms, never left/top.** Lint flags `gsap_non_transform_motion`.
 - **`letterSpacing` tweens are a hard lint error.** They snap to integer device pixels under the
   seek-by-frame capture engine. Replacements: a uniform tracking pulse becomes `scaleX`; a
-  per-letter spread-in becomes spans with function-based `x:(i)=>(i-mid)*N`.
+  per-letter spread-in becomes spans with function-based `x:(i)=>(i-mid)*N`, or a `spread()`
+  helper that splits the string into per-glyph `<i>` and animates each glyph's `x` from an
+  outward offset. **The glyph-splitter workaround cannot be used on
+  `background-clip:text` gradient headings**: each glyph gets its own gradient ramp instead of
+  sharing the parent's. Those need a plain transform entrance (scale + y) instead.
+- **`display:inline-block` on a span whose only content is a space collapses it to zero width.**
+  Any per-character animation system (a glyph splitter, a typing engine) produces exactly this
+  span, so "THREE FREE" rendered as "THREEFREE" and a shell command lost every space. Fix once,
+  everywhere the splitter is used: `white-space:pre` on the per-char span.
 
 ---
 
@@ -175,3 +265,30 @@ six other scenes, up to 0.4s of pre-visible content each.
   asterisk as `&#42;`.
 - **Do not set `className` from the timeline.** Tween `color` and svg `fill` directly.
 - **Leave 0.02s gaps between same-track clips**, or float-precision overlaps fail lint.
+- **`inspect` needs `data-duration` on the ROOT composition, not just `data-start="0"`.** `lint`
+  only demands the latter. Without the former `inspect` dies with `Cannot read properties of
+  undefined (reading 'totalDuration')`: an opaque error for a missing attribute, not a
+  composition bug.
+- **`:nth-of-type()` counts elements of that TAG, not that class.** Interleaving `.keep` spans
+  between `.kill` spans silently broke `#s2-demo .kill:nth-of-type(2)`. `lint` passed; `validate`
+  caught it as `GSAP target … not found`, which is worth reading rather than skimming. Give each
+  animated child its own explicit class instead of relying on structural selectors.
+- **An absolutely-positioned element with no `left`/`top` supplied entirely by GSAP parks at the
+  frame corner (0,0) until its first tween fires.** Four fact chips sat stacked there, fully
+  opaque, for 2.5 seconds before their `fly()` tween set a transform. A safe-zone gate that
+  measures real coordinates catches this; nothing else will. Any element whose position comes
+  entirely from GSAP needs an explicit `tl.set(...,{autoAlpha:0})` at its scene start.
+- **A typing/reveal helper that reads a `data-*` attribute needs that attribute checked at author
+  time, not at runtime.** `typeLine()` read `el.dataset.txt`; one element had inline HTML and no
+  `data-txt`, so it typed the literal string `undefined` for 3.6 seconds. Nothing checks that the
+  attribute exists before the call: grep every call site against its selector's markup.
+- **`gsap.timeline({defaults:{immediateRender:false}})` fixes `fromTo`-eats-the-cover and
+  introduces a mirror fault: an element sits at its FINAL value from frame 0, then SNAPS to its
+  FROM state when the tween starts, then replays.** Test both defaults and read frame 0 and every
+  tween-start frame; neither is safe unmonitored. See "fromTo semantics" above.
+- **`<use href="#sym">` cannot be stroke-drawn.** The geometry lives in the shadow tree, so
+  `querySelectorAll(sel+' path')` returns nothing and every `draw()` call is a **silent no-op**,
+  with no error: only a `GSAP target not found` warning in `validate`. Expand symbols to inline
+  paths before animating their strokes.
+- **A curved flight path with no MotionPathPlugin**: tween `x` with `ease:'none'` and `y`
+  separately (out then in). Two tweens, one visible arc.

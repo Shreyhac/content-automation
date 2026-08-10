@@ -12,12 +12,49 @@ Tools: `tools/stock/pexels_search.py`, `pexels_fetch.py`.
 - **Coverr is curl-open**, and the reliable download URL is the `og:video` meta tag on the video
   page. Scraping `cdn-staging` URLs off the page body gets unrelated sidebar and paywall videos.
 - **Pixabay pages stay JS-locked to curl.**
+- **Pinterest is a genuinely usable unauthenticated pipeline, and still the wrong primary
+  source.** `pinterest.com/resource/BaseSearchResource/get/?source_url=…&data={"options":{...}}`
+  with a plain browser UA answers unauthenticated, paginates by bookmark, and every video pin
+  exposes an HLS master `ffmpeg -c copy` can download directly: confirmed working, 65 pins across
+  nine queries. It loses anyway: video pins cap at 720×1280 (a ~2.5× upscale into a 2160×3840
+  composition) and the pool is dominated by re-uploads, including one otherwise-great clip that
+  carried another editor's watermark. **When asked to try an alternate source, report the result
+  even when it loses**: "it works, here is why it still loses" is a more useful answer than
+  silently reverting to the default.
+- **Pexels' search page 403s a plain `curl` but not Playwright, and only the FIRST query in a
+  session reliably returns results**: later queries in the same browser context come back empty
+  unless each gets a fresh context and a ~6 second gap.
 - **A company's own YouTube channel is the best "team" b-roll there is.** Real employees in a real
   space, on-claim in a way stock office footage can never be. Label the source on screen and it
   reads as citation rather than decoration. `yt-dlp --download-sections "*00:02:00-00:02:14"
   --force-keyframes-at-cuts` pulls 14 seconds in about 10.
 
 ---
+
+## Ban the shoot, not just the id, and ban the metaphor too
+
+A same-client repeat production found a "new" clip 168 ids away from one already shipped to that
+client, from the shape of one photographer's batch upload: a same-video threshold of 60 ids
+(generous against an earlier finding of 12-apart siblings) missed it entirely. **Widen the
+near-duplicate threshold aggressively (300, not 60): a false rejection costs one candidate in
+twelve; a false accept costs a clip the client has already watched: the asymmetry favours erring
+wide.** Two more repeat shapes a simple id-distance check cannot see on its own:
+
+- **Clusters within one result set.** Three same-shoot pairs turned up in a single query; picking
+  two of them repeats a shot inside the same film even with no cross-film collision at all.
+- **Cross-theme collisions.** Two ids one apart, from the same photographer's batch, cast for two
+  *different* chunks of the same film (e.g. a magnifier beat and a stamp beat): read separately
+  they look unrelated; side by side they are the same shoot appearing twice.
+
+**A metaphor can repeat even when no id does.** Reusing a "verdict" beat's own visual metaphor (an
+aerial fork in the road) in a follow-up production, sourced from an entirely different clip, is
+still the same shot to a viewer who watched both. No id check catches this: it is caught only by
+writing new search queries against a list of what previous productions for the same client already
+spent, and checking the metaphor as well as the footage.
+
+**A previously-rejected clip stays rejected on the facts about the clip, not on its id alone**: if
+a candidate was rejected once for a specific visible reason (an operator's hand in frame, a colour
+cast), re-surfacing under a new id with the same visible fault is still the same rejection.
 
 ## Always look at the footage
 

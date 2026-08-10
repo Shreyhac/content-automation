@@ -67,6 +67,38 @@ carries them. **Audit this the moment a segment list exists, not at QA.**
 
 ---
 
+## A frame count and a duration cannot see content: verify a cut by what it removed
+
+A single-pass cut using `select`+`setpts` for video and `aselect`+`asetpts`+`atrim` for audio
+compacted the video correctly but left the audio at its **source timings**, with the trailing
+`atrim` simply chopping the end. Every structural check passed: exact frame count, matching
+audio/video duration to the microsecond, right dimensions and frame rate, and the delivered "cut"
+still contained duplicate reads it was supposed to remove and had lost its last 18 seconds of
+content instead. **A result that looks entirely legitimate can be about the wrong thing entirely.**
+
+Verify a cut against a **fresh transcription of the delivered file**, checking: does each removed
+phrase now appear exactly once, does the file still end on the source's actual last words, is the
+resulting word count consistent with what the removed spans contained, does any word straddle a
+join. For audio specifically, explicit `atrim` segments rebased with `asetpts=PTS-STARTPTS` and
+joined with `concat` is the reliable idiom, not `aselect`, which is what silently failed to
+compact here.
+
+**One anchor phrase is not a content check; several independent ones are.** A verifier keyed on
+one long literal phrase failed a CORRECT file, because a transcription model heard one word
+differently across two passes of the same audio: the film was right and the comparator wasn't.
+Rewriting the check to key on numeric/proper-noun anchors (which transcription is stable on) still
+failed a correct file a second time, because punctuation-stripping tokenisation split a number like
+`$15.95` in a way that made it un-matchable: a check that cannot match is a check that cannot
+fail. The payoff for fixing both: on an actually-broken file, one specific phrase anchor **passed**
+because a transcription model happened to split it across a segment boundary differently than
+expected, while several other anchors caught the same break. A single-anchor gate would have
+cleared a catastrophically broken film.
+
+**A frame-index range is unambiguous where a timestamp range is not.** `-to` set to a frame's own
+timestamp INCLUDES that frame, which cost one build an extra frame after concatenating several
+`-ss`/`-to` segments. `select='between(n,a,b)'` with inclusively-computed ranges in one pass avoids
+both the off-by-one and the concat step.
+
 ## One face placement, full stop
 
 v1 alternated full-bleed (s=0.794) and card (s=0.399) five times with a 2.1s face island in the

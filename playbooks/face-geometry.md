@@ -66,6 +66,109 @@ never do.
 
 ---
 
+## Measure the free BACKGROUND, not just the head (`freespace.swift`)
+
+crown/facebox tell you where the face is. They do not tell you whether anything else can go on
+screen. `freespace.swift` runs person segmentation per horizontal band and reports the widest
+background run against each edge:
+
+| band | free left | free right | background |
+|---|---|---|---|
+| y0–300 | 0–58 | 118–220 | 26% |
+| y700–1000 | 52–84 | 0–11 | 8% |
+| **y1000–1600** | **0** | **0** | **0%** |
+
+A take where he held a prop through the whole shot had **zero usable graphics zone** below y1000,
+because head, prop and gesturing hand filled the full width. That killed a full-bleed hook before
+a pixel was drawn and forced the face into a band from frame 0. Run this alongside crown/facebox on
+any A-roll with a prop, a gesture, or a desk in shot; it decides band-vs-full-bleed before you
+design anything.
+
+## Measure the SUBJECT, not the face box, before placing anything over full-bleed
+
+A coupon/panel/graphic placed against the measured FACE contour still collides with a shoulder or
+a gesturing hand: the face box is not a body box. Two tools that build a subject mask instead:
+
+- **`measure_body_edge.py`**: per-pixel **temporal variance** over the window. The wall, chair,
+  monitor and speakers are bolted down, so the only thing that varies is him: the mask owes
+  nothing to skin tone or clothing. One placement measured "safe" against a face box had **2.9%
+  of its pixels in motion** from his hand; the replacement, placed against the real reach, had
+  0.0%.
+- **`fullbleed_guard`** (same technique, applied to graphic-zone gutters): a face contour measured
+  x1409–2407; his real reach, shoulders and gesturing hands, was **x1168 to x2704**. Every panel
+  in the film had been placed over him.
+
+The fix is never a narrower graphic in the same place; it is a graphic placed above or beside the
+zone his body actually works in.
+
+## A percentile over a whole take is a property of the take, not of the beat you are cutting
+
+A global chin p97 measurement is real and still the wrong veto for a specific shot. Twice:
+
+- A whole-take chin p97 at y1575/y1730 (of 2160), 25–62px of "clearance" that reads as a
+  coincidence rather than a margin, correctly ruled out a full-bleed **band** across the whole
+  film.
+- Measured on the **one beat actually being cut** instead, chin p97 came in far higher (y1541 →
+  canvas y1374, 226px of clearance; or y1648 → canvas y1465). The global figure was true and it
+  was vetoing a shot it was never measuring.
+
+**Re-measure per beat before letting a global figure veto a shot**, especially when the veto is
+what makes the film worse. This is the same discipline as the gaze-safety exclusion check in
+`playbooks/gaze-detection.md`: always check the raw signal against the window you are actually
+using, not the summary statistic.
+
+## Sparse sampling measures the pose he HOLDS, not the pose he moves into
+
+A talking-head chin measured at 11 points over 29 seconds gave worst-case y1080, and a plate
+placed off that number cut across his neck **in the CTA**, because he leans toward the lens in the
+last three seconds and his chin there is y1145. **Measure densely inside the window a placement
+actually plays over, and measure the beat where he is most likely to change: the close, where he
+leans in to make the ask.**
+
+A geometry heuristic can fail the same way from the tooling side: a skin-mask + width-collapse
+solver built to automate exactly this measurement locked onto his glasses (which break the skin
+run) and returned a confidently wrong "chin y424–492". **A heuristic that returns a number is not
+the same as a heuristic that returns the right number: sanity-check it against one hand-read
+frame before trusting it across an entire take.**
+
+## A residual is a proxy; when it fails, measure the thing it stands in for
+
+A planned card failed a residual-drift threshold inherited from a different take (`RESID 138 >
+130`). Hand-reading both sway extremes composited into the card showed the shot was fine: he
+drifts 400px right across the first 2.8s and then settles, so the card centred on where he ends up
+works. **The constraint a residual stands in for is whether his face stays inside the rect this
+beat shows him in. Measure that directly** (his contour swept 508px against a 560px card, 26px clear
+either side at the widest frame) rather than trusting the proxy number, which would have vetoed a
+real shot in one direction and shipped a real defect (a 26px-either-side sweep against a narrower
+card) in the other.
+
+## Measure the landmark the complaint literally names, not the one the API hands you
+
+Four client notes said "framing is off" with a box round a face card. Two successive measurement
+passes both said the framing was fine: one checked the Vision face **contour** (brow-to-chin,
+hair excluded), the next checked the face **bounding box** (hairline). Both were wrong. Person
+segmentation gave the real number:
+
+```
+contour top (brow)        y1084
+face bbox top (hairline)  y 879
+TRUE crown (hair)         y 439    (441px above the bbox top)
+```
+
+Under the shipped transform, the true crown landed at y76 against a card top of y440: his head was
+cut off in essentially every carded frame, not the "28%" an earlier pass had computed off the
+bbox. **Three successive measurements, each more careful than the last, each still measuring the
+wrong landmark.** The tell was available the whole time: draw the landmark on a frame and look.
+One hand-read frame settles what several rounds of arithmetic cannot.
+
+## A static object of known geometry answers "did the camera move?" directly
+
+Scene detection finds cuts, not gradual zooms. Face-box scale conflates a zoom with him leaning in.
+Background-strip differencing conflates a zoom with a gesturing arm crossing the strip. What
+actually settled it was a static object of fixed real-world geometry in the shot (here, a TV on
+the wall), which gives absolute framing per frame from its edge positions on a scanline, immune
+to anything the subject does. Look for one before reaching for a proxy signal.
+
 ## Three rules past "measure it"
 
 ### 1. A coverage floor

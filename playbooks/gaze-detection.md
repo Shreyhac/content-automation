@@ -98,6 +98,57 @@ An earlier round shipped those same frames unflagged.
 
 ---
 
+## Whitelist, not blacklist
+
+A blacklist (mark the unsafe spans) can only be as good as the detector that built it: two client
+notes about him visibly reading landed at moments where **no excluded span existed at all**,
+because eyelid aperture alone measured 0.347–0.361 there against a film median of 0.379,
+statistically indistinguishable from looking at the lens. A detector that cannot see a fault
+produces a blacklist with a hole in exactly the shape of what it cannot see.
+
+**Rewrite the gate as a whitelist: the windows his face MAY paint in, everywhere else forbidden.**
+A missing window under a whitelist costs a beat of face (safe failure). A missing entry under a
+blacklist ships the defect (unsafe failure). Choose which way you want the gate to fail before you
+build it.
+
+Two changes made the whitelist correct where the blacklist wasn't:
+
+1. **The signal.** Eyelid aperture cannot see gaze *direction*, only openness. Pupil position
+   inside its own eye-opening, plus real head pitch, can, but only as a **rolling median over
+   about 1 second**, not a per-sample threshold. That is what separates a blink (one depressed
+   sample) from a read (the whole window depressed). Hand-labelled frames stopped overlapping
+   entirely once measured this way: reads 0.153–0.326, camera 0.375–0.440. Per-sample thresholds
+   had already failed three times before this.
+2. **Two windows still needed a documented human override** even under the better signal: the
+   film's cover frame (the classifier's lead-trim was guarding what was actually a blink) and a
+   sign-off (the median dips because his eyes narrow when he smiles). **A classifier confident
+   enough to cut the presenter from his own sign-off needs a human check, not another threshold.**
+
+## Run length alone does not separate a blink from a glance when the signal runs backwards
+
+One take's contour-aspect signal ran **inverted** relative to camera-facing (1.015 reading vs.
+0.979 at camera) and `browEyeGap` was identical in both groups: neither discriminator worked at
+all on that take, and only eye-openness stayed cleanly bimodal, thresholded at the **top** of the
+ambiguous band rather than its valley.
+
+Rejecting every short (0.4–0.6s) run as a blink on a run-length argument alone raised coverage from
+22.5% to 55.4% and shipped windows where he was **visibly reading at five timestamps** inside
+"safe" territory. The fix was to tile and hand-adjudicate all 44 short runs: 36 were genuinely
+blinks, 8 were glances. A further trap one level down: `MIN_RUN=2` means single-sample dips never
+reach the run logic at all: 42 of those fell inside otherwise-safe windows and 3 were real glances
+no threshold change could ever reach; those 3 are now named individually in `HAND_EXCLUDE` with
+their reason attached, rather than left for the next threshold tweak to rediscover.
+
+## A confirmed exclusion is an editorial decision, not just a safety flag
+
+Once an exclusion is checked against the raw signal and found genuine (here: eye-openness
+0.45→0.13 sustained over 32 consecutive samples, frames showing him visibly reading), it stops
+being a binary "hide him" switch and becomes information about the shot: the picture moved to a
+smaller CARD for exactly that span, so he stayed on screen at a size the moment could support while
+graphics carried the argument, and returned to full size the instant the exclusion window ended.
+**The answer to "is this exclusion real" is sometimes "yes, and it tells you what the format should
+be", not just whether to cut him.**
+
 ## Bias
 
 **Err toward hiding him.** An extra second of graphics is a soft cost. Showing him reading is a

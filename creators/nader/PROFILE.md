@@ -28,6 +28,16 @@ Run the gaze pass before composing anything: `tools/vision/gaze-detect.swift` th
 **Err toward hiding him.** An extra second of graphics is a soft cost; showing him reading is a
 hard failure.
 
+**As of vid62 round 3, the gate is a WHITELIST, not a blacklist**: the windows he MAY appear in are
+enumerated; everywhere else defaults to hidden. A blacklist only flags what its detector produced a
+span for, and vid62's `read_guard` missed two of three client "framing is off" notes because
+eyelid aperture alone cannot see gaze DIRECTION (it measured 0.347/0.361 at those moments against a
+0.379 film median, indistinguishable from looking at the lens). The signal that actually separates
+a blink from a read is pupil position inside the eye opening plus head pitch, on a rolling ~1s
+median (hand-labelled reads: 0.153-0.326; camera: 0.375-0.440, no overlap). A missing whitelist
+window costs a beat of face; a missing blacklist entry ships the defect on screen. **Choose which
+way the gate fails.**
+
 ### 2. The hook line plays on the clean face; the acted scene starts on the NEXT beat
 
 Overlaying the hero animation on his face during the hook was rejected even though every
@@ -44,6 +54,36 @@ placement**: the face never cuts between sizes, it travels. See
 
 Card mode or full-bleed mode, no third mode. Three of eight round-one complaints on one film were
 this. See `docs/03-quality-bar.md` class 4.
+
+vid62 round 2 hit the same fault at a new scale: the guard that enforces this only ran while the
+face was carded, so full-bleed sections went unchecked and text landed on him 180 times across 23
+elements (a promise rail across his chin, competitor caveats across his mouth, headlines across his
+neck, the CTA on his chest). **Do not card the face just to clear it either**: the obvious fix
+cleared his face and emptied the other half of frame, a different defect for the same one. The
+correct fix is a measured-safe column outside his real contour (`facesafe_guard.py` against the
+source face track), and the top band is not automatically safe: his hair sits in it.
+
+### 9. Graphics are not the default; showing him is
+
+*"No need to show any animation here when Nader says real is what are you going and whatever it
+is, just the A-roll should be shown. Any animation, error, just A-roll with captions should be
+there. At the last line ... CTA."* (vid56 short, round 4, on the closing/direct-ask beat)
+
+**He said this explicitly generalises: it applies to the long-form too, and names a repeated
+pattern across videos, not a one-off note on this beat.** The beat in question had been
+graphics-only for its whole 4.6s (an offer card, no face) on the line where he makes the direct
+ask, because a gaze-safety exclusion had (wrongly, on inspection) flagged that source range as
+unsafe. Reach for an animated overlay when it's carrying information that cannot come from him
+speaking (a number, a comparison, a mechanism); do not reach for it to fill a beat, and never let
+it replace him at the moment he is making the direct ask. Audit every closing/CTA beat against this
+before the next round, not after the note.
+
+**This has a precondition, found the round after:** *"nader is reading here in this frame, need to
+replace it with animations ... as we cant show the a roll here as he is looking down."* (vid58
+short round 2, on a span already measured as him reading, eyeOpen 0.45→0.13 for 32 consecutive
+samples). An unwatchable shot at a smaller size is still an unwatchable shot: showing him is the
+default only when showing him is worth doing. When the take itself is unusable for a span, take the
+picture off and let graphics own the frame; do not shrink the problem instead of removing it.
 
 ### 5. No face-tracking tween
 
@@ -68,6 +108,11 @@ every clip toward the palette. See `playbooks/stock-footage.md`.
 "Better A-rolls and more A-rolls" from him means **b-roll, not face time.** Confirmed directly.
 Face share fell from 43.2% to 39.4% in a round he approved.
 
+Confirmed again on vid58's short, which delivered with zero stock despite eleven graded clips
+already cut into the long-form: the owner's corrective instruction was **"animations on TOP, A-roll
+on the BOTTOM, split-screen AND card, with stock footage."** Treat that as the standing shape for
+his shorts, not a one-off correction; see GRAMMAR.md.
+
 ### 8. Sponsored work has a zero-error bar
 
 Resolve promo codes against the partner URL, never against whisper. Every on-screen figure needs
@@ -83,6 +128,10 @@ pack must flag paid promotion.
 - No em dashes.
 - The file-size matching rule does **not** apply to him (that is the two Instagram creators).
 - SFX: median **0.060**, ceiling 0.096, bed 0.055. He has halved it on each complaint from 0.20.
+- **A sustained bed reads as "going on and on" regardless of level.** vid56 round 1 kept median
+  0.053 (below the vid46 ceiling) but added sustained texture beds under long builds, and still
+  drew "the SFX is very irritating, going on and on and on" plus four separate "remove the SFX from
+  here." Transients only; silence is allowed; roughly one cue per 4-5s.
 
 ---
 

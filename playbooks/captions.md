@@ -59,6 +59,69 @@ the same rule to already-injected HTML.
 
 ---
 
+## A word belongs to exactly ONE chunk
+
+In a chunked long-form, filtering caption words by **overlap** (`word.end > chunk.start and
+word.start < chunk.end`) puts any word straddling a join into BOTH chunks: five of fourteen joins
+on one film duplicated a word across the seam ("OneRep also" / "**Also** rolled out..."). Filtering
+by **onset alone** instead drops words, because chunk boundaries are frame-snapped and whisper's
+onset for the word the chunk was actually cut on can sit a few milliseconds earlier than the
+boundary. **Fix: key on onset plus a small frame-snap slack (~0.06s).** Proofread the assembled
+caption track end to end, in order: duplicates are invisible chunk by chunk and obvious in one
+list.
+
+## Numeric tokens need exact-token repair, including trailing punctuation
+
+Whisper writes spoken numbers as bare digits ("three ninety-nine" → `$399`, "fourteen ninety-nine"
+→ `$1499`), and an exact-token fix table can correct `$1499` while missing `$1499.` at a sentence
+end: the trailing period makes it a different token. In a sponsored comparison this is a
+**hundred-fold error on a competitor's price**, burned in. Grep every caption file for
+`\$[0-9]{3,}` before delivery on any film that quotes prices; it is the check that would have
+caught this.
+
+## Repairing a chopped word at a cut join
+
+An out-point that trims cleanly by the transcript's timestamp can still cut the word's actual
+**sound**, because whisper's marks undershoot (see `playbooks/short-from-longform.md`). The fix is
+an L-cut, not moving the cut: extend the outgoing beat's audio (faded) under the incoming one,
+**measured per join, not chosen**: extend until the signal has been under the noise floor for
+three consecutive 20ms windows.
+
+Two ways that repair itself goes wrong:
+
+- **A tail scan that walks forward from the cut can cross into the next word.** Capping only at
+  silence, with no ceiling, laid 124ms of the *next sentence's* word over the close: a fragment of
+  a different word appearing where none belongs reads exactly like "a word got cut." Every tail
+  must be capped at `min(measured_silence, next_word_onset − 50ms)`.
+- **A fade shape can destroy a word without clipping a single sample of it.** A `curve=exp` fade
+  starting at the cut's own t=0 is already well down by 100ms, so the release is inaudible under
+  the incoming line even though the word is technically present in the file. Hold full level for
+  ~60% of the tail and taper only the last portion: the tail is the same voice continuing, and
+  ducking it from sample zero is what makes it sound truncated.
+- The cheap way to verify a word survived: **transcribe the delivered span and the same words cut
+  from the clean master, and compare the two transcripts**: seconds, versus a full-file pass, and
+  it controls for the transcription model's own mishearings rather than chasing them as if they
+  were audio bugs.
+
+## A caption behind an A-roll is invisible and every position-based gate passes
+
+A caption `div` with no explicit `z-index` computes to `auto` (stacking-context 0); a full-bleed
+`<video>` above it in stacking order paints over it completely, for the video's entire on-screen
+life. `safe_zones`-style gates measure *where* an element is, not *what actually paints there*.
+The caption was exactly inside every Instagram safe zone and simply never visible. See
+`playbooks/frame-qa.md`'s "position is not visibility" note; the caption-specific fix is
+`autoAlpha`/explicit `z-index` on any caption layer that shares a stack with full-bleed video.
+
+## A suppression keyed to a composition must be re-derived when the composition changes
+
+Mute ranges (spans where a card already states the words, so the caption layer is deliberately
+silent there: see "When NOT to caption" below) are computed against a specific cut. When the
+composition is rebuilt and the graphics that justified the mute move or disappear, the old mute
+ranges can outlive them: one rebuild shipped **~30 seconds of speech with no subtitle at all**,
+because four legitimate mute ranges from an earlier cut had never been re-derived. Regenerating the
+caption track from the current composition (rather than reusing a hand-patched one) is what
+surfaces this: see the "regenerate derived artefacts" note in `playbooks/frame-qa.md`.
+
 ## Per-word animation
 
 - **Later words must be parked at time 0.** A generic per-word rise built as

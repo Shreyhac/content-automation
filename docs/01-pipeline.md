@@ -82,6 +82,12 @@ Then:
   listicle numbers are animation slots, not gaps.
 - If cutting: trim video and audio together with the same in and out points, then **re-whisper
   the cut file**. Every timestamp after the first cut is otherwise wrong.
+- **Whisper's word table is not a beat map for emphatic delivery.** A halting, staccato line
+  (four separate stressed words) can get smeared into one or two long "words" spanning several
+  seconds. Run an RMS envelope over the cut audio to find the real onsets and land each stress as
+  its own beat: a transcriber optimises for text, not for where the emphasis actually falls. Not
+  every gap in a halting delivery is dead air to cut: the gap is worth keeping when it sits
+  *between* stressed words (his emphasis) and worth removing when it sits *inside* a stumble.
 - **If the creator delivers a pre-cut, graded, mixed take, ship it untouched.** Transcode only.
   Do not loudnorm, denoise or regrade someone's own mix.
 - Check for a **mirrored** front-camera take: readable text in frame decides it, per take, not

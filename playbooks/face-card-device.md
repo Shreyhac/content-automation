@@ -121,6 +121,69 @@ or they do not exist. Never a full-width ground.**
 
 ---
 
+## Card and band size are arithmetic, not taste
+
+A card of width `W` at scale `s` shows `W/s` source pixels across, so the coverage floor from
+`playbooks/face-geometry.md` gives a second inequality for free: at `H/s` visible source rows,
+
+```
+rows <= H * 1080 / W
+```
+
+A 700×640 card has a ceiling of 987 rows: a head, always, however you nudge the crop. "Only his
+head is visible" was not fixed by repositioning the card; the card had to get **narrower**
+(560×700, ceiling 1349 rows) to show more of him. The same inequality run the other way sizes a
+full-width band: a 1080-wide band at `s=1` shows exactly 700 source rows against a 720px
+crown-to-chin, so a band that must hold a talking head **has to be narrower than the frame**, or
+run to full frame height so `s` can come up (see below).
+
+## A split (or band) half must run to the frame edge
+
+A 960×740 rounded card floating mid-frame, correctly sized and correctly placed by every gate, is
+still not a split: it is a card sitting in a frame, and the note it draws is "framing looks
+weird" even though nothing measured wrong. **A split half must run full width and all the way to
+the frame edge** (y1920 for a bottom half), not stop short of it to respect the reserved zone: on
+a full-bleed beat his video already covers y1600–1920 and nobody reads that as a violation, so a
+band may do the same. The reserved-zone rule protects his **chin and any text**, not pixels below
+it.
+
+Running the band to the true edge also fixes the size arithmetic instead of fighting it: a band
+stopping at y1600 has only 740px for a 720-row head (forcing a narrower `s`); run to y1920 and the
+same head gets 1140 rows at `s=1`, so the crop solves cleanly with margin on both crown and chin.
+**Reaching for a smaller scale is solving the wrong end of the inequality.**
+
+A full-bleed band also has no border to draw: its only edge is the top one, a hairline plus the
+shadow it casts onto the graphics above. A `border` on a full-width element is three invisible
+sides and one that matters.
+
+## Do not card the face just to clear graphics off it
+
+The obvious fix for "text on his face" is to card the face so graphics own the other half. It
+trades one defect for another: carding empties the vacated half of the frame just as hard as the
+text collision it was meant to fix. **Keep him full-bleed and put graphics only in the
+measured-safe column** (from his real body reach, see `playbooks/face-geometry.md`'s
+"measure the subject" section): caught here only by screenshotting the composition before
+rendering, not by any gate, because a correctly-carded-and-empty half passes every check.
+
+## Only ONE of a set of face states may change his head size
+
+A rebuild used three states off one baked camera: BAND (full-width bottom panel), CARD (the same
+pixels, clipped narrower), CLOSE (a real push-in on a hard cut, caption moved to the low band).
+BAND and CARD share one camera and differ only by `clip-path`, so his head is the **exact same
+size** in both: the change between them is a widen, not a resize, which is what makes two formats
+safe in one cut. CLOSE is a genuine size change and is allowed to be one only because it happens on
+a hard cut into a new shot. Two sizes that CUT between each other (not a hard cut, mid-scene) reads
+as a bug: this is the standing lesson from vid46's short, confirmed again here.
+
+## A vertical split is the only way to show him at native 1:1 without a punch-in
+
+A full-width band of height H shows exactly H source rows, so his chin lands wherever the band's
+height puts it: usually deep in the reserved zone unless the band runs to the frame edge (above).
+A full-height **column** has no such constraint: solved from the CTA window specifically (not a
+whole-take percentile: see `playbooks/face-geometry.md`), a right column at `x440–1080`, native
+scale, `x=250` showed his head at true 1:1 because his head span in that window, not the take's
+average, decided the column position.
+
 ## Two short windows separated by a gap
 
 Do not card both. One film carded 8.43 to 11.83 and 13.83 to 15.83 with two seconds of

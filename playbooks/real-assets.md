@@ -28,6 +28,28 @@ plan.**
   sections have carried everything worth posting.
 - **The vendor's caveat usually sits in the same paragraph as the damning quote.** Include it.
   Omitting it makes the reel debunkable; including it makes the narrator trustworthy.
+- **A registry/marketplace page is the source of truth for "is this the real X," ahead of star
+  counts or search results.** `https://skills.sh/api/search?q=<name>` returns canonical
+  `owner/repo/id` triples with install counts, and the page carries the exact install command in a
+  copy box: every command shown on screen was sourced from there, not written from memory.
+- **Verify a filtered capture actually applied the filter before it goes in the frame.** A
+  screenshot of `openrouter.ai/models?max_price=0` still showed a `from $0.13/second` card because
+  the URL param silently no-op'd, and the on-screen claim ended up asserting the opposite of the
+  headline. A screenshot is a *claim*; prefer the underlying API (e.g. `/api/v1/models`) over a
+  filtered page URL for anything the frame is counting.
+- **Run the larger transcription model on numbers before auditing a claim.** `whisper small`
+  dropped a figure entirely ("405 plus or 635 plus" → "435 plus") and separately mangled a correct
+  number into a wrong one, on two different productions: on each, the small model's error was
+  read as the *creator's* error before the medium/large model corrected it. **Numbers spoken at
+  speed are exactly what a small model mangles, and a claim audit is nothing but numbers.** Keep
+  the small model's word timings (they are already solved) but re-run the big model over any take
+  whose on-screen text is numeric.
+- **Resolve a named person's identity through an account you have already verified, not through
+  the domain that matches their name.** A script named "Emil Kowalski"; `emilkowalski.com` belongs
+  to a different person entirely (a Polish marketing founder, photo on the page). The actual
+  design engineer is at `emilkowal.ski`, found via the GitHub API's `blog` field on his verified
+  account. Screenshotting the obvious domain would have put a stranger's face on screen as the
+  subject.
 
 ---
 
@@ -71,6 +93,26 @@ are cheap; going back for a missed shot is not.
   use Python.
 - **A maintainer's own README hero images are the fastest real product surfaces there are**:
   `api.github.com/repos/.../readme`, base64, regex the image URLs.
+- **A marketing page can be the real product UI, even when the app itself is login-gated, if the
+  page plays a scroll-triggered demo of it.** One product's marketing site auto-played its own
+  playbook editor (slash menu, block chips, an agent dropdown) as an `IntersectionObserver`
+  animation. Static full-page captures showed **empty panels** because the sections render on
+  scroll. Fix: `wait_until="load"` (these sites keep sockets open, so `networkidle` times out on
+  them), scroll slowly first to trigger the observers, then screenshot per-`<section>` at ~1–1.5s
+  intervals. Delete any support-chat widget/iframe before shooting or it lands in every frame.
+  **Before rebuilding a product's UI from scratch, check whether its own marketing page animates
+  the real thing.**
+- **The real screenshot already brings its own cursor.** Compositing a synthetic pointer over a
+  captured UI plate that already contains one puts two arrows on screen. If the capture shows a
+  pointer, do not add one.
+- **A copyrighted/IP character generator refuses by name and often by careful paraphrase too.**
+  One image model refused a named superhero in every phrasing across four attempts (some only
+  after ~70s of silent moderation); a different model (Nano Banana Pro /
+  `gemini-3-pro-image-preview`) produced it correctly on the first try. Keep a fallback order for
+  IP characters rather than iterating prompts on a model that has already refused a plain
+  description. Prompt pattern that mattered: explicitly state **"absolutely NO panel border, the
+  background extends to all four edges"**. Without it the model draws a comic-panel frame welded
+  to the figure's own silhouette, which then keys badly.
 
 ---
 
@@ -81,6 +123,16 @@ scaled into a 960 card is unreadable, which is exactly the "reads as vague" fail
 
 > **Keep the real chrome and the real URL, which is the trust device. Rebuild the page BODY as
 > native HTML at reel type sizes** (30px+ body, 58px heading), quoting the real wording.
+
+**"The actual UI" means an accurate REBUILD that can perform, not a capture of the real one.** A
+note that reads as "use the real pixels" can mean the opposite once the client sees a screenshot on
+screen: it is inert (cannot type, cannot focus a field, cannot be zoomed without going soft, and
+at 1080-wide it reads as a blurry rectangle: literally "vague"). The capture's real value is as a
+**design spec**: copy the real chip shapes, field styling and colours from it, then build a version
+that types character-by-character with a caret, opens its own menus, and takes a camera move. A
+zoom on rebuilt content is only legible if the content can survive the scale: solve the container
+width so `content_width * max_scale < view_width` **before** animating the push-in, not after the
+first render clips a line.
 
 Trust comes from the frame and the link; legibility comes from the rebuild.
 
@@ -111,7 +163,17 @@ Trust comes from the frame and the link; legibility comes from the rebuild.
 - **Google's favicon service** for news outlets, which Simple Icons dropped:
   `google.com/s2/favicons?domain=<d>&sz=128`. White 5px-padded tiles normalise mixed-shape favicons.
 - **Coloured dots and monograms read as placeholders and get called out.** Real marks read premium
-  instantly.
+  instantly. So do monospace **text chips** standing in for brand marks: called "too shitty" on
+  two different beats of the same film. `cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@<ver>/icons/<name>.svg`
+  covers most dev-tool/AI brands (~29 pulled in one loop for a provider list); the monochrome ones
+  carry `fill="currentColor"`, which resolves correctly with zero extra work on a light/ink
+  background. **Render every logo to one sheet and look at it before wiring any of them in**: a
+  dead mark (wrong colour, wrong background) is worse than the text it would have replaced.
+- **One film, one cast: a second improvised character for the "same job" reads as two different
+  productions.** A hand-drawn mascot standing in for a beat where the house pixel-sprite character
+  should have appeared was flagged even though the client's note only named a different scene; the
+  actual fault was two characters doing the same job. If a house character exists, reuse its
+  literal asset rather than drawing a new one for a new beat.
 - **SVGs render directly as `<img>`** in HyperFrames. No PNG conversion step.
 - **Verify a logo asset has alpha before applying `brightness(0) invert(1)`.** Playwright element
   screenshots are RGB with no alpha unless `omit_background=True`, and a page rendered onto a white
@@ -129,6 +191,26 @@ Trust comes from the frame and the link; legibility comes from the rebuild.
   reel. Credit CC BY photos in the caption.
 
 ---
+
+## Compositing a real mark onto a generated plate
+
+An image model asked to draw a specific product's icon (or a legible UI on a screen inside a
+photographic plate) draws an invented glyph or illegible type no matter how the prompt is worded.
+**Compositing the real asset onto the generated plate beats regenerating the plate**:
+
+- Build the icon once from the client's own SVG plus their documented gradient formula, matched to
+  their design tokens.
+- Locate the AI-drawn stand-in's silhouette in the plate via colour-range masking + convex hull,
+  measure its rotation off the hull's top edge, and alpha-composite the real icon into that exact
+  position/rotation/size.
+- Same technique for a UI shown on a screen inside a photo: perspective-transform the real
+  screenshot onto the four corners of the AI-drawn screen. Get the quad corners right: a
+  mis-measured perspective warp looks worse than no attempt and should be deleted rather than
+  shipped half-right.
+- **This is optional, not a rule, when the screen/icon is background texture rather than the
+  subject.** A soft out-of-focus screen that is never the focus of the shot can be more believable
+  left un-composited than pixel-perfect and sharp. Ask which the surface is (subject or texture)
+  before spending the compositing pass on it.
 
 ## Honesty guards worth copying
 

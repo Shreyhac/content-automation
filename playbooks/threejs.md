@@ -65,6 +65,68 @@ captions; an arrow crossing both the title and the face.
 
 ---
 
+## Flat objects need oscillating rotation, not a monotonically increasing one
+
+A layout deliberately flat in its own XY plane (a page, a seal, a card, a stack of rows) inherited
+a steadily increasing Y rotation (`rot = t * 0.20`) from a build whose objects were genuinely 3D
+(spheres, clusters, cones). A monotonic spin **sweeps through 90 and 270 degrees**, and at those
+angles a flat object is a vertical smear. The earlier, related lesson was "a torus built in the XZ
+plane is invisible to a front camera": this is the same fault from the other axis. **Check the
+rotation against the dimensionality of the layout, not just the plane it lives in**: 3D layouts can
+spin freely; flat ones need `rot = A * sin(t * w)`, `A` around 0.17 rad, so they never turn
+side-on. The tell is a narrow bright column where a wide object should be: easy to misdiagnose as
+a density or alpha problem.
+
+## Tile/point size decides whether a material can be seen at all, before any shading question
+
+A material rebuild (standard shading, environment map, per-tile rise, bloom) was invisible in its
+first spike, and the cause was upstream of every one of those upgrades: at `TILE=34`, a tile
+rasterises to 17px at delivery resolution: no room for a highlight, no visible height, nothing
+bright enough for bloom to catch. Re-solved from that floor to `TILE=90`, the same device went from
+a 46%×27% strip to 62% of frame, with lit-vs-unlit separation finally surviving H.264 (65–83 luma
+apart, against a flat control's 38.9). **Scale places a device; pitch/spacing shapes it; and raw
+element size decides whether any material property is visible at all**: check size against the
+delivery resolution before tuning anything else.
+
+A related trap: enlarging the vertical pitch of a tilted grid to "give it more room" made it read
+as ten horizontal stripes instead of a grid, because the tilt's foreshortening was already
+compressing the vertical axis by ~0.65×: a 54px gap became 35px on screen against a 6px
+horizontal one. The geometry was already right; the fix was `scale` and vertical offset, not more
+pitch. **Re-proof the sheet before re-deriving anything**: one screenshot settles which axis is
+actually wrong.
+
+## A neutral instance colour is not a neutral render
+
+Setting an instanced object's own colour to neutral grey was not enough to make it read as neutral:
+the scene's environment map (a blue sky) and rim light tinted it a visible hue: a competitor
+rendered in the sponsor's own brand colour, in a paid comparison. The grey state needs
+`envMapIntensity` pulled down (not just zeroed) and a neutral/white rim light, which reads as a
+different **material**, not a dimmer version of the branded one. Any lit 3D object inherits colour
+from more than its own material property; check the environment and rim lights too whenever colour
+is doing editorial work (branded vs. neutral, ally vs. competitor).
+
+## Different numeric claims must not share one field, and a tile is not automatically "one thing"
+
+A script carried three different counted quantities (e.g. 750 broker groups, 319 sites, 420
+brokers). Building one field of 750 elements with 319 and 420 lit inside it asserts a relationship
+between the three numbers that was never established: the viewer computes ratios nobody claimed.
+**A recurring field device should carry SHAPE (the comparison), never COUNT**: put each number on
+its own stamped/labelled figure with its own source, and use the field only where the argument
+genuinely is coverage/shape. Making a tile equal exactly "one broker" to avoid this just moves the
+same false-precision problem down one level (the field's total now has to be a real, exact number),
+so the fix is to stop asking the field to carry a count at all.
+
+## Guilloche / epitrochoid curves: two traps
+
+- **Never interpolate `R` and `r`.** A closed epitrochoid needs `R/r` rational; lerping through a
+  non-integer ratio produces an OPEN curve that sweeps enormous arcs off the frame. Switch `R`,
+  `r`, `d` **discretely on the cut** (the wipe already covers the canvas on that exact frame, so
+  the swap is invisible) and lerp only centre/level/spin so the new figure settles into place.
+- **Guilloche is copies, not scales.** Nesting rings from 0.30x to 1.0x scale produces a smear.
+  Real guilloche is many near-identical copies of one curve, each turned by a fraction of a lobe
+  (`scale 0.82–1.0`, `phase = f * 2PI / lobes`). Lobe count is the numerator of `R/r`: pick pairs
+  giving 5–10 lobes; below 5 reads as swooping arms rather than a rosette.
+
 ## The recurring object
 
 **One recurring object beats 3D-per-beat.**
@@ -76,6 +138,16 @@ plate is. Cost: about 90 seconds of the render per chunk, no bugs.
 
 On a 40-second reel the same principle applies at smaller scale: two beats, one object, and the
 recurrence is what makes it feel designed rather than decorative.
+
+**A recurring 3D field is a subject or it is nothing: it does not survive demotion to ambient
+texture.** The same field device that worked at alpha 0.92 as the literal subject of a film (its
+instances *were* the thing being counted) was rejected when reused as low-opacity wallpaper behind
+unrelated scenes in the next production: at 5–14% alpha its thin edges alias frame-to-frame at 4K
+(read as flicker) and its instance-colour LEDs bleed through as stray coloured lines behind text.
+**Never run a hero field below roughly 0.6 alpha, and never behind content it is not actually
+illustrating.** Reusing a hero device as texture destroys the device and dirties everything in
+front of it. A signature device reused for the *same client's next film* also reads as a repeat,
+not a callback, unless the client explicitly asks for it back.
 
 **A DOM bezel around a WebGL core is the strongest hybrid.** The ring, tick marks and label are
 crisp CSS; only the thing inside needs to be 3D.

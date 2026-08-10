@@ -66,6 +66,45 @@ Same standing rule as gaurav. See `docs/06-delivery.md` step 3.
 
 ### 7. No em dashes
 
+### 8. No camera zoom, ever: "make it stagnant"
+
+vid57 round 2: *"The entire frame just zooms in and zooms out a lot of times. Make it
+stagnant."* A whole-frame zoom-entrance-plus-micro-punch grammar (`rigIn`, `punch()`, `par()`
+parallax) had been ported wholesale from another creator's file
+(`feedback_premium_motion_grammar`, a **thepmfguy** finding) without ever checking whether he
+wanted it. Removed globally across 16 call sites and the slow push on his A-roll.
+
+**Rule: camera grammar is per-creator, not a house default.** Element-level entrances
+(lift/drop/fade/slam/pop/fly, things arriving) are still fine; the camera itself must never
+move. Before porting any motion rule from another video's file, check whose it was.
+
+### 9. "An animation" means a drawn CHARACTER that acts, not an interface that represents the thing
+
+Two separate instances, same misread each time. vid53: *"better spiderman animations"* (asked
+twice) turned out to mean giving the Spider-Man figure AGENCY: a figure that causes the cuts
+(recoil web-shots, a rappel, a landing that jolts the page), not one that reacts to them. vid57
+round 2: *"Told you to make an animation where an AI icon is showing and he is forgetting from
+its memory. Visual cartoonish animation I want from motion graphics itself."* Round 1 had built
+an agent *terminal* (UI); he meant a bot character that bobs, blinks, and visibly breaks down.
+
+**Rule: when he asks for an animation of a thing, build a drawn character that acts, never a
+UI, meter, or panel standing in for it.** Cartoon animation is a choreography problem (values
+that read as acting: a limb a different colour from the body, a light that goes red, eyes that
+squash flat), not an asset problem.
+
+### 10. Full-bleed is an opening device only: CARD and SPLIT are the two ways he returns, never a mid-film slab
+
+vid57: *"Show my frame at the start for 1-1.5 seconds, then my face should go off and come only
+at important lines in the form of those small cards."* vid63 round 1 reconfirmed it after an
+initial misread: *"As we have been doing in the very start from 1.5 to 1.5 seconds, my full face
+is shown. Either split-screen it or switch it to card format."* The 1-1.5s open is kept, not
+cut; what changed is that **split-screen is now an equally valid return alongside the card**,
+solved by the same rail arithmetic as everything else (`rows <= H*1080/W`): CARD sizes down to
+fit (e.g. 560x700 at s=0.519), SPLIT runs a native 1:1 column to the frame edge instead of
+shrinking. Never a full-width lower-third slab (rule 2) and never full-bleed again after the
+open: a mid-film face panel was tried and rejected once already (vid53: *"no need to show my
+face from here, just show the animations and the content in the full screen"*).
+
 ---
 
 ## Face geometry

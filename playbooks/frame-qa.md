@@ -113,6 +113,115 @@ grep -n "—" index.html *.srt *caption*.md
 
 ---
 
+## Custom gates: design rules learned from building them
+
+This system has grown project-specific gates beyond lint/validate/inspect (`card_guard`,
+`band_guard`, `safe_zones`, `paint_guard`, `motion_guard`, `snap_guard`, `sched_guard`,
+`asset_guard`, `broll_guard`, `audio_guard`, `cut_guard`, `facesafe_guard`, `contrast_guard`,
+`css_guard`, `dead_guard`, `pii_guard`). What they all taught, past what any one of them checks:
+
+**A gate that has never run is not a gate.** On one film, `pii_guard.py` read a file that a
+different script had never written; `card_guard.py` had silently defaulted to `["c1"]`, reading as
+a clean film-wide pass; `css_guard.py` was hardcoded to a chunk list from an earlier plan;
+Playwright's browser binary was missing, so every DOM gate was **crashing**, not checking. A green
+run and a gate that silently did nothing produce the identical console output. **Derive scope from
+the plan file (e.g. `chunks.json`), never a literal, and print what a gate actually measured
+(element count, chunk list) every run, not just its verdict.**
+
+**A gate that excludes a scene is not a gate for that scene.** Two gates walked
+`document.querySelectorAll('.scene')`; one chunk's hook markup did not carry that class, so the
+film's first nineteen seconds, the thing every viewer sees, were never measured by either gate,
+in any run, on any film. What that hid: a panel and a caption printed on top of each other,
+illegible, for the entire hook. Found only by extracting frames from the finished render and
+reading them. **Before trusting a gate, check what it does NOT look at.**
+
+**A stale-looking correction table can be worse than stale: it can be inert.** A price-correction
+table matched `"$420"` because that is how the token looks in a caption. Whisper emits a **leading
+space** on ordinary words and none on attaching punctuation, so the actual token is `" $420"`, and
+the table had never matched anything across three films' worth of reuse: read, in review, as a
+safety net the whole time. **A correction table needs a test that proves it FIRES**, not just that
+it exists: one assert that a known-bad input comes out corrected is enough.
+
+**Run a negative control on every new gate; a gate that sounds like it covers a case often does
+not.** A malformed CSS comment silently dropped every rule after it (browser error-recovery
+resynchronises past it), and `lint`, `validate` and `inspect` all passed clean: none of them parse
+the cascade. The new `css_guard.py`, which asserts every source selector survives into
+`document.styleSheets`, was proved by replanting the exact defect and confirming it FAILS. Its
+sibling `dead_guard.py` (looks for elements that should paint and don't) reported **CLEAN on that
+same defect**, because the dropped rule was the element's only paint source, so the element has no
+background/border/text and gets filtered out as "not a painting element" before the zero-area test
+even runs. Two gates that sound complementary can both miss the same bug for different reasons: negative-control each one independently.
+
+**A permissive change to a gate is not done until a planted defect still fails it.** Widening a
+band-check to intersect an element's rect with every clipping ancestor (correct fix for a false
+positive) also made the gate pass a **planted** violation, because the root element computed to
+height 0 on a plain page load and the ancestor-clip walk clipped everything in the film to
+nothing. The gate reported PASS having tested nothing at all.
+
+**An allowlist/exemption list must be re-derived per film, from measurement: an inherited one
+exempts the wrong thing.** A motion-gate allowlist carried an entry naming elements the current
+build no longer has (matches nothing, silently "handles" nothing while reading as if it were
+considered) and a second entry that blanket-exempted an entire scene's full duration when only a
+few seconds of it were legitimately held, hiding 15.8s of genuine staleness. Grep an allowlist's
+selectors against the current build before trusting it, every round.
+
+## Reading render output: more tells
+
+- **A near-flat render compresses to almost nothing: check the delivered file's byte count before
+  extracting a single frame.** 2.1 MB for 27s where 39 MB was expected caught a whole-film bug (see
+  `playbooks/gsap-traps.md`) in one second. This tell only catches "the whole film is one static
+  element": it does not catch "one element among many is missing," which needs the full frame
+  read.
+- **Sample two distant frames' mean RGB as a five-second pre-check.** Byte-identical means at
+  frame 0 and frame 210 is the same signal as the file-size tell, faster than opening images.
+- **"Position is not visibility."** An element can be exactly where every safe-zone gate expects
+  it and still never paint, if something else sits on top of it. A caption `div` with no explicit
+  `z-index` computed to `auto` (0) under a full-bleed `<video>` at `z-index:2`: captions were
+  missing for 27 of 43 seconds and every gate passed, because `lint`/`validate` check the document
+  and console, `safe_zones` checks coordinates, and WCAG contrast is computed from **declared**
+  colours, not from what actually composites on screen. The only test that settles it:
+  `elementFromPoint` at the element's own centre, actually returning that element. Two things are
+  needed to make that honest: **probe at the composition's real size** (a scaled-down viewport
+  returns `null`, and `null` reads as a pass), and **replicate the renderer's clip scheduling
+  before hit-testing** (a plain page load stacks every clip's DOM at identical coordinates, so the
+  last one wins every hit test and reports the other 21 as failing for no reason).
+- **A hole is not an overflow, and no structural gate looks for one.** A frame mid-tween, between
+  one element finishing its exit and the next starting its entrance, can be a genuinely empty
+  region for a fraction of a second, not static, not overflowing, not a contrast failure, not a
+  snap. The only way to find it is extracting the mid-move frame and looking. Fix by deciding
+  which side of the move loses ground last (a `clip-path` collapsing downward can let a face
+  finish leaving before the incoming panel needs to land on it).
+- **A "static for N frames, one-frame jump, returns to within ~2% of the held value" is the shape
+  of a real visibility snap.** The SIZE of the jump is not the test: a legitimate
+  `back.out(2.4)` entrance moves most of its travel in the first sixth of its duration and looks
+  identical to a snap on a raw-magnitude threshold. Require the static-hold-before and the
+  return-to-value-after; that shape alone separated real bugs from fourteen honest entrances in
+  one pass.
+- **Regenerating a derived artefact exposes what was hand-patched into the version it replaced.**
+  Re-running a caption generator to fill four gaps surfaced bare unformatted prices (a fix table
+  that only matched `$`-prefixed tokens had never fired: see the gate-design note above),
+  mid-sentence capitalisation on every clip, and a missing source transcript the tooling could not
+  have run without: none of which had been reported, because a hand-edited version silently
+  looked fine. **When something in a build was clearly hand-patched once, regenerating it from the
+  real generator is itself a QA pass.**
+- **`validate` sampling a fixed small number of timestamps will eventually sample a transition,
+  not a contrast problem.** Seventeen WCAG failures all landed at exactly `duration/2`: the exact
+  midpoint of a wipe, where a near-black sheet legitimately covers the frame and every element
+  measures 1:1 against it. Before fixing a contrast report, check whether every failure shares one
+  timestamp; if so, nudge the sample point and re-run before touching any colour.
+- **A comparator that keeps finding faults which evaporate on inspection is measuring the wrong
+  thing.** A caption-sync check against a full re-transcription reported "three cues out of sync,"
+  then two, then one: each instance was the comparator itself (transcription mis-spelling a
+  proper noun, a number tokenised differently in a caption vs. a transcript, a word on a cue
+  boundary attributed inconsistently). The measurement that actually settles sync is **drift**
+  between anchored distinctive words at the head and tail of every beat, not string similarity.
+  It found a genuine, flat 0.02s offset (half a frame) that a similarity check could never have
+  resolved. Fix what you measure before lowering a threshold to make failures stop.
+- **A render in flight is not a sunk cost.** A caption defect found four chunks into a 45-minute
+  render was worth stopping immediately: twelve minutes lost against forty-five plus a film to
+  throw away. Kill it the moment a real defect is confirmed, do not let it finish "since it's
+  already running."
+
 ## Cadence
 
 Expect two to three fix, render, QA rounds. **Renders are cheap.** A 40-second 1080 composition

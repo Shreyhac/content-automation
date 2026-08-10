@@ -75,6 +75,35 @@ A delivery at a healthy 8.4 Mbps looked "too small" next to the 108MB raw A-roll
 
 ### 9. No em dashes
 
+### 10. Match the master's resolution, not just its byte count
+
+He asked for the final "in the original size I gave it to you" **after** the byte-match rule
+(#8) was already satisfied: he meant the 2160×3840 of his own master, not just its file size.
+`--resolution=portrait-4k` renders the composition at that size without touching it (Chrome
+renders at DPR2; match the aspect, keep the scale an integer multiple). Rebuild the A-roll
+assets at 4K first, or a 4K render off 1080p transcodes ships graphics sharp and his face soft.
+Keep the 1080 set in `assets/_1080/` so a revert costs nothing. The byte target from rule #8
+still applies and gets real at 4K: it should land near the master's own bitrate, not just its
+size in bytes.
+
+### 11. The split/band construction must not scale the footage either
+
+"No need to zoom his frame. Just keep the original frame." Rule #2 already banned zooming the
+A-roll; vid50 v3 confirmed it extends to the split band too. Build the band as the video at
+`scale 1` with a paper panel laid over the top, and reposition him with a **translate**, not a
+crop-and-scale: solve the translate from his crown minimum against the panel edge, and his
+chin maximum against y1600. A translate changes his position on screen, not his size.
+
+### 12. On full-bleed footage, display type needs its own surface
+
+"Text is not visible" landed even though the type cleared every safe zone, because a safe zone
+guarantees position, not contrast against real photographic content: it can still cross a
+painting or a picture frame mid-word. Any hook or beat with type over raw footage gets a paper
+panel or equivalent solid ground; a claim pill on bare footage needs a solid fill, not a tinted
+one. Depth/height for that panel is solved from the subject's highest point across the WHOLE
+shot (camera or subject can move after the frame you designed against), not the value at the
+cut.
+
 ---
 
 ## The zoom question, settled
@@ -91,6 +120,9 @@ The resolution:
   heartbeat.
 - **Confirm which surface a zoom note is about.** "Keep the frame stable" applied to designed
   scenes meant kill the camera rig entirely; it did not apply to the A-roll.
+- **The split/band is a third surface, and vid50 v3 confirmed the same ban applies there too.**
+  "No need to zoom his frame" ruled out the `scale(1.379)` crop the band used through vid50 v2;
+  the fix was to translate the untransformed video behind a panel instead. See hard rule #11.
 
 ---
 

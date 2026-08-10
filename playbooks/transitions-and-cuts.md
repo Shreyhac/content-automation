@@ -36,6 +36,58 @@ Two corollaries that bit in the same pass:
 
 ---
 
+## A transition needs a HOLD, not just a symmetric pass
+
+Wipes sized symmetrically around the swap (in 0.22s / out 0.22s) put **full coverage at a single
+instant**, but scene clips overlap for 0.20s by design (the lead rule above), so at that overlap
+point two scenes were briefly on screen simultaneously through the panel. **The panel must cover
+for at least as long as the clips overlap**: `in 0.20 → hold 0.16 → out 0.24`, with every outgoing
+clip ending inside the hold.
+
+## Entrances must finish under the wipe, not merely start under it
+
+Leading a scene's `data-start` early (above) is necessary but not sufficient: the entrances
+**inside** the clip have to be timed against the wipe too. A panel covering at `T` and uncovering
+over `T..T+0.22` while the incoming scene's own elements start at `T+0.04` with 0.5–0.6s durations
+uncovers onto a half-built scene.
+
+- **Budget: everything the viewer must see has to be at or past 70% of its entrance by `T+0.22`.**
+  Start entrances on the swap frame itself, not after it, and shorten them (0.34–0.50s ranges have
+  worked).
+- The **outgoing** element's exit must **end** at or before `T`, not start there.
+
+## Every slam must clear its own transition
+
+`$0` landed on the envelope's peak for "free" at 28.220s. The CTA wipe (0.42s centred on 28.480s)
+starts at 28.270: the film's biggest number had 0.05s in the clear, one and a half frames. No
+gate has any opinion about this; only the render sheet showed it. Moved the slam earlier (to the
+stressed syllable of the preceding word) for 0.53s clear.
+
+> **Rule: for every slam, check `t_land + 0.25s < t_nextcut − wipe_duration/2`.** A beat that lands
+> inside its own transition is not a beat.
+
+## A card exit must be a HANDOFF, and a scene without its own exit ghosts through the cut
+
+A face card (or any full-frame element) exiting is not itself the fault if the space it vacates is
+immediately filled by the next thing: the fault is **nothing filling it**, which leaves the frame
+half-composed with a dead patch for a beat. Audit every exit against what occupies the vacated
+region on the very next frame, not just whether the exit itself looks clean.
+
+Separately: **the clip window ending is not an exit.** A scene relying only on its `data-duration`
+running out (with the wipe expected to cover the seam) lifts the incoming scene in at partial alpha
+**while the outgoing one is still at full opacity underneath**: a double-exposure. The wipe hides
+the yank, it does not replace the need for one; give every scene its own exit tween even though a
+transition covers the swap.
+
+## A graphic that changes AT a join reads as a glitch, not an edit
+
+A film built in chunks changed a lockup's state and a number's value exactly on the (invisible)
+chunk boundary. Both sides were internally correct and the underlying data state matched exactly,
+and it still read wrong, because a chunk boundary is a cut the viewer cannot see. **Graphics have
+to carry visually THROUGH an invisible join and change on a spoken word afterward**, the same as
+they would across any other continuous shot. Confirm by checking whether the film's other, correct
+joins do this and the broken one doesn't: that contrast is the tell it was a habit, not a rule.
+
 ## Wipe timing is arithmetic
 
 **Run every band symmetrically around the swap time**, with an inOut ease, and size the panel so

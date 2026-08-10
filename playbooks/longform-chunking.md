@@ -128,6 +128,60 @@ Prune `cN/renders` between rounds: a 4K round costs about 800MB.
 
 ---
 
+## A staleness stamp must be taken BEFORE the work, not after
+
+A resumable-render staleness check stamped a content hash once a chunk **finished** rendering. A
+chunk takes minutes, so any edit landing during that window was recorded as if the finished render
+already contained it: a chunk rendered its old timeline, a fix landed two minutes later, and the
+stamp taken after both declared the stale render fresh. The assembler would have shipped it, and
+every downstream frame-count check would have passed: exactly the failure the guard exists to
+prevent. **Capture the hash before the work starts, write it after the work finishes.** The stamp
+then describes what the renderer actually read; a later edit correctly reads as stale. Any
+"is this output current?" check has this shape: fingerprinting at the end measures the wrong
+moment.
+
+A related trap in the same hashing scheme: if the hash strips only the `<audio>` **element** and
+not an HTML comment sitting beside it (documenting what the cue lands on), every audio-only edit
+still changes the hash and forces an unnecessary picture re-render. Strip comments too, since they
+never reach a pixel, but **a change to a guard's hash function invalidates every stored stamp at
+once**, so make that specific fix at the *start* of a delivery round, never mid-round.
+
+## Beats scheduled against the wrong chunk's clock fail in two different, both silent, ways
+
+A helper that converts an absolute film timecode to a chunk-local one is a trap at exactly one
+input: **the chunk's own start time**, which every chunk uses at least once (its opening beat).
+`t0 + epsilon` (a tiny floating-point remainder above zero) is "not frame 0" to a numeric
+comparison and "frame 0" to the renderer, so a call meant to fire immediately silently waits for a
+`tl.set` that is not reliably applied while the playhead sits exactly on 0, and a full-bleed
+graphic prints across a face for one frame at the hard join.
+
+The other direction fails differently and worse: a beat scheduled **before** its chunk's start does
+not get clamped by GSAP: it **shifts the entire timeline** by the overshoot. A cue meant for
+121.1s scheduled against a chunk starting at 122.372 put every tween in that chunk 1.272s late,
+uniformly.
+
+A gate that checks every scheduled position against `[t0, t0+duration]` must scan the **whole
+script**, not just literal timeline-method calls: helper functions that wrap `tl.to`/`tl.set`
+internally hide violations from a gate that only greps for `tl.*(`. Strip comments before scanning;
+a commented-out call with a bad position still matches a naive regex.
+
+## A cue landing exactly on a chunk join needs the join's own stored value, not a hand-typed one
+
+Using a chunk's `data-duration` (deliberately written a quarter-frame *below* its true boundary, so
+`ceil(duration * fps)` doesn't add a spurious extra frame) as if it were the chunk's **extent**
+leaves a fractional-second hole at every join: a cue landing exactly there belongs to no chunk at
+all and is silently dropped. Nothing catches this from frame counts or gate passes alone: the
+frame-total assert still balances, because dropped cues don't cost frames. **A chunk's extent
+should come from its rendered frame count**, not from re-deriving it off the duration value, and
+any generator that fans a list of cues out across several chunk files should assert the total count
+it emitted against the total count requested: "I emitted these" and "these landed" are different
+claims, and only counting both catches the gap.
+
+A related, quieter version: a hand-typed timecode meant to coincide with a join (`183.85` for a
+join actually at `183.8503`) is not a rounding error, it is a different chunk: it lands one frame
+early, on the tail of the previous chunk. Anything that must coincide with a join takes the join's
+own stored value from the plan file, never a hand-copied approximation of it.
+
 ## Long-form QA finds a specific family of bug
 
 Nine chunks, a frame at every beat, read as images. The linter passed all of them with zero errors
