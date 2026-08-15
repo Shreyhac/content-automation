@@ -302,29 +302,28 @@ pre b{color:var(--lime);font-weight:400}
 <!-- 8 ─────────────────────────────────────────────────────── -->
 <section class="slide">
   <div class="wrap">
-    <p class="kicker rise">Reproducibility</p>
-    <h2 class="d2 split" style="margin-top:16px">Can a cloner<br>hit this quality?</h2>
-    <div class="grid g2" style="margin-top:clamp(24px,4vh,44px)">
-      <div class="card pad rise">
-        <div class="lbl" style="margin:0 0 12px"><span class="tick">&#10003;</span> &nbsp;What travels perfectly</div>
-        <p style="margin:0;color:var(--paper-dim);font-size:15px;line-height:1.6">
-        Measured geometry, safe-zone rules, the gates, the caption engine, the delivery contract,
-        the four template systems, and every recorded failure. None of it is taste. It is
-        arithmetic, and all of it is in the repo.</p>
+    <p class="kicker rise">Reel Review</p>
+    <h2 class="d2 split" style="margin-top:14px">Stop describing<br>video in words.</h2>
+    <p class="lead rise" style="margin-top:16px;max-width:70ch">
+      The feedback loop is a real product, not a demo screen. It runs locally for your own
+      passes and ships a private link when a client needs to see the cut.
+    </p>
+    <div class="grid" style="grid-template-columns:1fr 1fr 0.95fr;margin-top:clamp(16px,2.4vh,30px);align-items:start">
+      <div class="spine rise">
+        <div class="step hot"><h4>Draw, do not describe</h4><p>Scrub to the frame, drag a box, pin, arrow or pen over the problem, type the note. The paused frame with your markup baked in is saved as a JPEG, so the editor sees the exact thing you circled.</p></div>
+        <div class="step hot"><h4>Two kinds of note</h4><p>A frame note is a local fix. A whole-video note ("SFX too loud") applies to the entire cut regardless of where it was written, and is exported in its own section. Mixing them is how global notes get half applied.</p></div>
+        <div class="step hot"><h4>Notes become a brief</h4><p>Send to editor writes a <code>feedback-round&lt;N&gt;.md</code> the agent reads at the start of the next round. It refuses to overwrite an earlier round, because one was lost that way.</p></div>
       </div>
-      <div class="card pad rise">
-        <div class="lbl" style="margin:0 0 12px"><span class="cross">&#10007;</span> &nbsp;What does not</div>
-        <p style="margin:0;color:var(--paper-dim);font-size:15px;line-height:1.6">
-        The review loop. These reels took three to twelve rounds each against a real person's
-        reactions. <code style="font-family:var(--mono);font-size:12.5px;color:var(--lime)">docs/09-self-review.md</code>
-        makes the agent run that review on itself before delivering, which closes most of the gap.
-        Not all of it.</p>
+      <div class="spine rise">
+        <div class="step hot"><h4>Send it to a client</h4><p><code>rr share</code> prints one private link. No index route, every path guarded by a per-project key, so a link cannot enumerate other clients.</p></div>
+        <div class="step hot"><h4>Versions stack</h4><p>Re-render and it lands as v2 under the same link. The client wipes v1 against v2 side by side rather than comparing from memory.</p></div>
+        <div class="step hot"><h4>Answer, then ship</h4><p><code>rr pull</code> brings their notes in, <code>rr push</code> sends your replies back. Order matters: fix, reply, push, and only then share the new cut. Sharing first makes every addressed note look ignored.</p></div>
+      </div>
+      <div class="rise">
+        <img class="shot" src="img/ui-review.jpg" alt="A red box drawn on a paused frame with a timecoded note beside it">
+        <p class="cap">Normalised coordinates, so a note left on a laptop lands in the right place on a phone.</p>
       </div>
     </div>
-    <p class="lead rise" style="margin-top:26px">
-      A cloner gets the system, the standard, and the tooling that enforces it. What they build
-      their own version of is the taste loop, and the repo tells them exactly how.
-    </p>
   </div>
 </section>
 
