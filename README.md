@@ -4,7 +4,8 @@
 anything by drawing a box on the frame.**
 
 Not a concept. Four reels built by this system have done **434,738 views, 15.4K saves and 9.8K
-sends** on a real creator account. The insight screenshots are below.
+sends** on [@shreyansharora05](https://www.instagram.com/shreyansharora05/). Insight screenshots
+below, reels linked, all publicly checkable.
 
 **The editor is your terminal. The web app is the intake and review surface.**
 
@@ -93,8 +94,9 @@ thresholds, each carrying the specific video and the reaction that set it.
 
 ## Proof: 434,738 views
 
-Four reels this system produced, posted on a real creator account. Instagram's own insights,
-not self-reported numbers.
+Four reels this system produced, posted on **[@shreyansharora05](https://www.instagram.com/shreyansharora05/)**.
+Instagram's own insight screens, not self-reported numbers. Every reel below is public: open the
+account and check them against these figures.
 
 | Reel | Views | Viewers | Avg watch | Follows | Saves | Sends |
 |---|---|---|---|---|---|---|
@@ -110,6 +112,9 @@ not self-reported numbers.
 <img src="docs/proof/reel-security-holes-79k.png" width="24%" alt="79,109 views">
 <img src="docs/proof/reel-ugly-websites-73k.png" width="24%" alt="73,377 views">
 </p>
+
+*Screenshots taken from Instagram's Reel insights on @shreyansharora05. The reels are linked in
+the table above, so the view counts are independently checkable.*
 
 **Saves and sends are the numbers that matter here.** Instagram ranks on sends per reach, and
 these reels were saved 15,400 times and sent to another person 9,800 times. 1,399 people followed
