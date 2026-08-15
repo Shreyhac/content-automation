@@ -90,6 +90,11 @@ td b{color:var(--lime)}
 /* Phone screenshots are 922x1999. Unconstrained they push this slide past the
    fold, so they are cropped from the top, which is where the numbers live. */
 .proof img{height:min(40vh,380px);object-fit:cover;object-position:top}
+/* Real markup frames are 9:16. Cap the height so three sit in a row without
+   pushing the slide past the fold, and crop from the top where the box is. */
+.note img{height:min(34vh,320px);object-fit:cover;object-position:top}
+.note .cap{text-transform:none;letter-spacing:.01em;font-size:11.5px;line-height:1.5}
+.note .cap b{color:var(--red);font-family:var(--mono);letter-spacing:.08em}
 
 .quote{border-left:2px solid var(--red);padding-left:18px;font-size:clamp(17px,2vw,23px);line-height:1.4}
 .kbd{font-family:var(--mono);font-size:10.5px;border:1px solid var(--hair);padding:3px 7px;border-radius:2px;color:var(--paper-dim)}
@@ -358,25 +363,29 @@ figure,.rise>img{will-change:transform}
 <section class="slide">
   <div class="wrap">
     <p class="kicker rise">Reel Review</p>
-    <h2 class="d2 split" style="margin-top:14px">Stop describing<br>video in words.</h2>
-    <p class="lead rise" style="margin-top:16px;max-width:70ch">
-      The feedback loop is a real product, not a demo screen. It runs locally for your own
-      passes and ships a private link when a client needs to see the cut.
+    <h2 class="d2 split" style="margin-top:12px">Stop describing<br>video in words.</h2>
+    <p class="lead rise" style="margin-top:12px;max-width:78ch;font-size:15.5px">
+      Real notes from real rounds on these films. Scrub to the frame, drag a box over the
+      problem, type one line. The paused frame with the drawing baked in is what the editor
+      gets, so nothing has to be interpreted.
     </p>
-    <div class="grid" style="grid-template-columns:1fr 1fr 0.95fr;margin-top:clamp(16px,2.4vh,30px);align-items:start">
-      <div class="spine rise">
-        <div class="step hot"><h4>Draw, do not describe</h4><p>Scrub to the frame, drag a box, pin, arrow or pen over the problem, type the note. The paused frame with your markup baked in is saved as a JPEG, so the editor sees the exact thing you circled.</p></div>
-        <div class="step hot"><h4>Two kinds of note</h4><p>A frame note is a local fix. A whole-video note ("SFX too loud") applies to the entire cut regardless of where it was written, and is exported in its own section. Mixing them is how global notes get half applied.</p></div>
-        <div class="step hot"><h4>Notes become a brief</h4><p>Send to editor writes a <code>feedback-round&lt;N&gt;.md</code> the agent reads at the start of the next round. It refuses to overwrite an earlier round, because one was lost that way.</p></div>
+    <div class="grid" style="grid-template-columns:repeat(3,minmax(0,270px)) 1fr;margin-top:clamp(10px,1.6vh,20px);gap:clamp(12px,1.4vw,20px);align-items:start">
+      <div class="rise note">
+        <img class="shot" src="img/note-overlap.jpg" alt="A red box drawn around overlapping caption text">
+        <p class="cap"><b>0:10.62</b><br>"This kind of text is overlapping at a lot of places."</p>
+      </div>
+      <div class="rise note">
+        <img class="shot" src="img/note-frame.jpg" alt="A red box drawn around a badly cropped face">
+        <p class="cap"><b>0:03.94</b><br>"Need to fix this frame as only head is visible, looks weird."</p>
+      </div>
+      <div class="rise note">
+        <img class="shot" src="img/note-logo.jpg" alt="A red box drawn around an overlapping logo">
+        <p class="cap"><b>0:02.60</b><br>"Logo as well is overlapping."</p>
       </div>
       <div class="spine rise">
-        <div class="step hot"><h4>Send it to a client</h4><p><code>rr share</code> prints one private link. No index route, every path guarded by a per-project key, so a link cannot enumerate other clients.</p></div>
-        <div class="step hot"><h4>Versions stack</h4><p>Re-render and it lands as v2 under the same link. The client wipes v1 against v2 side by side rather than comparing from memory.</p></div>
-        <div class="step hot"><h4>Answer, then ship</h4><p><code>rr pull</code> brings their notes in, <code>rr push</code> sends your replies back. Order matters: fix, reply, push, and only then share the new cut. Sharing first makes every addressed note look ignored.</p></div>
-      </div>
-      <div class="rise">
-        <img class="shot" src="img/ui-review.jpg" alt="A red box drawn on a paused frame with a timecoded note beside it">
-        <p class="cap">Normalised coordinates, so a note left on a laptop lands in the right place on a phone.</p>
+        <div class="step hot"><h4>Notes become the brief</h4><p>Send to editor writes a <code>feedback-round&lt;N&gt;.md</code> that the agent reads at the start of the next round. It refuses to overwrite an earlier round, because one was lost that way.</p></div>
+        <div class="step hot"><h4>Clients get one private link</h4><p><code>rr share</code> prints it. No index route, every path guarded by a per-project key, so a link cannot enumerate other clients. A re-render stacks as v2 under the same link and they wipe v1 against v2.</p></div>
+        <div class="step hot"><h4>Answer, then ship</h4><p>Fix, reply to every note, push, and only then share the new cut. Share first and every note you just addressed still looks ignored.</p></div>
       </div>
     </div>
   </div>
