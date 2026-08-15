@@ -1,0 +1,96 @@
+/* Reel Factory: design tokens.
+   Lifted from thepmfguy.com: the palette and the type system are his, so the product
+   reads as part of the same studio rather than as a generic SaaS page.
+   Every page imports THIS and adds nothing to it. Do not invent a second accent. */
+
+@font-face{font-family:Anton;src:url(fonts/anton.woff2)format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:'Space Grotesk';src:url(fonts/space-grotesk-500.woff2)format('woff2');font-weight:500;font-display:swap}
+@font-face{font-family:'Space Grotesk';src:url(fonts/space-grotesk-700.woff2)format('woff2');font-weight:700;font-display:swap}
+@font-face{font-family:'Space Mono';src:url(fonts/space-mono.woff2)format('woff2');font-weight:400;font-display:swap}
+
+:root{
+  /* the four colours, and there are only four */
+  --ink:#0d0d0d;          /* ground */
+  --paper:#f3f1ea;        /* type on ground, and the light panels */
+  --red:#e40014;          /* alert, destructive, the marker pen */
+  --lime:#cdff00;         /* the single accent. Ration it. */
+
+  --ink-2:#151513;        /* raised surface on ground */
+  --ink-3:#1e1e1b;        /* border on ground */
+  --paper-dim:rgba(243,241,234,.62);
+  --paper-faint:rgba(243,241,234,.34);
+  --hair:rgba(243,241,234,.14);   /* hairlines, never a coloured border */
+
+  --display:Anton,'Arial Narrow',sans-serif;
+  --body:'Space Grotesk',system-ui,sans-serif;
+  --mono:'Space Mono',ui-monospace,monospace;
+
+  --gut:clamp(20px,5vw,72px);
+  --maxw:1240px;
+  --r:2px;                /* corners are nearly square. This is not a rounded product. */
+  --ease:cubic-bezier(.22,1,.36,1);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--ink);color:var(--paper);
+  font-family:var(--body);font-weight:500;font-size:17px;line-height:1.5;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  overflow-x:hidden;   /* the page never scrolls sideways */
+}
+img,video,canvas{max-width:100%;display:block}
+button,input,select{font:inherit;color:inherit}
+a{color:inherit}
+
+/* Display type. Anton is already heavy, so never bold it and never letterspace it loose. */
+.d1{font-family:var(--display);font-weight:400;font-size:clamp(52px,11.5vw,168px);line-height:.86;letter-spacing:-.02em;text-transform:uppercase;margin:0}
+.d2{font-family:var(--display);font-weight:400;font-size:clamp(34px,6vw,84px);line-height:.92;letter-spacing:-.015em;text-transform:uppercase;margin:0}
+.d3{font-family:var(--display);font-weight:400;font-size:clamp(24px,3.2vw,42px);line-height:1;text-transform:uppercase;margin:0}
+.lead{font-size:clamp(17px,1.7vw,22px);line-height:1.45;color:var(--paper-dim);max-width:62ch}
+.kicker{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--paper-faint)}
+.acc{color:var(--lime)}
+
+.wrap{max-width:var(--maxw);margin:0 auto;padding-inline:var(--gut)}
+.rule{height:1px;background:var(--hair);border:0;margin:0}
+
+/* Controls */
+.btn{
+  display:inline-flex;align-items:center;gap:10px;justify-content:center;
+  padding:15px 26px;border:1px solid var(--paper);background:transparent;color:var(--paper);
+  font-family:var(--mono);font-size:13px;letter-spacing:.1em;text-transform:uppercase;
+  border-radius:var(--r);cursor:pointer;text-decoration:none;
+  transition:background .18s var(--ease),color .18s var(--ease),transform .18s var(--ease);
+}
+.btn:hover{background:var(--paper);color:var(--ink)}
+.btn:active{transform:translateY(1px)}
+.btn--go{background:var(--lime);border-color:var(--lime);color:var(--ink)}
+.btn--go:hover{background:var(--paper);border-color:var(--paper);color:var(--ink)}
+.btn--ghost{border-color:var(--hair);color:var(--paper-dim)}
+.btn--ghost:hover{border-color:var(--paper);background:transparent;color:var(--paper)}
+.btn[disabled]{opacity:.35;pointer-events:none}
+
+.field{
+  width:100%;padding:14px 16px;background:var(--ink-2);
+  border:1px solid var(--ink-3);border-radius:var(--r);
+  font-family:var(--mono);font-size:14px;color:var(--paper);
+}
+.field:focus{outline:none;border-color:var(--lime)}
+.field::placeholder{color:var(--paper-faint)}
+
+.card{background:var(--ink-2);border:1px solid var(--ink-3);border-radius:var(--r)}
+.tag{display:inline-block;padding:5px 10px;border:1px solid var(--hair);border-radius:var(--r);
+     font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--paper-dim)}
+
+/* Focus is visible everywhere. A hackathon judge tabbing the page must never lose the caret. */
+:focus-visible{outline:2px solid var(--lime);outline-offset:3px}
+
+/* Scroll reveal. Elements start hidden ONLY if JS is alive to reveal them,
+   so the page still reads with JS disabled or if a script throws. */
+.js [data-rise]{opacity:0;transform:translateY(22px)}
+.js [data-rise].in{opacity:1;transform:none;transition:opacity .7s var(--ease),transform .7s var(--ease)}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms!important;transition-duration:.01ms!important}
+  .js [data-rise]{opacity:1;transform:none}
+}

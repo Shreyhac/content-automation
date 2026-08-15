@@ -52,6 +52,15 @@ else bad "Pillow  ->  pip3 install --user Pillow   (tools/gates contrast + tools
 if python3 -c "import docx" 2>/dev/null; then ok "python-docx"
 else bad "python-docx  ->  pip3 install --user python-docx   (tools/deliver/make_cta_doc.py)"; fi
 
+# numpy: the band-share, drift and transient measurement in tools/generative/.
+if python3 -c "import numpy" 2>/dev/null; then ok "numpy"
+else bad "numpy  ->  pip3 install --user numpy   (tools/generative/)"; fi
+
+# fal-client: only tools/generative/plate.py, and only for a real generation call.
+# It is imported lazily, so --help and --dry-run work without it. Optional on purpose.
+if python3 -c "import fal_client" 2>/dev/null; then ok "fal-client (optional)"
+else warn "fal-client not found (optional) -> pip3 install --user fal-client   (tools/generative/plate.py, real calls only)"; fi
+
 echo
 echo "Node / HyperFrames"
 if command -v node >/dev/null 2>&1; then

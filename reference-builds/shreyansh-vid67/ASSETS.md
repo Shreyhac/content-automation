@@ -28,6 +28,8 @@ Master `/Volumes/Shreyansh/shreyanshs set 4/edited/agentss.mp4`: 35.233s, 2160x3
 33.15 Mbps, 30fps, his own manual cut, no CapCut watermark (checked top-left and bottom-right at
 full resolution). **The drive is external.** If it is not mounted the master is not fetchable and
 the transcode in the project is the only copy.
+**Verified present and readable 2026-08-15** with the drive mounted: 35.233s, 2160x3840 HEVC,
+33.15 Mbps, exactly as recorded above.
 
 Transcoded at **native 2160x3840**, codec change only, no scale filter: h264 crf 14, which measured
 43.23 Mbps. A 1080x1920 transcode here would have shipped a 4K container carrying 1080p of his

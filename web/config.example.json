@@ -1,0 +1,4 @@
+{
+  "supabaseUrl": "https://<project-ref>.supabase.co",
+  "supabaseKey": "<service_role or anon key>"
+}

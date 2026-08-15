@@ -5,6 +5,9 @@
   "scripts": {
     "dev": "npx --yes hyperframes preview",
     "check": "npx --yes hyperframes lint && npx --yes hyperframes validate && npx --yes hyperframes inspect",
+    "derive": "python3 ../../tools/gates/derive_config.py . --force",
+    "gate": "python3 ../../tools/gates/guard.py guard.json",
+    "sheet": "python3 ../../tools/qa/shoot-sheet.py guard.json",
     "render": "HF_DE_STALL_MS=420000 npx --yes hyperframes render -q high --workers 2 --video-bitrate 16M"
   }
 }

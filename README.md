@@ -67,17 +67,24 @@ library/
   sfx/saas/           Gaurav's own supplied pack (17 files). He expects to hear it.
   vendor/             three.min.js (UMD r150). Vendored deliberately, see playbooks/threejs.md.
   templates/          Starter scaffolds.
-reference-builds/     Seven shipped compositions, code only, each with an ASSETS.md saying
+reference-builds/     Eight shipped compositions, code only, each with an ASSETS.md saying
                       exactly what media it expected and where that media came from.
-reference-cuts/       720p proxies of shipped finals. This is the quality bar, watchable.
+                      One current build per creator, plus the earlier ones worth reading.
+reference-cuts/       Fifteen 720p proxies of shipped finals. This is the quality bar,
+                      watchable. Start with the current cut for your creator.
 tools/
   vision/ aroll/      Measurement and preparation.
   captions/ sfx/      Caption and audio assembly.
   chunking/ stock/    Long-form assembly and stock fetch.
-  gates/              guard.py, the pre-render gate that measures what actually paints.
-  qa/                 The beat contact sheet and the exact-frame extractor.
+  gates/              guard.py, the pre-render gate that measures what actually paints,
+                      and derive_config.py, which bootstraps its config for a new film.
+  qa/                 The beat contact sheet, the exact-frame extractor, and
+                      benchmark.py, which scores a delivered file against the bar.
   deliver/            The CTA .docx builder.
+  generative/         Cloned voice, AI plates, i2v drift measurement, licensed music.
   review/             Reel Review: the local player, the markup canvas and the client link.
+web/                  The product surface. Upload, watch the edit, mark up the frame,
+                      download. Node built-ins only, no install. See web/README.md.
 .claude/skills/       hyperframes, hyperframes-cli and gsap skills. Auto-discovered.
 ```
 
@@ -142,9 +149,12 @@ Full detail is in `docs/03-quality-bar.md`. In one screen:
    looked about right" in this repo's history became a render round.
 6. **No em dashes** in on-screen text, captions or published copy. Owner rule, all videos, all
    creators. Grep the composition, the SRT and the caption pack before every delivery. This is
-   the most-skipped rule here.
+   the most-skipped rule here: a sweep on 2026-08-15 found them in 19 delivered caption packs,
+   2 delivered SRTs and one composition with 45. `tools/qa/benchmark.py` now fails on it.
 7. **Match the master's resolution AND its bitrate on delivery**, verified with `ffprobe`
    against the master. Not the CRF: the same CRF has delivered 36.8 and 24.9 Mbps.
+   `tools/qa/benchmark.py <file> --creator <who> --master <take>` checks this and twelve more.
+   Run it before you deliver, and read `docs/09-self-review.md` for what it cannot measure.
 8. **No hashtags.** The caption body is the ranking surface. The caption pack is paste-ready
    only, and the CTA .docx ships at first delivery, not on request.
 

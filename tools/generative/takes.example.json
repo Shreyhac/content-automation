@@ -1,0 +1,46 @@
+{
+  "_comment": [
+    "The worked example, generalised off the Demi UGC build. Copy it and replace",
+    "the content. target_rate and source_consonant are MEASUREMENTS OF THE REAL",
+    "PERSON, taken from her own recording, not defaults: 3.62 words/sec of speech",
+    "and a 4.80% share in 2 to 5 kHz. Without them the scorer has nothing to be",
+    "right about.",
+    "Every candidate here is the SAME LINE. That is the point: you are choosing a",
+    "model and a stability, not writing four scripts. 'target' is what the",
+    "candidate should be HEARD saying, used for transcript verification, and",
+    "defaults to the text with tags stripped."
+  ],
+  "voice_id": "REPLACE_WITH_VOICE_ID",
+  "target_rate": 3.62,
+  "source_consonant": 4.8,
+  "candidates": [
+    {
+      "name": "v2-plain-035",
+      "model": "eleven_multilingual_v2",
+      "text": "You've probably got a dictation app... Hold a key down, talk, and it types out what you said. ... I had one for months.",
+      "stability": 0.35,
+      "style": 0.2
+    },
+    {
+      "name": "v2-plain-050",
+      "model": "eleven_multilingual_v2",
+      "text": "You've probably got a dictation app... Hold a key down, talk, and it types out what you said. ... I had one for months.",
+      "stability": 0.5,
+      "style": 0.15
+    },
+    {
+      "name": "v3-tagged-035",
+      "model": "eleven_v3",
+      "text": "[casual] You've probably got a dictation app. <break time=\"0.45s\" /> Hold a key down, talk, <break time=\"0.25s\" /> and it types out what you said. <break time=\"0.5s\" /> I had one for months.",
+      "stability": 0.35,
+      "style": 0.2
+    },
+    {
+      "name": "v3-plain-040",
+      "model": "eleven_v3",
+      "text": "You've probably got a dictation app... Hold a key down, talk, and it types out what you said. ... I had one for months.",
+      "stability": 0.4,
+      "style": 0.2
+    }
+  ]
+}

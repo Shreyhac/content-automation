@@ -1,0 +1,136 @@
+{
+  "_stub": "A STUB, produced by `python3 tools/gates/derive_config.py library/templates/vertical-reel` against the template itself. It proves the wiring, it does not describe a film: `beats` is [0.0] because the template's beat map is still REPLACE markers. REGENERATE it, do not edit this copy into a config: `python3 ../../tools/gates/derive_config.py . --force` from inside your film's directory once the beat map, the duration and the cut list carry real numbers. Then work the TODOs. guard.py exits 2 while any is left.",
+  "_generated_by": "tools/gates/derive_config.py. Every TODO below is a measurement this script is not entitled to invent. guard.py REFUSES to run while one is left in the file.",
+  "_notes": [
+    "root is 2160x3840 over a 1080x1920 stage, so the stage is transform:scale(2). stage_w/stage_h below are the UNSCALED numbers, which is what guard.py measures in.",
+    "no transcript word onsets, so beats sit on the composition's own boundary numbers and interior samples are plain midpoints. Pass --transcript to snap them to speech."
+  ],
+  "project": ".",
+  "_project": "relative to this file's own directory. Keep the config next to index.html, or pass --project on the command line.",
+  "document": "index.html",
+  "timeline": "vidNN",
+  "stage_id": "stage",
+  "stage_w": 1080,
+  "stage_h": 1920,
+  "asset_prefix": "assets/",
+  "_beats": "1 beats: 0 state cuts, 1 picture data-starts, 0 times from the composition's own beat map, 0 interior samples for holds longer than 0.90s, and the tail frame. 0 were snapped to a word onset. ADD any frame inside a beat where something lands: an entrance that finishes, a number that changes, a card that collapses.",
+  "beats": [
+    0.0
+  ],
+  "_bands": "the 2026 Instagram numbers from docs/02-safe-zones.md, in stage space. These are the only inherited numbers in this file and they are a platform spec, not a measurement of this film.",
+  "bands": {
+    "top_text": 150,
+    "band_y": 1600,
+    "rail_x": 960,
+    "rail_y0": 900,
+    "rail_y1": 1600,
+    "left_pad": 60
+  },
+  "_caption_replay": "found window.__CAPS and an element the engine writes into. Verify the target id: if guard.py's coverage line says `0 with text`, this is wrong and every caption rule is inert.",
+  "caption_replay": {
+    "array": "__CAPS",
+    "target": "cap"
+  },
+  "_face_observed": {
+    "element": "faceScene",
+    "states": {
+      "full": {
+        "clip": "inset(0px 0px 0px 0px)",
+        "inset_top_right_bottom_left": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "split": {
+        "clip": "inset(REPLACEpx 0px 0px 0px)",
+        "inset_top_right_bottom_left": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    "how_to_write_the_rules": "one rule per state, most specific FIRST, keyed on top/right/bottom/left and never on a position in a list: Chromium collapses inset(700px 0px 0px 0px) to inset(700px 0px 0px) when left equals right, and a guard that assumed four numbers reported the wrong state for a whole film. Write thresholds that sit BETWEEN the observed values above, not on them, so a one-pixel rounding does not flip the state."
+  },
+  "face": {
+    "element": "faceScene",
+    "default": "TODO",
+    "off_state": "TODO",
+    "rules": "TODO"
+  },
+  "_face_TODO": "`rules` maps the clip-path inset to a state NAME, `default` is the state when no rule matches, `off_state` names the state where his face is not on screen at all (guard.py skips the face whitelist there). The observed insets are in _face_observed above. Form: {\"state\": \"split\", \"when\": {\"top\": [\">=\", 610]}}.",
+  "states": {
+    "full": {
+      "_TODO": "fill or DELETE each key below. Deleting a key means this state has no such constraint, which is a decision. Leaving a trivially wide value is a gate that cannot fail.",
+      "text_must_clear_y": "TODO",
+      "ink_zone": "TODO",
+      "min_ink_frac": "TODO",
+      "videos_painting": "TODO"
+    },
+    "split": {
+      "_TODO": "fill or DELETE each key below. Deleting a key means this state has no such constraint, which is a decision. Leaving a trivially wide value is a gate that cannot fail.",
+      "text_must_clear_y": "TODO",
+      "ink_zone": "TODO",
+      "min_ink_frac": "TODO",
+      "videos_painting": "TODO"
+    }
+  },
+  "_states_TODO": {
+    "text_must_clear_y": "the WORST-CASE crown of his head in this state, in stage space: no text may run past it. It is a measurement of HIS HEAD in THIS take, over every frame of the take, not a layout constant. Measure with tools/vision/ and playbooks/face-geometry.md, and measure the WINDOW the state covers, not the whole take: an 11-sample average missed him leaning in at the CTA. A guessed crown is a gate that passes text printed on his forehead. vid67's is 660, which is 40px below its y620 seam and came off 176 Vision samples.",
+    "text_forbidden_rects": "add this key instead of a crown when his face occupies a RECT rather than a half of the frame, as in card mode. [[x0,y0,x1,y1], ...], stage space. Same rule: hit-test the real crop at the candidate numbers, do not model it.",
+    "text_must_stay_left_of_x": "the split seam, for a vertical split. Text crossing it lands on him.",
+    "ink_zone": "[x0,y0,x1,y1], the rectangle the GRAPHICS are supposed to own in this state. This is the one value that cannot be derived even in principle: a parser cannot tell a rect that is the design from a rect that is a hole in it, and a zone derived from what happens to be on screen passes by construction on the beat it exists to fail. vid61 shipped a beat that was one element over blank paper past lint, validate and every safe-zone rule. DELETE this key for a state whose picture is full-frame video: ink is summed per element and overlapping elements double count, so a zone over his face measured 212.9% covered on vid67 and the floor can never fail. A key that cannot fail is worse than no key, because it reads as a check.",
+    "min_ink_frac": "the fraction of ink_zone that must be covered. 0.14 is the number this house uses. Raise it for a state whose zone is a dense panel; do not lower it to make a failing beat pass, that is the beat the check was built for.",
+    "videos_painting": "the exact set of <video> ids that must be painting in this state, sorted compared. The band track must show in SPLIT and be hidden in FULL and nothing structural checks that. The document's own <video> inventory is in _video_inventory below."
+  },
+  "_video_inventory": [
+    {
+      "id": "aroll",
+      "src": "assets/aroll.mp4",
+      "window": [
+        0.0,
+        0
+      ]
+    },
+    {
+      "id": "vband",
+      "src": "assets/bandtrack.mp4",
+      "window": [
+        0.0,
+        0
+      ]
+    }
+  ],
+  "_video_inventory_note": "a <video> painted outside its own [data-start, +data-duration] window renders DEAD GREY. Seven of nine dashboard placements shipped that way on the film whose brief was `more screen recordings`. guard.py checks the window itself; `videos_painting` per state is the half it cannot infer.",
+  "face_windows": "TODO",
+  "_face_windows_TODO": "[[t0,t1], ...], the windows his face MAY paint in. A WHITELIST, deliberately: a gate that enumerates the known-bad spans cannot catch what its detector missed, and a gaze detector missed two real down-looks three times running on thresholds alone. A missing window costs a beat of face; a missing blacklist entry ships the defect. Derived from the composition this list would be exactly what the composition already does, so it could never disagree with it. Write it from the SHOT PLAN, or from watching the take. If his face is genuinely on screen for the whole film, say so with one window covering the duration and record WHY here.",
+  "void": {
+    "after_t": 0.0,
+    "min_ink_frac": 0.14
+  },
+  "_void": "after_t skips the hook, where a deliberately sparse frame is the design. 0.0 checks everything, which is the strict setting; raise it only past a hook you have looked at. This block is inert until at least one state carries an ink_zone.",
+  "contrast": {
+    "enabled": true,
+    "bright": 150,
+    "max_bright_frac": 0.35,
+    "min_area": 2500
+  },
+  "_contrast": "bright-pixel FRACTION, never the mean: white type on a black screen averages dark while still colliding, and a mean rated one title fine at a measured bright-fraction of 59.6%. Needs Pillow; guard.py FAILS rather than skipping if it is missing.",
+  "paint": {
+    "enabled": true
+  },
+  "stylesheets": [],
+  "_stylesheets": "no external stylesheets, all CSS is inline in the document. That is correct as []: guard.py only PICHASHes sheets with an href, and an inline sheet cannot go stale against the document it lives in.",
+  "allow": [],
+  "_allow": "exemptions, {\"kind\",\"match\",\"t0\",\"t1\",\"reason\"}. Start EMPTY and add only from a measurement you have looked at. An entry that matches nothing fails the run as ALLOWDEAD: one inherited entry blanket-exempted a whole scene and hid 15.8s of genuine staleness while reading as considered.",
+  "root_id": "root",
+  "_root_id": "timed elements are scanned from HERE, not from the stage. A timed element can be a SIBLING of #stage and a stage-scoped query never looks at it.",
+  "apply_clip_schedule": true,
+  "managed_tags": [
+    "DIV",
+    "VIDEO",
+    "IMG"
+  ]
+}

@@ -1,0 +1,516 @@
+{
+  "schema": 1,
+  "about": [
+    "The measured half of docs/03-quality-bar.md, as numbers a machine can check.",
+    "Every entry carries the film and the reaction that set it. A metric with no recorded",
+    "failure behind it does not belong in this file: a threshold nobody was ever rejected on",
+    "is a preference, and preferences drift into gates that block good work.",
+    "Severity is 'fail' only where a delivery was actually sent back or a rule was stated as",
+    "hard. Where the archive records a target AND a shipped film that passed it by, the entry",
+    "is a 'warn' and says so. Do not promote a warn to a fail without a rejection to cite.",
+    "One entry is marked derived:true. Read its note before trusting the exact number.",
+    "Read with tools/qa/benchmark.py. Prose and provenance: docs/03-quality-bar.md,",
+    "the per-creator numbers: creators/<name>/PROFILE.md."
+  ],
+  "tuning": {
+    "cut_threshold": 25.0,
+    "still_threshold": 1.0,
+    "note": [
+      "Both are on the MAX GRID CELL mean absolute luma difference between samples taken",
+      "10 times a second at 180x320, not on the whole-frame mean. The whole-frame mean is the",
+      "same mistake the contrast gate made: it averages a real local event down to nothing.",
+      "Calibrated against four delivered films. The whole-frame mean reports vid62-short at",
+      "29% frozen; the cell max reports 15%, and 15% is what its held runs actually add up to."
+    ]
+  },
+  "order": [
+    "delivery.pixel_ratio",
+    "delivery.bitrate_ratio",
+    "audio.integrated_lufs",
+    "audio.lufs_delta_vs_master",
+    "audio.true_peak_dbtp",
+    "motion.mean_shot_s",
+    "motion.longest_frozen_s",
+    "motion.frozen_fraction",
+    "frame.band_mean_luma",
+    "frame.cover_ink_fraction",
+    "face.presence_fraction",
+    "face.chin_max_norm",
+    "copy.em_dashes"
+  ],
+
+  "defaults": {
+    "delivery.pixel_ratio": {
+      "unit": "x master",
+      "min": 1.0,
+      "severity": "fail",
+      "film": "vid55, vid57, vid60",
+      "why": [
+        "A 4K container carrying a 1080p face shipped three times. The transcode step said",
+        "scale=1080:1920 while the compositions render at 2160x3840, so a 4K master was",
+        "downscaled and then upscaled back by the renderer. Rasterising the same frame from",
+        "each asset: 1080 asset 6.51 Laplacian variance, 2160 asset 11.99, the master 12.58.",
+        "84% sharper from the native asset. Right resolution, wrong detail, and every",
+        "resolution check you can think to run passes. Triggered by his one-line question,",
+        "'is this video rendered in the same file size that I gave you the a roll as'.",
+        "Match the asset to the composition's OUTPUT: 1080 stays correct for a client short",
+        "that genuinely outputs 1080x1920, and vid33 v9 recorded the opposite trap, comparing",
+        "against the camera's 4K when the render target was a 1080x1920 Reel."
+      ]
+    },
+    "delivery.bitrate_ratio": {
+      "unit": "x master",
+      "min": 0.90,
+      "warn_min": 1.0,
+      "severity": "fail",
+      "film": "vid60, vid55",
+      "why": [
+        "vid60 shipped 2160x3840 from a 2160x3840 master with the asset chain correct and he",
+        "said 'it is very much compressed'. `-q high` picked 15.5 Mbps against the master's",
+        "28.0, about half what a modern phone writes. Re-rendered at 28.3 Mbps it cost 2m46s",
+        "and bought +13.2% high-frequency detail in the face region.",
+        "vid55 shipped the raw render at 29,314,793 bytes and came back with 'the size of this",
+        "video is very low, need it to be in the actual size of my a roll or more than that,",
+        "how tf it is so low, we decided it to be on that size itself'. Re-delivered at",
+        "118,711,758 bytes, delta zero.",
+        "CRF cannot be the contract: vid61 round 1 landed 36.8 Mbps at --crf 10 and round 2",
+        "landed 24.9 at the same CRF, because three drawn artboards were replaced by one dark",
+        "screen recording. Pin the rate, not the quality.",
+        "On record: vid59 38.4 against 43.9, vid60 v5 28.3 against 28.0, vid61 36.8 against",
+        "36.25, vid62 37.18 against 32.78, vid67 38.28 against 33.15.",
+        "Pass the CAMERA master, not the project's CRF-17 transcode. hf67/assets/aroll.mp4",
+        "carries 43.2 Mbps against the 33.15 Mbps master it was made from, so using it as the",
+        "reference turns a 1.16x pass into a 0.89x fail."
+      ]
+    },
+    "audio.integrated_lufs": {
+      "unit": "LUFS",
+      "warn_min": -24.0,
+      "warn_max": -13.0,
+      "severity": "warn",
+      "film": "vid36, vid41, vid47, vid57, vid63",
+      "why": [
+        "Two competing correct answers, which is why this is a wide warn and not a target.",
+        "The house delivery pass is two-pass loudnorm to -14.5 LUFS / -1.0 dBTP for Instagram",
+        "and -14 for YouTube: vid36 went -16.7 to -14.8, vid41's mix arrived at -19.0 and",
+        "shipped at -14.8, vid47 came off the renderer at -19.5 and shipped at -14.5.",
+        "The counter-rule is stronger on the creators who hand over a finished mix. vid57's",
+        "delivery script loudnorms to -14 as its first step and that is audio processing he",
+        "vetoed; the render mix was -21.83 and shipped there. vid63 delivered -21.2 against",
+        "his master's -21.6 deliberately.",
+        "So a reading near -14.5 on those accounts means the vetoed pass ran, and a reading",
+        "near -22 on an account that normalises means the pass was skipped. Neither is",
+        "readable from the number alone. audio.lufs_delta_vs_master is the check with teeth."
+      ]
+    },
+    "audio.lufs_delta_vs_master": {
+      "unit": "LU vs master",
+      "max": 1.0,
+      "severity": "fail",
+      "film": "vid57",
+      "why": [
+        "'I really don't want to touch my A-roll at any given cost.' The delivery script",
+        "loudnorms to -14 LUFS as step 1 and that is audio processing he vetoed for that film;",
+        "a --raw-audio path was added for it. The render mix measured -21.83 against his",
+        "source's -22.25, the 0.4 dB being the SFX bed. vid63 delivered -21.2 against a -21.6",
+        "master. vid67: his VO -22.6 LUFS in, -22.5 out.",
+        "SKIPPED when the master has no audio track, which is the case for a video-only",
+        "transcoded asset, and skipped on the accounts that normalise to an absolute target."
+      ]
+    },
+    "audio.true_peak_dbtp": {
+      "unit": "dBTP",
+      "max": -0.5,
+      "warn_max": -1.0,
+      "severity": "fail",
+      "film": "vid38, vid42, vid43",
+      "why": [
+        "vid38's mix measured a comfortable -12.6 LUFS integrated at +4.7 dBTP: a VO whose own",
+        "peak is -1.0 dBFS plus about 38 SFX clips sums past full scale even at 0.16 to 0.26",
+        "volumes. It recurred at +4.1 on vid42 and +4.0 on vid43, which is where the file says",
+        "the two-pass loudnorm with -c:v copy 'is not optional on this SFX-dense grammar'.",
+        "Integrated loudness and true peak fail independently and only the second one clips in",
+        "a phone speaker. It costs no video time.",
+        "One documented exception, and check for it before acting: on a film where the owner",
+        "said his mix is final, volumedetect max 0.0 dBFS was CORRECT, a single transient and",
+        "not sustained clipping. Confirm with astats Flat factor 0.000 and Abs Peak count."
+      ]
+    },
+    "motion.longest_frozen_s": {
+      "unit": "s",
+      "max": 1.0,
+      "severity": "warn",
+      "film": "vid56 short round 1",
+      "why": [
+        "'Nothing static for more than about 1 second' has been in the grammar since vid2 and",
+        "nothing checked it until motion_guard. vid56's short round 1 held 10.0s, 23% of the",
+        "cut, with runs of 3.6s, 3.8s and 4.8s, and drew 'the animation is very still here'.",
+        "Severity is warn on purpose: a held frame can be deliberate, and vid58's round 2 kept",
+        "two 1.6s breaths in a cut that was accepted. The point is that the decision gets made",
+        "on purpose instead of discovered by the client.",
+        "This measures literally frozen PIXELS, a strict subset of the DOM-side held blocks",
+        "motion_guard reports, so any breach here is a certain breach of the rule."
+      ]
+    },
+    "motion.frozen_fraction": {
+      "unit": "of runtime",
+      "warn_max": 0.10,
+      "severity": "warn",
+      "derived": true,
+      "film": "vid59, vid62, vid58 short",
+      "why": [
+        "The recorded rejections are on the DOM-side measure, not on pixels: vid59 at 66% held",
+        "drew 'very boring b roll' and 'need better animations'; vid62 round 1 measured 71%",
+        "with a longest hold of 17.0s and drew 'only a text-based thing is really too shitty',",
+        "rebuilt onto word onsets to 56% then 35%; vid58's short measured 86% on its first",
+        "pass and 7% on the round that shipped. The stated target is 40% or under, and vid62",
+        "did not meet it: 'closing the rest would mean decorating every 2 to 3s gap, which is",
+        "its own defect'.",
+        "That 40% is NOT portable to this metric. A frozen-pixel run is a strict subset of a",
+        "DOM held block, so the same films measure far lower here and 40% would never trip.",
+        "0.10 is calibrated against four delivered films (vid67 0%, vid63 2%, demi2 6%,",
+        "vid62-short 15%) and is the one number in this file that is a derivation rather than",
+        "a recorded rejection. It stays a warn until a film is rejected at a known pixel-side",
+        "figure. If you want the number the rejections were actually written against, run",
+        "the DOM-side guard on the composition."
+      ]
+    },
+    "frame.band_mean_luma": {
+      "unit": "0-255",
+      "min": 20.0,
+      "warn_min": 28.5,
+      "severity": "fail",
+      "film": "vid58 short",
+      "why": [
+        "He sent back a frame with 'What the fuck is this?'. Content stopped at y1530 and the",
+        "bottom 390px, 20% of the frame, averaged 13/255, with a pure-black seam at y1000 to",
+        "y1040 where the face band's feather ran to solid. He reviews the exported 9:16 file",
+        "in a player, where an unlit reserved zone reads as a broken black bar rather than as",
+        "a reserved zone. A wide shallow stage lift along the floor took the band to 28.5 mean",
+        "and softened the seam to 7.0.",
+        "Reserving a zone means keeping TEXT out of it, never leaving it black. Related and",
+        "separately recorded: a split band that stops at y1580 leaves 340px of bare paper, and",
+        "the reserved zone protects his CHIN, not his chest.",
+        "Meaningful on 9:16 only. On a 16:9 long-form there is no Instagram band to reserve."
+      ]
+    },
+    "frame.cover_ink_fraction": {
+      "unit": "of frame",
+      "min": 0.14,
+      "severity": "fail",
+      "film": "vid61, vid49",
+      "why": [
+        "0.14 is the ink floor tools/gates/guard.py already enforces per graphics zone, set",
+        "after three vid61 scenes spent 0.8 to 1.8s as one element at the top of an 1120px",
+        "column over blank paper. They passed lint, they passed validate, the motion guard saw",
+        "plenty of movement and the safe-zone gate saw nothing out of bounds. A frame can be",
+        "moving, in-bounds and contrast-safe while two thirds of it is blank.",
+        "Applied here to frame 0 because frame 0 is the Reels cover and a delivered asset in",
+        "its own right. vid49 records the sharper version of the same point: the grid preview",
+        "crops to 4:5, y285 to y1635, and v1's eyebrow at y150 and hook number at y194 were",
+        "both above it, so 'the thumbnail lost the entire claim'. This metric sees an empty",
+        "cover. It cannot see a cover whose ink is all outside the 4:5 crop, so look at frame",
+        "0 as well as measuring it."
+      ]
+    },
+    "face.chin_max_norm": {
+      "unit": "of frame height",
+      "max": 0.8333,
+      "severity": "fail",
+      "film": "vid60, vid46 short",
+      "why": [
+        "y1600 of 1920 is where Instagram's bottom UI band starts, and 'a talking-head chin",
+        "below about 1600 is a guaranteed re-edit request' is one of the oldest rules here.",
+        "Above the chin IS the face: vid46's short reasoned a redaction stack at y1000 to",
+        "y1346 as 'his chest' and a ruler overlay put y1000 on his nose and y1346 on his",
+        "lower lip.",
+        "vid60's chin was measured at 11 points over 29 seconds, worst case y1080, and a plate",
+        "placed at y1190 off that number rendered across his neck: he leans in at the CTA and",
+        "the chin there is y1145, collar y1280. A sparse sample of a talking head measures the",
+        "pose he holds, not the pose he moves into. Measure the WINDOW the beat uses.",
+        "Read contourBot, not the bounding box. On vid62 the landmark itself was wrong three",
+        "times: the true crown sits 441px above the face bbox top, and under the shipped",
+        "transform his head was cut off in essentially every carded frame while the gate",
+        "reported 28%.",
+        "Passes on record: vid67 chin max 1548.7, vid59's short worst band chin y1519, vid58's",
+        "short worst y1511. Coincidences on record: 25px of clearance on vid58's p97 and 24px",
+        "on vid59's, both of which the archive calls a coincidence and not a margin."
+      ]
+    },
+    "copy.em_dashes": {
+      "unit": "count",
+      "max": 0,
+      "severity": "fail",
+      "film": "vid46 round 3, vid52",
+      "why": [
+        "'Remove the double em dashes from text wherever they are, and make sure you don't add",
+        "any', stated by Nader and recorded as applying to ALL videos; it is a standing rule",
+        "on shreyansh, gaurav and demi too. vid46 round 3 swept 13 on-screen instances and 14",
+        "in the caption pack. Label separators become the house middot, sentence dashes become",
+        "a comma or a colon.",
+        "It is a PRE-RENDER check, not a pre-delivery one: seven `FIG. NN` labels found late",
+        "cost a full 4K re-render on vid52.",
+        "And it was only ever enforced inside the composition, so the deliverables were never",
+        "scanned: 19 delivered caption packs and 2 delivered SRTs in out/ carry em dashes,",
+        "vid58's pack 14 of them and vid62-short's 11. Pass --srt, --caption-pack and",
+        "--composition or this check measures nothing, which is exactly how it shipped broken",
+        "21 times."
+      ]
+    }
+  },
+
+  "creators": {
+    "house": {},
+
+    "shreyansh": {
+      "face.presence_fraction": {
+        "unit": "of runtime",
+        "warn_min": 0.25,
+        "warn_max": 0.55,
+        "severity": "warn",
+        "film": "vid42, vid53, vid63",
+        "why": [
+          "Both edges have a rejection. Too little: vid42 v2 went 27% to 44% on 'need to show",
+          "my face for like 11.5 seconds at the very start'. Too much: 'no need to show my",
+          "face from here, just show the animations and the content in the full screen', and",
+          "'no need to show my face too much, only at important lines and with split screen'.",
+          "The shape that landed is a 1.4s full-bleed open then card beats at the important",
+          "lines: vid42 v3 at 30% with four card beats reads as 'present throughout', two did",
+          "not, and vid63 shipped at 46% (13.9s of 30.1) with never a full-bleed beat.",
+          "Vision misses profiles and occluded jaws, so the measured number is a floor on the",
+          "real one. Treat a reading near an edge as a prompt to open the contact sheet."
+        ]
+      },
+      "audio.integrated_lufs": {
+        "unit": "LUFS",
+        "warn_min": -24.0,
+        "warn_max": -19.0,
+        "severity": "warn",
+        "film": "vid57, vid63, vid67",
+        "why": [
+          "His mix ships untouched, so his films land where his master lands: vid63 -21.2",
+          "against a -21.6 master, vid67 -22.5 out from -22.6 in, vid57's render mix -21.83",
+          "against a -22.25 source. A shreyansh film reading near -14.5 means the loudnorm he",
+          "vetoed ran. This band is descriptive; audio.lufs_delta_vs_master has the teeth."
+        ]
+      }
+    },
+
+    "gaurav": {
+      "face.presence_fraction": {
+        "unit": "of runtime",
+        "warn_min": 0.55,
+        "severity": "warn",
+        "film": "vid47",
+        "why": [
+          "'We just can't show text, show animations while the man is also visible.' The reel",
+          "opens already in the split with a story running in the graphics zone, so he is on",
+          "screen nearly throughout. vid47 v1 shipped at 45% face share on a FACE/GFX/GFX",
+          "cadence and the note was 'we need to show the face more': v2 went to 91%. Earlier",
+          "cuts on his account run 40% and 70%, and the round that replaced the full-width",
+          "band with the floating card took 27% to 44%.",
+          "A low reading here means the split collapsed somewhere, which is a layout bug and",
+          "not a pacing choice."
+        ]
+      },
+      "audio.integrated_lufs": {
+        "unit": "LUFS",
+        "warn_min": -26.0,
+        "warn_max": -13.0,
+        "severity": "warn",
+        "film": "vid5, vid19, vid41, vid47",
+        "why": [
+          "Both behaviours are on record for this account and the difference is which layer.",
+          "His A-ROLL ships untouched: 'whatever there is in the video, mirrored or without",
+          "mirrored, keep that the same', and a pre-cut take at -25.9 dB mean shipped as is.",
+          "The delivery MIX was normalised on vid41 (-19.0 in, -14.8 out) and vid47 (-19.5 in,",
+          "-14.5 / -1.2 out) and both were accepted. Wide band, and read audio.true_peak_dbtp",
+          "instead: that is the one with a rejection behind it.",
+          "His self-mixed VO around -21 to -25 dB mean is also why the house SFX range of 0.16",
+          "to 0.34 overpowers him and his own band is 0.10 to 0.19."
+        ]
+      }
+    },
+
+    "nader": {
+      "delivery.bitrate_ratio": {
+        "unit": "x master",
+        "warn_min": 0.90,
+        "min": null,
+        "severity": "warn",
+        "film": "his profile, explicitly",
+        "why": [
+          "The file-size matching rule is the two Instagram creators' rule and it explicitly",
+          "does NOT apply to him: he is 3840x2160 YouTube long-form and his cutdowns are",
+          "crops of it, so a whole-frame data rate against his master compares two different",
+          "pictures. vid62's short delivered 28.16 Mbps at 1080x1920 against a 32.78 Mbps",
+          "3840x2160 master, which reads 0.86x and means nothing.",
+          "What still applies to him is not shipping a compressed-looking file: vid59 round 1",
+          "went out at 26.7 Mbps and was re-rendered at 38.4 against a 43.9 master."
+        ]
+      },
+      "audio.integrated_lufs": {
+        "unit": "LUFS",
+        "warn_min": -15.0,
+        "warn_max": -13.0,
+        "severity": "warn",
+        "film": "vid44, vid59 short, vid62 short",
+        "why": [
+          "Two-pass loudnorm to -14 LUFS / -1.0 dBTP for YouTube, and the cutdowns ship at the",
+          "same number: vid59's short delivered -14.0 / -0.9 and vid62's short delivered -14.0.",
+          "This is the account where the absolute figure is the working contract, because his",
+          "audio is rebuilt in the edit (source-aligned VO plus a separately-built SFX bed)",
+          "rather than stream-copied from a mix he made. No film of his was ever sent back on",
+          "loudness, so it is a warn: the number is the practice, not a rejection."
+        ]
+      },
+      "audio.lufs_delta_vs_master": {
+        "unit": "LU vs master",
+        "max": null,
+        "severity": "warn",
+        "why": [
+          "Not a contract on this account. His delivery is normalised to an absolute target,",
+          "so a delta against the master is information and not a gate."
+        ]
+      },
+      "face.presence_fraction": {
+        "unit": "of runtime",
+        "warn_min": 0.28,
+        "warn_max": 0.55,
+        "severity": "warn",
+        "film": "vid56, vid58, vid59",
+        "why": [
+          "'Better A-rolls and more A-rolls' from him means b-roll, not face time, confirmed",
+          "directly: face share fell 43.2% to 39.4% in a round he approved. Gaze-driven safe",
+          "coverage on his long-forms runs 38% (vid44), 43% (vid46) and 46.1% (vid56).",
+          "The floor exists because of the opposite note: 'no need to show any animation here",
+          "... just the A-roll should be shown', said on a 4.6s closing beat that was",
+          "graphics-only with no face at all, and he said explicitly it generalises.",
+          "The precondition on the floor: he reads from notes for about 45% of a long take and",
+          "showing him reading is a hard failure, so an unusable span comes off the screen",
+          "rather than getting smaller. Run tools/vision/gaze-detect.swift, not taste, and",
+          "note that eyelid aperture alone cannot see gaze DIRECTION: at the two moments the",
+          "client flagged it read 0.347 and 0.361 against a film median of 0.379."
+        ]
+      },
+      "frame.band_mean_luma": {
+        "severity": "warn",
+        "why": [
+          "Downgraded to a warn because his primary format is 16:9 YouTube long-form, where",
+          "there is no Instagram bottom band to reserve and this number is just whatever the",
+          "bottom sixth of the picture happens to be. Dark footage there would trip a hard",
+          "floor for no reason.",
+          "It is still the real check on his 9:16 cutdowns and it is not decorative: vid62's",
+          "short measures 22.9, above the 13.4 that drew the complaint and well below the",
+          "28.5 that answered it. Read this row against the format you are shipping."
+        ]
+      }
+    },
+
+    "demi": {
+      "motion.mean_shot_s": {
+        "unit": "s",
+        "warn_max": 1.5,
+        "severity": "warn",
+        "film": "demi2",
+        "why": [
+          "This number reversed inside one production and it is the clearest example in the",
+          "archive of a round-scoped correction that is not law. Read both halves before",
+          "acting on the row.",
+          "Round 1: 'i really want this a fast paced edit for meta ads, plz make a note of it',",
+          "said after a first plan came in at a 2.28s mean shot modelled on the Wispr Flow",
+          "reference ads. The reference ads set the grammar, not the tempo. The plan landed at",
+          "42 shots over 36.2s, 0.86s mean, 1.46s longest, and the density came from",
+          "pre-rendered static crop-cuts of the 4K master, hard-cut to. A cut to a tighter",
+          "framing is not a camera move, and animating a scale on a <video> wrapper both reads",
+          "as a zoom and deadlocks the capture engine.",
+          "Rounds 6, 9 and 10 walked it back. Block E went from 7 shots to 3 held shots on",
+          "'let the b-roll breathe', and v17 confirmed two long b-roll holds beat three medium",
+          "ones: drop a shot rather than compress three. Then 'smooth and subtle but so",
+          "elegant' was measured against the reference he named, a 79s Viktor ad with zero",
+          "cuts detectable at a 5% scene-change threshold, overlays fading in and HOLDING for",
+          "5 to 10s. The translation was to kill the flash cuts and replace every back.out and",
+          "expo.out with 0.4 to 0.5s power2 fade-drifts.",
+          "So a demi cut measuring well above 1.5s is not automatically wrong. Ask which",
+          "grammar is live before you cut anything, and record the answer in HISTORY.md.",
+          "Two carve-outs held throughout: a beat where the viewer must READ product UI gets",
+          "0.9 to 1.3s, and the direct-ask CTA line stays on the presenter's face.",
+          "MEASUREMENT CAVEAT, read this before acting on the number. Mean shot length is the",
+          "least trustworthy row in the report and no detector threshold fixes it. demi2's",
+          "density comes from static crop-cuts of the same person against the same wall,",
+          "which barely score as scene changes: the plan is 42 shots over 36.2s and the",
+          "detector sees 11 at scene 0.25, 16 at 0.10 and 19 at 0.06, while the same sweep",
+          "takes vid63 from a correct 10 to 66 false cuts. The shot count lives in the shot",
+          "plan. Use this row to notice a cut that is nowhere near its plan, not to grade it."
+        ]
+      },
+      "face.presence_fraction": {
+        "unit": "of runtime",
+        "max": 0.55,
+        "warn_max": 0.35,
+        "severity": "fail",
+        "film": "Demi UGC reel v1",
+        "why": [
+          "v1 was rejected on two structural faults and one of them was her face on screen 66%",
+          "of the time; the other was abstract graphics instead of Demi's real interface. Both",
+          "were structural, so the cut was rebuilt from the shot spec rather than iterated.",
+          "The rebuild came back at about 14% full-frame (6.3s of 43.6s) plus 10.8s as a small",
+          "card beside the product. These are paid Meta placements: the product has to be on",
+          "screen, not the presenter."
+        ]
+      },
+      "audio.integrated_lufs": {
+        "unit": "LUFS",
+        "warn_min": -20.0,
+        "warn_max": -13.0,
+        "severity": "warn",
+        "film": "demi2, Demi UGC reel",
+        "why": [
+          "The A-roll audio is stream-copied bit for bit on this account: no denoise, no EQ, no",
+          "loudnorm, no grade on the picture either. Video 1 landed at -13.9 LUFS integrated",
+          "and demi2's music sits about -13.9 dB at t=0.",
+          "Zero added sound effects here until asked. 'Remove the typing sfx' meant every added",
+          "sound and it took five rounds to learn: three evidence-based fixes removed the",
+          "click and tick family, then the music's own metronomic 0.465s percussion grid, then",
+          "the 2ms-attack reveal cues, and round 5's five timestamped notes (14.32, 17.31,",
+          "19.03, 21.43, 33.85) landed exactly on the five surviving whoosh and impact cues."
+        ]
+      },
+      "delivery.bitrate_ratio": {
+        "unit": "x master",
+        "min": 1.2,
+        "warn_min": 2.0,
+        "severity": "fail",
+        "film": "demi2",
+        "why": [
+          "Pinned at 40 Mbps minimum so the 32.9 Mbps A-roll master is never the ceiling, and",
+          "the delivered cuts run 75 to 96 Mbps depending on the content. The other sources in",
+          "the film run 52.0 / 64.7 / 99.9 Mbps min / median / max, so parity with the A-roll",
+          "master alone would still leave the weakest link in the chain setting the quality."
+        ]
+      },
+      "face.chin_max_norm": {
+        "severity": "warn",
+        "why": [
+          "These are Meta ads, not Instagram organic, so the Reels bottom UI band is not the",
+          "constraint it is elsewhere. And a markup box he drew over the presenter's own face",
+          "was placement approval: he had already priced in the overlap, and honouring the",
+          "drawn geometry beat re-deriving a safer placement nobody asked for."
+        ]
+      }
+    }
+  },
+
+  "masters_on_record": {
+    "note": [
+      "Measured master bitrates in Mbps, for when the master file is not to hand. Pass one",
+      "with --master-bitrate. These are the CAMERA masters, not project transcodes."
+    ],
+    "vid59": 43.9,
+    "vid60": 28.0,
+    "vid61": 36.25,
+    "vid62": 32.78,
+    "vid67": 33.15,
+    "demi2": 32.9
+  }
+}

@@ -1,6 +1,6 @@
 # Reference builds
 
-Seven shipped compositions, **code only**. Each carries an `ASSETS.md` naming every media file it
+Eight shipped compositions, **code only**. Each carries an `ASSETS.md` naming every media file it
 expected, where that file came from, and how to regenerate it.
 
 They are here to be read and scaffolded from, not to be re-rendered as-is. Re-rendering one means
@@ -11,6 +11,7 @@ re-fetching or re-shooting its media, which the manifest tells you how to do.
 | `shreyansh-vid67/` | shreyansh | **Current shreyansh grammar.** A reference reel copied shot for shot on his own A-roll, re-timed word by word. First build with a pre-render gate script and a beat contact sheet, and a chunked render of a short. |
 | `nader-vid62-short/` | Nader | **Current Nader vertical.** Nine beats cut from a long-form with no new recording. Split and card states off one camera, and the card collapsing inside its own rect. |
 | `demi-demi2/` | Demi | **The new client.** The only composition authored as ONE file and chunked afterwards. Its chunking scripts are the artefact. Voice plus music, zero SFX. |
+| `gaurav-vid50/` | gaurav | **Current gaurav grammar.** The paper split as it settled, and the build where the hook was already in the footage: the lid shuts by frame 22 and the title lands on it. His supplied `saas` SFX pack across 28 placements. |
 | `gaurav-vid47/` | gaurav | The paper split band. One accordion carrying ten items. Two moves per beat tied to specific words. three.js re-lit for a paper world. |
 | `nader-vid46-short/` | Nader | A 9:16 short derived from a finished long-form. Frame-defined timeline, baked crops, complete-sentence excerpting, the floating face card as a move. |
 | `nader-vid46-longform/` | Nader | The chunked 16:9 architecture: shared `base.css` and `chunk.js`, the recurring three.js field, one specimen chunk. |

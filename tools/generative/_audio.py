@@ -122,9 +122,15 @@ def speech_rate(path, word_count):
 TAG_RE = re.compile(r"<break[^>]*>|\[[a-zA-Z ]+\]")
 
 
+# U+2014, written as an escape so the repo's no-em-dash grep stays at zero. It
+# is data here, not prose: a script line that uses one gets counted as a word
+# otherwise, and the words/sec measurement comes out low.
+EM_DASH = "\u2014"
+
+
 def plain_text(tagged):
     """Strip audio tags and break markers, leaving what should be SPOKEN."""
-    return " ".join(TAG_RE.sub(" ", tagged).replace("—", " ").split())
+    return " ".join(TAG_RE.sub(" ", tagged).replace(EM_DASH, " ").split())
 
 
 def normalise_words(text):

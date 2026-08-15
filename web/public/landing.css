@@ -1,0 +1,140 @@
+/* Reel Factory landing. Uses tokens.css only. No second accent, no rounding, no gradient type. */
+
+section{position:relative}
+
+/* ---------- nav ---------- */
+.nav{position:sticky;top:0;z-index:40;background:rgba(13,13,13,.86);
+     backdrop-filter:blur(8px);border-bottom:1px solid var(--hair)}
+.nav__in{display:flex;align-items:center;gap:24px;height:64px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;margin-right:auto}
+.brand__mark{width:14px;height:14px;background:var(--lime);display:block}
+.brand__txt{font-family:var(--display);font-size:19px;letter-spacing:.01em}
+.nav__links{display:flex;gap:26px}
+.nav__links a{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--paper-dim);text-decoration:none}
+.nav__links a:hover{color:var(--paper)}
+.nav__cta{padding:10px 16px}
+
+/* ---------- hero ---------- */
+.hero{padding-top:clamp(34px,5vw,64px);overflow:hidden}
+.hero__h{font-size:clamp(46px,9.2vw,124px)}
+.hero__grid{position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background-image:linear-gradient(var(--hair) 1px,transparent 1px),
+                   linear-gradient(90deg,var(--hair) 1px,transparent 1px);
+  background-size:100% 88px,88px 100%;
+  -webkit-mask-image:radial-gradient(120% 80% at 50% 0%,#000 0%,transparent 78%);
+  mask-image:radial-gradient(120% 80% at 50% 0%,#000 0%,transparent 78%)}
+.hero__in{position:relative}
+.hero__kick{display:flex;align-items:center;gap:10px;margin:0 0 clamp(20px,3vw,34px)}
+.dot{width:8px;height:8px;background:var(--lime);display:inline-block;flex:none;
+  animation:blip 1.6s steps(1,end) infinite}
+@keyframes blip{0%,60%{opacity:1}61%,100%{opacity:.15}}
+
+.hero__h{margin-bottom:clamp(28px,4vw,48px)}
+.hero__cols{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);
+  gap:clamp(24px,4vw,56px);align-items:end;padding-bottom:clamp(40px,6vw,72px)}
+.hero__acts{display:flex;flex-wrap:wrap;gap:12px;justify-content:flex-start;align-self:end}
+
+/* ticker */
+.ticker{position:relative;border-block:1px solid var(--hair);overflow:hidden;
+  background:var(--ink-2);padding:14px 0}
+.ticker__track{display:flex;width:max-content;animation:slide 26s linear infinite}
+.ticker:hover .ticker__track{animation-play-state:paused}
+.ticker__set{display:flex;align-items:center;gap:26px;padding-right:26px;flex:none}
+.ticker__set b{font-family:var(--display);font-weight:400;font-size:clamp(20px,2.4vw,30px);
+  text-transform:uppercase;letter-spacing:.005em;white-space:nowrap}
+.ticker__set i{color:var(--lime);font-style:normal;font-family:var(--display);
+  font-size:clamp(20px,2.4vw,30px)}
+@keyframes slide{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
+@media (prefers-reduced-motion:reduce){.ticker__track{animation:none}}
+
+/* ---------- proof ---------- */
+.proof{padding:clamp(40px,6vw,76px) 0}
+.proof__row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(16px,3vw,32px)}
+.stat{border-left:1px solid var(--hair);padding-left:clamp(14px,2vw,22px);min-width:0}
+.stat__n{display:block;font-size:clamp(44px,7vw,92px);line-height:.9}
+.stat__n em{font-style:normal;color:var(--lime)}
+.stat__l{display:block;margin-top:10px}
+
+/* ---------- how ---------- */
+.how{padding:clamp(56px,8vw,110px) 0}
+.how__h{margin:14px 0 clamp(36px,5vw,60px)}
+.steps{list-style:none;margin:0;padding:0;display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--hair);
+  border:1px solid var(--hair)}
+.step{background:var(--ink);padding:clamp(20px,2.4vw,30px);min-width:0;
+  transition:background .2s var(--ease)}
+.step:hover{background:var(--ink-2)}
+.step__n{font-family:var(--mono);font-size:12px;letter-spacing:.16em;color:var(--lime)}
+.step__t{margin:16px 0 12px;font-size:clamp(20px,2.1vw,28px)}
+.step__p{margin:0;font-size:15px;line-height:1.5;color:var(--paper-dim)}
+
+/* ---------- review ---------- */
+.review{padding:clamp(56px,8vw,110px) 0}
+.review__in{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);
+  gap:clamp(32px,5vw,72px);align-items:center}
+.review__copy .d2{margin:14px 0 22px}
+.revlist{list-style:none;margin:28px 0 0;padding:0;border-top:1px solid var(--hair)}
+.revlist li{padding:15px 0;border-bottom:1px solid var(--hair);
+  font-size:16px;color:var(--paper-dim)}
+.revlist b{color:var(--paper);font-family:var(--mono);font-size:13px;letter-spacing:.1em;
+  text-transform:uppercase;margin-right:10px}
+.review__cta{margin-top:30px}
+
+/* the CSS/SVG player mock */
+.mock{margin:0;background:var(--ink-2);border:1px solid var(--ink-3);border-radius:var(--r);
+  padding:12px;max-width:420px;justify-self:center;width:100%}
+.mock__chrome{display:flex;align-items:center;gap:10px;padding:0 2px 12px;
+  font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--paper-faint)}
+.mock__dot{width:8px;height:8px;background:var(--red);flex:none}
+.mock__file{margin-right:auto}
+.mock__ver{color:var(--lime)}
+.mock__stage{position:relative;aspect-ratio:3/4;background:#111110;overflow:hidden;
+  border:1px solid var(--ink-3)}
+.mock__subject{position:absolute;left:50%;bottom:0;transform:translateX(-50%);
+  width:76%;height:82%}
+.mock__head{position:absolute;left:50%;top:6%;transform:translateX(-50%);
+  width:42%;aspect-ratio:1/1.15;background:var(--ink-3);border-radius:44% 44% 40% 40%}
+.mock__body{position:absolute;left:50%;bottom:0;transform:translateX(-50%);
+  width:100%;height:56%;background:var(--ink-3);border-radius:46% 46% 0 0}
+.mock__cap{position:absolute;left:8%;right:8%;bottom:26%;text-align:center;
+  font-family:var(--display);font-size:clamp(15px,2.6vw,21px);line-height:1.04;
+  text-transform:uppercase;letter-spacing:.005em}
+.mock__cap span{color:var(--lime)}
+.mock__draw{position:absolute;inset:0;width:100%;height:100%}
+.mock__draw rect{stroke-dasharray:640;stroke-dashoffset:640;animation:draw 2.6s var(--ease) infinite}
+@keyframes draw{0%{stroke-dashoffset:640}30%,86%{stroke-dashoffset:0}100%{stroke-dashoffset:0;opacity:0}}
+.mock__note{position:absolute;left:10px;bottom:10px;right:10px;background:var(--paper);
+  color:var(--ink);padding:9px 11px;font-size:12px;line-height:1.35;border-radius:var(--r)}
+.mock__noteh{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.14em;
+  color:var(--red);margin-bottom:3px}
+.mock__bar{position:relative;height:4px;background:var(--ink-3);margin-top:12px}
+.mock__played{position:absolute;inset:0 auto 0 0;width:41%;background:var(--paper-dim)}
+.mock__pin{position:absolute;left:41%;top:-4px;width:3px;height:12px;background:var(--red)}
+.mock__cc{margin-top:12px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--paper-faint)}
+
+/* ---------- footer CTA ---------- */
+.fcta{padding:clamp(64px,9vw,120px) 0}
+.fcta__in{display:flex;flex-direction:column;align-items:flex-start;gap:clamp(28px,4vw,44px)}
+.fcta__h{max-width:14ch}
+.foot{border-top:1px solid var(--hair);padding:26px 0}
+.foot__in{display:flex;flex-wrap:wrap;gap:12px 26px;justify-content:space-between}
+
+/* ---------- responsive ---------- */
+@media (max-width:960px){
+  .hero__cols{grid-template-columns:1fr;align-items:start}
+  .hero__acts{justify-content:flex-start}
+  .proof__row{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:28px}
+  .steps{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .review__in{grid-template-columns:1fr}
+  .nav__links{display:none}
+}
+@media (max-width:560px){
+  .steps{grid-template-columns:1fr}
+  .brand__txt{font-size:16px}
+  .nav__cta{padding:9px 12px;font-size:11px}
+  .hero__acts .btn{flex:1 1 100%}
+  .mock{max-width:none}
+}

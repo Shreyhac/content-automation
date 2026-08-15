@@ -453,3 +453,42 @@ into `HISTORY.md` with its date rather than into the grammar as law.
   the third person about the person on screen gets recast as a label.
 - **Two failed passes on a decorative element means cut it, not tune it.** Negative space beats a
   graphic that needs explaining.
+
+---
+
+## Where the two halves of this bar are enforced
+
+This document is the argument. Two other files are the execution, and they split along the same
+line the top of this page draws.
+
+**The measured half: `tools/qa/benchmark.py` and `tools/qa/benchmarks.json`.**
+
+```bash
+python3 tools/qa/benchmark.py out/vid68-final.mp4 --creator shreyansh \
+    --master /path/to/camera-master.mp4 \
+    --srt out/vid68-final.srt --caption-pack out/vid68-caption-pack.md \
+    --composition hf68/index.html
+```
+
+It measures the DELIVERED FILE, which is the only artefact he ever sees, against the numbers the
+sections above were written from: the master's resolution and data rate, integrated loudness and
+true peak, frozen runs and their longest block, the reserved band's mean luma, frame 0's ink
+coverage, face presence and the chin against y1600, and the em dash across the composition, the
+SRT and the caption pack alike. Per creator, because the targets genuinely differ. About 20 to 35
+seconds on a 4K reel; non-zero exit on any hard fail.
+
+Read `benchmarks.json` rather than only the tool's output. Every number in it carries the film and
+the reaction that set it, and one entry is marked `derived: true` because its exact threshold is
+calibration rather than a recorded rejection. Three things it deliberately does not settle: mean
+shot length (a static crop-cut barely scores as a scene change, so the shot count lives in the shot
+plan), whether a delivered crop samples its master above 1:1 (it refuses the comparison rather than
+reporting a false failure), and the DOM-side held fraction that the "boring" rejections were
+actually written against, which needs the composition and `tools/gates/guard.py`.
+
+**The judgement half: `docs/09-self-review.md`.**
+
+The five rejection classes above are diagnoses, and a new operator has never seen the reaction that
+produces one. 09 turns them into a sequence with an artefact and a stop condition per pass, ordered
+by how often each complaint recurs, so round 1 of a new operator's film is about the film rather
+than about defects that were already findable. It ends where this page does: the protocol replaces
+round 1 and round 2, and nothing replaces showing him the cut.

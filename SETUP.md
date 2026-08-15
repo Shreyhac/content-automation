@@ -12,7 +12,8 @@ what is missing.
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 brew install ffmpeg node python@3.12 expat
-pip3 install --user openai-whisper playwright Pillow python-docx
+pip3 install --user openai-whisper playwright Pillow python-docx numpy
+pip3 install --user fal-client        # optional, only for real generative calls
 python3 -m playwright install chromium
 ```
 

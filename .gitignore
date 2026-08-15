@@ -68,3 +68,15 @@ tools/review/share/config.json
 tools/review/share/.dev.vars
 tools/review/share/.wrangler/
 !tools/review/share/config.example.json
+
+# ---- secrets --------------------------------------------------------------
+# Nothing with a key in it, ever. Added 2026-08-15 after a check showed .env
+# files were NOT ignored while API-key tooling was being added.
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+web/config.local.json
+web/data/

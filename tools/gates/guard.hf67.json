@@ -1,0 +1,77 @@
+{
+  "_": "A REAL, RUNNABLE config, not an illustration. This is vid67 (shreyansh,",
+  "__": "`launch-your-agent`, 35.233s, delivered), and every number in it is a",
+  "___": "measurement of that one film. guard.example.json shows every key that",
+  "____": "exists; this file shows one film's actual answers. Re-derive, never inherit.",
+
+  "project": "../../reference-builds/shreyansh-vid67",
+  "_project": "the in-repo copy of the film, which is CODE ONLY: reference-builds carry no media by policy, so a run against it reports ASSET for assets/aroll.mp4, assets/bandtrack.mp4 and the fonts, and IMG0 for nothing because the film has no <img>. That is the gate working. For the clean PASS, point it at the film directory that has its assets: `--project ~/Desktop/shreyansh\\ claude/hf67`.",
+
+  "document": "index.html",
+  "timeline": "vid67",
+  "stage_id": "stage",
+  "stage_w": 1080,
+  "stage_h": 1920,
+  "_stage": "the root is 2160x3840 and #stage is 1080x1920 under transform:scale(2). These are the UNSCALED numbers, which is the space guard.py measures in. Writing the root's numbers here puts every band at half its real height and the gate passes everything.",
+  "asset_prefix": "assets/",
+
+  "_beats": "41: the 20 cut() boundaries, one word onset inside each hold, and 35.1, four frames short of the 35.233 duration. tools/qa/shoot-sheet.py reads the same list, so the beat map is written once.",
+  "beats": [0.0, 1.21, 2.2, 2.772, 3.24, 4.329, 5.22, 6.677, 7.869, 8.887, 9.72,
+            10.215, 10.62, 11.126, 11.54, 12.805, 13.84, 14.324, 14.72, 15.072,
+            15.36, 15.899, 16.34, 16.703, 17.0, 18.705, 20.1, 20.694, 21.18,
+            22.17, 22.98, 23.606, 24.119, 25.275, 26.22, 26.968, 27.58, 29.912,
+            31.82, 33.697, 35.1],
+
+  "bands": {
+    "top_text": 150,
+    "band_y": 1600,
+    "rail_x": 960,
+    "rail_y0": 900,
+    "rail_y1": 1600,
+    "left_pad": 60
+  },
+
+  "caption_replay": { "array": "__CAPS", "target": "cap" },
+  "_caption_replay": "vid67 has 70 caption cues written by a tl.call(). tl.time(t, false) suppresses events, so without this replay #cap carries no text at any beat, isText is false, and the crown, band, rail, text-on-text and contrast rules all measure nothing while printing PASS. The composition publishes `window.__CAPS = CAPS;` for exactly this.",
+
+  "face": {
+    "element": "faceScene",
+    "default": "full",
+    "off_state": "none",
+    "rules": [
+      { "state": "split", "when": { "top": [">=", 610] } }
+    ]
+  },
+  "_face": "two states, hard cut, never a tween: FULL is inset(0px 0px 0px 0px), SPLIT is inset(620px 0px 0px 0px). The threshold is 610, between the two observed values and on neither, so a one-pixel rounding cannot flip the state. off_state names a state this film does not have, because his face never leaves the frame.",
+
+  "states": {
+    "split": {
+      "_": "B-roll band y0-620 full width, his face below it, picture pushed down 380. Worst crown 660 over 176 Vision samples of this take (crown y280-375 raw), 40px below the seam: no caption may run past it. No ink_zone: the graphics band IS a full-width video track. Measured, a zone inside it reads 241.3% covered, because ink is summed per element and overlapping elements double count, so the floor can never fail here.",
+      "text_must_clear_y": 660,
+      "videos_painting": ["aroll", "vband"]
+    },
+    "full": {
+      "_": "his face full-bleed, untouched. No graphics rectangle exists, so ink_zone and the crown are DELETED rather than widened: a zone here measured 212.9% covered, which is a check that cannot fail. The band track must be dark here, and that is the one thing this state can assert.",
+      "videos_painting": ["aroll"]
+    }
+  },
+
+  "face_windows": [[0.0, 35.234]],
+  "_face_windows": "one window covering the film, deliberately. He is on screen for every frame of vid67: under the band on SPLIT beats, whole-frame on FULL beats. Recorded as a decision so nobody later reads it as an omission. On a film where he leaves, this is the list of windows he MAY appear in and everywhere else is forbidden.",
+
+  "void": { "after_t": 0.0, "min_ink_frac": 0.14 },
+  "_void": "inert on this film: no state carries an ink_zone. Kept so the next edit that adds a graphics panel has the floor already sitting here.",
+
+  "contrast": { "enabled": true, "bright": 150, "max_bright_frac": 0.35, "min_area": 2500 },
+  "paint": { "enabled": true },
+
+  "stylesheets": [],
+  "_stylesheets": "all of vid67's CSS is inline in index.html. [] is correct, not lazy: guard.py only PICHASHes a sheet with an href, and an inline sheet cannot go stale against the document it lives in.",
+
+  "allow": [],
+  "_allow": "empty, and it stayed empty: the clean run has nothing to exempt. An entry that matches nothing fails the run as ALLOWDEAD.",
+
+  "root_id": "root",
+  "apply_clip_schedule": true,
+  "managed_tags": ["DIV", "VIDEO", "IMG"]
+}

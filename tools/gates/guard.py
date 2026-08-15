@@ -66,8 +66,12 @@ Usage
     python3 tools/gates/guard.py path/to/guard.json
     python3 tools/gates/guard.py path/to/guard.json --project hf67 --beats 4.3,5.2
 
-Nothing about a film is hardcoded here. See tools/gates/README.md and
-tools/gates/guard.example.json for the config.
+Nothing about a film is hardcoded here. Bootstrap the config with
+`tools/gates/derive_config.py <film-dir>`, which derives what is derivable and
+leaves a loud TODO on every value that is a measurement. This script REFUSES to
+run while any TODO is left, because a half-finished config that silently treats
+its blanks as absent prints the same PASS a real run prints. See
+tools/gates/README.md and tools/gates/guard.example.json for the config.
 
 Exit code 0 means every check RAN and passed. Read the coverage block it prints
 before believing a PASS.
@@ -122,9 +126,54 @@ DEFAULTS = {
 }
 
 
+TODO = "TODO"
+
+
+def find_todos(node, path=""):
+    """Every unresolved TODO marker in the raw config, by dotted path.
+
+    Keys beginning with `_` are the comment block `derive_config.py` writes, and
+    those comments EXPLAIN the TODOs, so they carry the word themselves. They are
+    skipped, and nothing else is.
+    """
+    out = []
+    if isinstance(node, dict):
+        for k, v in node.items():
+            if isinstance(k, str) and k.startswith("_"):
+                continue
+            out += find_todos(v, "%s.%s" % (path, k) if path else str(k))
+    elif isinstance(node, list):
+        for i, v in enumerate(node):
+            out += find_todos(v, "%s[%d]" % (path, i))
+    elif isinstance(node, str) and TODO in node:
+        out.append(path)
+    return out
+
+
 def load_config(path, args):
     with open(path) as fh:
         raw = json.load(fh)
+
+    # A half-finished config must not be able to masquerade as a passing gate.
+    # Every TODO in a derived config is a MEASUREMENT: the crown of his head, the
+    # rectangle graphics are supposed to own, the windows his face may paint in.
+    # Treated as absent, each one simply switches its check off, and the run
+    # prints the same PASS a real one prints. That is the failure this repo has
+    # made more than any other: a gate that has never run is not a gate, and a
+    # green run and a gate that silently did nothing produce identical output.
+    # So refuse, name the paths, and make the operator resolve or DELETE each one.
+    todos = find_todos(raw)
+    if todos:
+        print("REFUSING TO RUN: %d unresolved TODO(s) in %s" % (len(todos), path))
+        for t in todos:
+            print("   %s" % t)
+        print("Each TODO is a measurement, not a blank. Fill it from the take, or DELETE "
+              "the key if this film genuinely has no such constraint. Deleting is a "
+              "decision and is fine; leaving it is a gate that cannot fail. The "
+              "`_`-prefixed keys beside each one say what the number means and how to "
+              "measure it. Walkthrough: tools/gates/README.md.")
+        sys.exit(2)
+
     cfg = dict(DEFAULTS)
     for k, v in raw.items():
         if isinstance(v, dict) and isinstance(cfg.get(k), dict):
@@ -538,6 +587,50 @@ def face_state(cfg, clip):
 
 
 # ---------------------------------------------------------------------------
+# union area of axis-aligned rectangles
+# ---------------------------------------------------------------------------
+
+def union_area(boxes):
+    """Area covered by at least one box. Overlap is counted ONCE.
+
+    This exists because the first version of the ink-coverage check summed each
+    element's intersection with the zone separately. On any film whose picture is
+    full-frame video the elements stack, so coverage came out at 212% and 241% on
+    hf67 and the floor could never fail: the check that is supposed to catch a
+    void was structurally incapable of firing. Summing areas is not measuring
+    coverage.
+
+    Exact, by sweeping x slabs between every distinct edge and merging the y
+    intervals of the boxes that span each slab. Element counts here are in the
+    low hundreds, so the O(n^2) worst case is irrelevant and being exact is worth
+    more than being clever.
+    """
+    boxes = [b for b in boxes if b[2] > b[0] and b[3] > b[1]]
+    if not boxes:
+        return 0.0
+    xs = sorted({b[0] for b in boxes} | {b[2] for b in boxes})
+    total = 0.0
+    for i in range(len(xs) - 1):
+        x0, x1 = xs[i], xs[i + 1]
+        dx = x1 - x0
+        if dx <= 0:
+            continue
+        spans = sorted((b[1], b[3]) for b in boxes if b[0] <= x0 and b[2] >= x1)
+        if not spans:
+            continue
+        covered, cy0, cy1 = 0.0, spans[0][0], spans[0][1]
+        for y0, y1 in spans[1:]:
+            if y0 > cy1:                 # gap, bank the run and start a new one
+                covered += cy1 - cy0
+                cy0, cy1 = y0, y1
+            elif y1 > cy1:
+                cy1 = y1
+        covered += cy1 - cy0
+        total += dx * covered
+    return total
+
+
+# ---------------------------------------------------------------------------
 # contrast over video: bright-pixel fraction, never the mean
 # ---------------------------------------------------------------------------
 
@@ -807,15 +900,13 @@ def run(cfg, verbose, ids_path=None):
             if zone:
                 floor = srules.get("min_ink_frac", (cfg.get("void") or {}).get("min_ink_frac", 0.14))
                 after = (cfg.get("void") or {}).get("after_t", 0.0)
-                ink = 0.0
+                boxes = []
                 for e in els:
-                    if e["x"] + e["w"] < zone[0] or e["x"] > zone[2]:
-                        continue
-                    if e["y"] + e["h"] < zone[1] or e["y"] > zone[3]:
-                        continue
-                    ox = min(e["x"] + e["w"], zone[2]) - max(e["x"], zone[0])
-                    oy = min(e["y"] + e["h"], zone[3]) - max(e["y"], zone[1])
-                    ink += max(0, ox) * max(0, oy)
+                    ox0, oy0 = max(e["x"], zone[0]), max(e["y"], zone[1])
+                    ox1, oy1 = min(e["x"] + e["w"], zone[2]), min(e["y"] + e["h"], zone[3])
+                    if ox1 > ox0 and oy1 > oy0:
+                        boxes.append((ox0, oy0, ox1, oy1))
+                ink = union_area(boxes)
                 frac = ink / float((zone[2] - zone[0]) * (zone[3] - zone[1]))
                 if t > after and frac < floor:
                     problems.append(("VOID", t, "graphics zone only %.1f%% covered in state %s"

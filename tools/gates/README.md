@@ -6,6 +6,7 @@ minutes and every defect below has shipped past `hyperframes lint` and `hyperfra
 validate`, which read the document and the console and nothing else.
 
 ```bash
+python3 tools/gates/derive_config.py hf67             # write hf67/guard.json first
 python3 tools/gates/guard.py hf67/guard.json          # the whole film
 python3 tools/gates/guard.py hf67/guard.json -v       # one line per beat
 python3 tools/gates/guard.py hf67/guard.json --beats 4.3,5.2
@@ -17,6 +18,7 @@ second run names anything that disappeared. A baseline that just reported a disa
 is **kept, not overwritten**, or the next run silently forgets what the last one found.
 
 Exit 0 means every check **ran** and passed. Read the coverage line before believing it.
+Exit 2 means the config still has `TODO` markers in it and nothing ran at all.
 
 Doctrine, when to add a gate and why gates lie: `playbooks/gates.md`.
 Symptom to cause: `docs/07-troubleshooting.md`.
@@ -25,8 +27,43 @@ Symptom to cause: `docs/07-troubleshooting.md`.
 
 ## Configure it for a new film
 
-Copy `guard.example.json` next to the film's `index.html` as `guard.json` and edit it.
-`tools/qa/shoot-sheet.py` reads the same file, so the beat list is written once.
+**Do not hand-author it. Derive it, then edit it.**
+
+```bash
+python3 tools/gates/derive_config.py hf68            # writes hf68/guard.json
+python3 tools/gates/derive_config.py hf68 --print    # to stdout instead
+```
+
+`derive_config.py` reads the composition and fills in everything a parser is entitled to
+know: timeline key, stage geometry, beats, asset prefix, stylesheets, caption replay, the
+`<video>` inventory, the face element and its observed `clip-path` strings. Everything that
+is a **measurement** rather than a fact comes out as the literal string `TODO`, with a
+`_`-prefixed sibling key saying what the number means and how to measure it.
+
+`guard.py` **refuses to run** while any `TODO` is left, exit code 2. It does not treat a
+`TODO` as absent, because absent means "check switched off" and a switched-off check prints
+the same `PASS` a real one prints. That refusal is the point:
+
+```
+REFUSING TO RUN: 12 unresolved TODO(s) in hf67/guard.json
+   face.default
+   face.off_state
+   face.rules
+   states.full.text_must_clear_y
+   ...
+   face_windows
+Each TODO is a measurement, not a blank. Fill it from the take, or DELETE the key if
+this film genuinely has no such constraint.
+```
+
+Deleting a key is a legitimate answer and often the right one. Leaving a wide value is not:
+see the wrong-value table below, where a crown of 1600 passes a film with captions printed
+across his forehead.
+
+`guard.example.json` is a **key reference**, not a config: it mixes vid66 and vid67 numbers
+so every key appears once, which means it describes no film. `guard.hf67.json` is a real,
+runnable, verified one. `tools/qa/shoot-sheet.py` reads the same file, so the beat list is
+written once.
 
 **Every number in that file is a measurement of one film. Re-derive them, never inherit
 them.** An inherited exemption list once carried an entry naming elements the current
@@ -123,6 +160,106 @@ presenter out of his own goodbye.
 Every exemption records a hit count, and an entry that matched nothing is reported as
 `ALLOWDEAD` and fails the run. An allowlist entry that matches nothing is worse than no
 entry: it reads as considered while handling nothing.
+
+---
+
+## Walkthrough: hf67 from nothing to a green gate
+
+A real one, run end to end against the shipped `vid67` build (35.233s, two face states, 70
+caption cues, two `<video>` tracks). The finished article is `guard.hf67.json`.
+
+### 1. Derive
+
+```
+$ python3 tools/gates/derive_config.py ~/Desktop/shreyansh\ claude/hf67
+wrote .../hf67/guard.json
+derived: timeline=vid67 stage=stage 1080x1920, 37 beats (20 cuts via cut(), 1 data-starts,
+  0 from beat map none, 16 interior, 0 snapped to onsets from 144 words), 37 element ids,
+  2 <video>, 0 stylesheet(s)
+face: element=faceScene states=full, split
+caption replay: array=__CAPS target=cap engine_present=True
+12 TODO(s) left, guard.py will REFUSE to run until every one is resolved:
+   face.default / face.off_state / face.rules
+   states.full.text_must_clear_y / ink_zone / min_ink_frac / videos_painting
+   states.split.text_must_clear_y / ink_zone / min_ink_frac / videos_painting
+   face_windows
+```
+
+Read the derive line before the file. It is the same discipline as guard's coverage line:
+`0 from beat map none` on hf67 is correct, because hf67 writes literal cut times, while the
+same run on hf66 prints `8 cuts via faceSet(), 17 from beat map B` and on hf64 `15 cuts via
+faceSet(), 19 from beat map B`. Those two films write `faceSet("card", B.s1)`, and a
+literal-only scan found **one** cut on a sixteen-scene film. If your film prints a cut count
+that does not match the number of scenes you built, the beat list is wrong and everything
+downstream measures the wrong frames.
+
+`caption replay: array=None target=None engine_present=True` is the other line to read. It
+is what hf66 and hf64 print: they have a `tl.call()` caption engine and publish no cue
+array, so the derived config carries `caption_replay: "TODO"`. The fix is one line **in the
+composition**, `window.__CAPS = CAPS;`, not a config value.
+
+### 2. The twelve TODOs, and where each number came from
+
+| TODO | vid67's answer | How it was measured |
+|---|---|---|
+| `face.rules` | `[{"state":"split","when":{"top":[">=",610]}}]` | the derived `_face_observed` block lists the two clips the composition uses, `inset(0px…)` and `inset(620px…)`. The threshold goes **between** them, not on either, so a one-pixel rounding cannot flip the state. |
+| `face.default` | `full` | the state with no rule. |
+| `face.off_state` | `none` | a name no state has: vid67 never cuts his face out, so no beat should be exempt from the whitelist. |
+| `states.split.text_must_clear_y` | `660` | Vision over all 176 samples of the take (`vid67/facebox.csv`): raw crown y280 to y375, picture pushed down 380, so worst crown 660, which is 40px below the y620 seam. **Not** derivable: it is a measurement of his head in this take. |
+| `states.full.text_must_clear_y` | deleted | in full-bleed there is no band above him, and the film's captions sit at y1246 under his chin. The constraint that matters in this state is `videos_painting`. |
+| `states.*.ink_zone`, `min_ink_frac` | both deleted | see below: measured, they cannot fail on this film. |
+| `states.split.videos_painting` | `["aroll","vband"]` | the band track shows on split beats. |
+| `states.full.videos_painting` | `["aroll"]` | and is dark on full beats. Nothing structural checks this. |
+| `face_windows` | `[[0.0, 35.234]]` | one window covering the film, **recorded as a decision**: he is on screen for every frame, under the band on split beats and whole-frame on full. Written down so the next operator does not read it as an omission. |
+
+### 3. Run it
+
+```
+$ python3 tools/gates/guard.py tools/gates/guard.hf67.json --project ~/Desktop/shreyansh\ claude/hf67
+coverage: 41 beats, 204 painting elements, 45 with text, 45 hit tests (0 returned null),
+  41 contrast measurements, 82 <video> reads, 0 <img> reads, 2 timed elements (0 unmanaged)
+face states seen: full x7, split x34
+PASS: assets resolve, everything measured paints, bands clear, no text on text, no void beats
+```
+
+The derived config, with those same twelve answers pasted in, reaches the same verdict on
+its own 37-beat list: `PASS`, 185 painting elements, 41 with text, 41 hit tests, 0 null, 37
+contrast measurements, 74 `<video>` reads, `full x6, split x31`. The two configs were
+written independently and disagree only in how many frames they sample, which is exactly
+what should differ between a derived beat list and a hand-tuned one.
+
+Run the same config with no `--project` and it reads the in-repo `reference-builds/`
+copy, which is **code only, no media by policy**:
+
+```
+16 problem(s):
+  [ASSETDIR ] t=  0.000  directory does not exist: assets/
+  [ASSET    ] t=  0.000  referenced but not on disk: assets/aroll.mp4
+  ...
+  [PAGEERR  ] t=  0.000  console: Failed to load resource: net::ERR_FILE_NOT_FOUND
+```
+
+Same 41 beats, same 204 elements, same geometry. That is the `ASSET` check doing its job on
+a build with no assets, and it is worth seeing once before you trust it on a build that is
+missing only one.
+
+### 4. What a wrong value looks like
+
+Every row below was actually run against hf67, changing exactly one value in the passing
+config. Note which ones **fail loudly** and which ones **pass quietly**: the quiet ones are
+the reason the TODO refusal exists.
+
+| Wrong value | What the gate does |
+|---|---|
+| `stage_w/stage_h` set to the root's `2160x3840` instead of the stage's `1080x1920` | **77 problems**, all false: `cap text to x1405 in the rail`, `cap runs to y1238 past the crown at 660`, `cap text to y2630 > 1600`. Every coordinate is doubled. Loud, and a beginner reads it as a broken film and starts moving elements. |
+| `states.split.text_must_clear_y` set to `1600`, a safe-looking wide guess | **`PASS`.** The captions run to y619 and the gate has no opinion. This is a film where a caption at y1500 would print across his mouth and ship. A wide crown is not a lenient check, it is no check. |
+| the same crown set to `540`, a guess at the seam | **34 false `ONCROWN`**, one per split beat: `cap runs to y619, past the worst-case crown at 540`. Tightening past the measurement is not "safer", it just trains you to ignore the gate. |
+| `ink_zone` invented over his face in `full`, `[60,700,1020,1400]` with the house floor 0.14 | **`PASS`, and it can never do anything else.** Ink is summed per element and overlapping elements double count, so that zone measures **212.9%** covered, and the split band measures **241.3%**. On a film whose picture is full-frame video the ink floor is structurally inert, which is why both keys are deleted rather than filled. |
+| `ink_zone` set to a token `[0,0,40,40]` with floor `0.01` | **`PASS`.** The trivially-passing config, exactly what the refusal exists to prevent someone shipping. |
+
+The two `PASS` rows are the whole argument. A wrong number that fails is a bad afternoon.
+A wrong number that passes is a gate that has never run, and the only way to tell the
+difference from the console is that there is no way to tell the difference from the console.
 
 ---
 

@@ -146,3 +146,36 @@ deliverables live elsewhere.
 `share/config.example.json` shows the shape. `tools/review/README.md` covers running it,
 `docs/08-review-workflow.md` is the operating manual and the one that matters: it carries the
 ordering rule, fix, reply, push, then share.
+
+---
+
+## `generative/` cloned voice, plates, drift, music
+
+| Script | What |
+|---|---|
+| `voice.py` | `clone`, `takes`, `sweep`, `eqfit`, `master`. ElevenLabs. Refuses to clone without `--i-did-not-denoise`, because pre-processing a clone reference cost 19% of its consonant energy. |
+| `plate.py` | `avatar`, `avatar4`, `omnihuman`, `lipsync`, `i2v`. Refuses an i2v run with no negative prompt unless you pass `--no-negative`. |
+| `drift.py` | Per-region drift on a crop around every face and hand. No key, no cost. A global metric read 4.84 while a hand drifted 77.4. |
+| `music.py` | `search`, `fetch`, `transients`, `treat`. Mixkit. AI-generated music has been rejected outright, so this fetches real licensed tracks. |
+
+Keys come from the environment only, never from a file in the repo. `.env.example` names them.
+Every tool takes `--dry-run`, which prints the exact request body and sends nothing.
+Doctrine is in `playbooks/generative-assets.md`.
+
+---
+
+## `qa/benchmark.py` the quality bar, measured
+
+```bash
+python3 tools/qa/benchmark.py out/vid68-final.mp4 --creator shreyansh --master /path/to/aroll.mp4
+```
+
+Thirteen metrics from `benchmarks.json`, each carrying the film and the reaction that set it.
+PASS, WARN, FAIL or SKIP per metric, non-zero exit on a hard fail, 16 to 35 seconds per film.
+
+It refuses to compare a 9:16 cutdown's pixels or bitrate against a 16:9 master, because that
+compares two different pictures. Point `--master` at the ORIGINAL take, not at the project's
+CRF-17 transcode: doing the latter turns a real 1.16x pass into a 0.89x fail.
+
+**Every shipped film tested failed at least one metric.** That is the tool working, not the tool
+being wrong. `docs/09-self-review.md` covers the judgement classes no measurement reaches.

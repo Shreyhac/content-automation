@@ -2,146 +2,320 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=1080, height=1920" />
-<title>REPLACE · vidNN (creator)</title>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
-<!-- three.js, if used, is VENDORED and UMD. Never a CDN request, never an ES module:
-     a module defers and the capture engine reads window.__timelines synchronously,
-     which silently produces a dead page that every gate reports as passing.
-<script src="assets/three.min.js"></script>
--->
+<title>REPLACE, vidNN (creator)</title>
+
 <style>
-  /* ══════════ FONTS ══════════
-     Copy the faces this build needs from library/fonts/ into assets/fonts/.
-     Declare every one here: the static guard only resolves faces it can see in
-     the document, and an external stylesheet alone silently falls back. */
-  @font-face{font-family:'Display';font-weight:700;font-display:block;src:url(assets/fonts/REPLACE.woff2) format('woff2');}
-  @font-face{font-family:'Body';font-weight:500;font-display:block;src:url(assets/fonts/REPLACE.woff2) format('woff2');}
-  @font-face{font-family:'Geist Mono';font-weight:400 700;font-display:block;src:url(assets/fonts/geist-mono.woff2) format('woff2');}
+/* ═══════════════════════════════════════════════════════════════════════════
+   vertical-reel, the current-generation skeleton.
 
-  /* ══════════ THEME ══════════
-     Theme follows the SUBJECT, type and layout follow the CREATOR.
-     Sample the subject's own CSS :root, charts, or supplied footage. Do not invent.
-     One saturated accent carries every number, bar and border; every rival and
-     every label is neutral. Treatment rules, non-negotiable:
-       no gradient display type · no glow on type · hairlines not coloured borders
-       one background wash · radial gradients only (linear bands in H.264) */
-  :root{
-    --bg:#REPLACE; --card:#REPLACE; --ink:#REPLACE; --mute:#REPLACE;
-    --accent:#REPLACE;        /* fills, bars, borders */
-    --accentText:#REPLACE;    /* the darker step, for type: an accent that works
-                                 as a fill usually fails WCAG as small text */
-    --line:rgba(0,0,0,.12);
-  }
-  *{margin:0;padding:0;box-sizing:border-box;}
-  html,body{width:1080px;height:1920px;overflow:hidden;background:#000;}
-  #stage{position:relative;width:1080px;height:1920px;background:var(--bg);
-    font-family:'Body',system-ui,sans-serif;-webkit-font-smoothing:antialiased;}
-  .mono{font-family:'Geist Mono',ui-monospace,monospace;}
-  .tnum{font-variant-numeric:tabular-nums;}
+   Parent: reference-builds/shreyansh-vid67 (delivered, 35.233s). Its caption
+   engine, its two-state face `cut()` system, its entrance conventions and its
+   SFX bed are what this file carries, with every measured number replaced by a
+   REPLACE marker. `guard.json` beside this file is a real derived stub from
+   tools/gates/derive_config.py, so the gate is wired before the first scene is.
 
-  /* ══════════ GROUND ══════════
-     Backgrounds are never flat. ONE global stack, not per-scene grounds:
-     per-band grounds silently cover the ambient layers and push the
-     heavy-overlay count past ~40, where the renderer produces solid black.
-     Any band ABOVE the face layer is the exception: it needs its own opaque bg. */
-  #ground{position:absolute;inset:0;z-index:1;
-    background:
-      radial-gradient(120% 80% at 50% 0%, rgba(0,0,0,.00) 0%, rgba(0,0,0,.06) 100%);}
-  #grid{position:absolute;inset:0;z-index:3;opacity:.5;
-    /* hard-stop = a LINE, not a ramp, so the no-linear-gradients rule does not apply.
-       Never stop at `transparent`: it is rgba(0,0,0,0) and premultiplies to a dark fringe. */
-    background:
-      linear-gradient(var(--line) 2px, rgba(0,0,0,0) 2px) 0 0/100% 64px;}
+   WHAT THIS FILE IS NOT: a film. It has no assets and no shot list. Read
+   reference-builds/README.md and prefer scaffolding from a reference build when
+   one fits; use this when the build genuinely fits none of them.
 
-  /* ══════════ SAFE ZONES (1080x1920) ══════════
-       TOP        y0–150      no text
-       BOTTOM     y1600–1920  no faces, captions or key UI
-       RIGHT RAIL x960–1080 in y900–1600
-       LEFT       x0–60
-     Hook and title band: y200–600. Chin at or above y1600.
-     Audit EVERY render round. text-shadow counts toward the box. */
-  .safe-debug{position:absolute;z-index:9999;pointer-events:none;display:none;}
-  /* flip to display:block while composing, then remove */
-  #z-top   {top:0;left:0;width:1080px;height:150px;background:rgba(255,0,0,.18);}
-  #z-bottom{top:1600px;left:0;width:1080px;height:320px;background:rgba(255,0,0,.18);}
-  #z-rail  {top:900px;left:960px;width:120px;height:700px;background:rgba(255,0,0,.18);}
+   THE FOUR THINGS THAT ARE STRUCTURAL, NOT STYLISTIC
+   1. The composition renders at 2160x3840 from a 1080x1920 #stage under
+      transform:scale(2). Every number below is in STAGE space, and the A-roll
+      must be transcoded at the MASTER's own resolution: a 1080x1920 asset is
+      upscaled back to 4K and delivers 52% of the master's detail against 95%
+      from a 2160x3840 one (measured on vid60).
+   2. Every media element NEEDS an id, or video renders FROZEN and audio SILENT.
+   3. A <video> painted outside its own [data-start, +data-duration] window
+      renders DEAD GREY. One always-on track with a full-film window cannot fall
+      outside it; seventeen windowed tracks stalled the capture engine outright.
+   4. No CSS transform ever animates on a box containing a <video>. A scale
+      punch-in on a video wrapper deadlocked the capture engine on vid66b.
+   ═══════════════════════════════════════════════════════════════════════════ */
 
-  /* ══════════ FACE ══════════
-     A beat is either CARD mode or FULL-BLEED mode. There is no third mode.
-     Never a full-width band across the torso: a card is a frame, a slab is a cover.
-     Solve the geometry from a Vision measurement (tools/vision/), per take.
-     Every clip-path number must stay non-collapsible: browsers collapse inset()
-     shorthand when serializing, and GSAP mispairs the numbers by index. */
-  #faceVid{position:absolute;left:0;top:0;width:1080px;height:1920px;
-    object-fit:cover;z-index:8;
-    clip-path:inset(0.1px 0.2px 0.3px 0.4px round 0.5px);}
+/* ══════════ FONTS ══════════
+   Copy the faces this build needs from library/fonts/ into assets/fonts/ and
+   declare every one HERE. An external stylesheet alone silently falls back, and
+   the `[Compiler] Embedded local font` line in the render log is the only proof
+   a face actually embedded. Verify glyphs at native resolution: a downscaled QA
+   crop hid a serifed capital I for a whole round. */
+@font-face{font-family:'Inter';src:url('assets/fonts/inter-800.woff2')format('woff2');font-weight:800;font-display:block}
+@font-face{font-family:'Inter';src:url('assets/fonts/inter-600.woff2')format('woff2');font-weight:600;font-display:block}
+@font-face{font-family:'Fraunces';src:url('assets/fonts/fraunces-italic.woff2')format('woff2');font-style:italic;font-weight:900;font-display:block}
 
-  /* ══════════ CAPTIONS ══════════ */
-  #capwrap{position:absolute;inset:0;z-index:30;}  /* last in DOM: stacking follows
-                                                       DOM order, not data-track-index */
+/* ══════════ THEME ══════════
+   Theme follows the SUBJECT, type and layout follow the CREATOR. Sample the
+   subject's own CSS, charts or supplied footage. Do not invent, and do not
+   reach for dark plus glow plus dot-grid: that carrier has been rejected twice.
+   Treatment rules, non-negotiable:
+     no gradient display type . no glow on type . hairlines not coloured borders
+     one background wash . radial gradients only, linear ones band in H.264 */
+:root{
+  --bg:#REPLACE; --card:#REPLACE; --ink:#REPLACE; --mute:#REPLACE;
+  --accent:#REPLACE;      /* fills, bars, borders */
+  --accentText:#REPLACE;  /* the darker step, for type: an accent that works as
+                             a fill usually fails WCAG as small text */
+  --line:rgba(0,0,0,.12);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:2160px;height:3840px;background:#000;overflow:hidden}
+#stage{position:absolute;left:0;top:0;width:1080px;height:1920px;
+  transform:scale(2);transform-origin:0 0;overflow:hidden;background:var(--bg);
+  font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+
+/* ══════════ GROUND ══════════
+   Backgrounds are never flat. ONE global stack, not per-scene grounds: per-band
+   grounds cover the ambient layers and push the heavy-overlay count past ~40,
+   where the renderer produces solid black. A band ABOVE the face layer is the
+   exception and needs its own opaque background. */
+#ground{position:absolute;inset:0;z-index:1;
+  background:radial-gradient(120% 80% at 50% 0%, rgba(0,0,0,0) 0%, rgba(0,0,0,.06) 100%)}
+#grid{position:absolute;inset:0;z-index:2;opacity:.5;
+  /* a hard stop is a LINE, not a ramp, so the no-linear-gradients rule does not
+     apply. Never stop at `transparent`: it is rgba(0,0,0,0) and premultiplies
+     to a dark fringe. */
+  background:linear-gradient(var(--line) 2px, rgba(0,0,0,0) 2px) 0 0/100% 64px}
+
+/* ══════════ THE FACE ══════════
+   Two states, hard cuts, never a tween. There is no third mode and no
+   full-width band across his torso: a card is a frame, a slab is a cover.
+   SPLIT  graphics own y0 to the seam, his face owns everything below it
+   FULL   his face full-bleed, untouched
+   Solve the geometry from a Vision measurement per take (tools/vision/,
+   playbooks/face-geometry.md), never from a layout instinct:
+     seam        REPLACE   graphics band height
+     cam y push  REPLACE   so the chin clears Instagram's y1600 band
+     worst crown REPLACE   goes in guard.json as states.split.text_must_clear_y
+   Centre on the MEDIAN of the window the state covers, not on the extremes:
+   extremes-centring protects one frame and skews the rest.
+   The clip-path is SET, never tweened. If you ever tween one, write
+   non-collapsible numbers (0.1px 0.2px 0.3px 0.4px): browsers collapse the
+   shorthand on serialize and GSAP then mispairs the numbers by index. guard.py
+   expands the collapsed form on its side, so a set-only file is safe as-is. */
+#faceScene{position:absolute;left:0;top:0;width:1080px;height:1920px;z-index:3;
+  clip-path:inset(0px 0px 0px 0px)}
+#faceCam{position:absolute;left:0;top:0;width:1080px;height:1920px;
+  transform-origin:0 0;transform:translate(0px,0px) scale(1)}
+#faceCam video{position:absolute;left:0;top:0;width:1080px;height:1920px;
+  object-fit:cover;display:block}
+
+/* ══════════ THE GRAPHICS BAND ══════════
+   ONE track, always playing, revealed only on SPLIT beats. Screen recordings
+   are never full-bleed and must actually MOVE: all six "recordings" on vid59
+   were stills, and only a measured motion assertion found it. */
+#btop{position:absolute;left:0;top:0;width:1080px;height:REPLACEpx;z-index:5;
+  overflow:hidden;background:#0A0A0C}
+#btop video{position:absolute;left:0;top:0;width:1080px;height:REPLACEpx;
+  object-fit:cover;display:block}
+#seam{position:absolute;left:0;top:REPLACEpx;width:1080px;height:4px;z-index:6;
+  background:rgba(0,0,0,.55)}
+
+/* ══════════ CAPTIONS ══════════
+   One phrase bar, not per-word stickers. inline-block so the BOX is the ink: a
+   full-width centred container measures 1080px and trips every edge gate
+   falsely (vid66b). z-index above the face layer: the vid56 short shipped with
+   no captions for 27 of its 43 seconds because .cs had no z-index at all,
+   computing to auto (0) under a full-bleed video at 2, and every gate passed. */
+#capW{position:absolute;left:0;top:REPLACEpx;width:1080px;text-align:center;z-index:8}
+#capW.full{top:REPLACEpx}
+#cap{display:inline-block;font-family:'Inter';font-weight:800;font-size:44px;
+  letter-spacing:-.018em;line-height:1.14;color:#FFFFFF;
+  background:rgba(10,10,12,.70);border-radius:12px;padding:9px 20px 12px;
+  text-shadow:0 2px 10px rgba(0,0,0,.5);white-space:nowrap}
+
+/* ══════════ CTA ══════════
+   "Comment X and I'll send you Y" also needs a make_cta_doc.docx at first
+   delivery, not when he asks: tools/deliver/make_cta_doc.py. */
+#cta{position:absolute;left:0;top:REPLACEpx;width:1080px;text-align:center;z-index:8;
+  opacity:0;visibility:hidden}
+#ctaP{display:inline-flex;align-items:center;gap:18px;
+  background:rgba(18,18,20,.86);border:2px solid rgba(255,255,255,.16);
+  border-radius:999px;padding:16px 30px 18px}
+#ctaT{font-family:'Inter';font-weight:800;font-size:52px;color:#fff;letter-spacing:-.01em}
+
+#flash{position:absolute;left:0;top:0;width:1080px;height:1920px;z-index:9;
+  background:#FFFFFF;opacity:0;pointer-events:none}
+
+/* ══════════ SAFE ZONES (1080x1920 stage space) ══════════
+     TOP        y0-150      no text
+     BOTTOM     y1600-1920  no faces, captions or key UI, and it must be LIT:
+                            an unlit reserved band reads as a broken black bar
+     RIGHT RAIL x960-1080 in y900-1600
+     LEFT       x0-60
+   Hook and title band y200-600. Chin at or above y1600. text-shadow counts
+   toward the box. Audit EVERY render round, not once per project: the full spec
+   is docs/02-safe-zones.md and guard.py enforces these same numbers. */
+.safe-debug{position:absolute;z-index:9999;pointer-events:none;display:none}
+#z-top{top:0;left:0;width:1080px;height:150px;background:rgba(255,0,0,.18)}
+#z-bottom{top:1600px;left:0;width:1080px;height:320px;background:rgba(255,0,0,.18)}
+#z-rail{top:900px;left:960px;width:120px;height:700px;background:rgba(255,0,0,.18)}
 </style>
 </head>
 <body>
-<div id="stage">
 
-  <div id="ground"></div>
-  <div id="grid"></div>
+<div id="root" data-composition-id="vidNN" data-start="0"
+     data-duration="REPLACE" data-fps="30" data-width="2160" data-height="3840">
+  <div id="stage">
 
-  <!-- safe-zone guides: enable while composing -->
-  <div class="safe-debug" id="z-top"></div>
-  <div class="safe-debug" id="z-bottom"></div>
-  <div class="safe-debug" id="z-rail"></div>
+    <div id="ground" data-layout-ignore></div>
+    <div id="grid" data-layout-ignore></div>
 
-  <!-- A-roll. Every media element NEEDS an id or video renders FROZEN and audio SILENT.
-       A <video> with data-start cannot be nested inside another element with data-start. -->
-  <video id="faceVid" class="clip" data-start="0" data-duration="0" muted src="assets/aroll.mp4"></video>
+    <!-- A-roll. data-layout-ignore on the carrier, never on the video. -->
+    <div id="faceScene" data-layout-ignore>
+      <div id="faceCam">
+        <video id="aroll" src="assets/aroll.mp4" data-start="0" data-duration="REPLACE"
+               data-track-index="0" muted playsinline></video>
+      </div>
+    </div>
 
-  <!-- scenes go here -->
+    <!-- the graphics band: ONE always-on track, windowed to the whole film -->
+    <div id="btop" data-layout-ignore>
+      <video id="vband" src="assets/bandtrack.mp4" data-start="0" data-duration="REPLACE"
+             data-track-index="1" muted playsinline></video>
+    </div>
+    <div id="seam" data-layout-ignore></div>
 
-  <div id="capwrap">
-    <!-- CAPTIONS -->
-    <!-- /* CAPTIONS */ -->
+    <!-- scenes go here. Anything carrying data-start that is NOT a div, video
+         or img paints for the WHOLE FILM: the framework gives visibility
+         control to those three tags only, and an <svg class="clip"> with a
+         data-start showed up in every scene of one film. -->
+
+    <div id="capW"><div id="cap"></div></div>
+    <div id="cta"><div id="ctaP"><span id="ctaT">Comment REPLACE</span></div></div>
+
+    <div id="flash" data-layout-ignore></div>
+
+    <div class="safe-debug" id="z-top"></div>
+    <div class="safe-debug" id="z-bottom"></div>
+    <div class="safe-debug" id="z-rail"></div>
   </div>
 
+  <!-- ══════════ AUDIO ══════════
+       VO first, then the SFX bed. Volumes 0.16 to 0.34 and never above the VO.
+       Build the bed with tools/sfx/build_bed.py rather than by hand: it refuses
+       to inject a bed that breaks the share cap, the median or the ceiling,
+       which is why those rules have not been broken since. And read the film's
+       own feedback history first, one creator wanted the whole SFX CATEGORY
+       gone and three evidence-based single-cue fixes did not satisfy it. -->
+  <audio id="vo" src="assets/vo.mp4" data-start="0" data-duration="REPLACE"
+         data-track-index="30" data-volume="1"></audio>
+  <!-- SFX BED -->
+  <!-- /* SFX BED */ -->
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<!-- three.js, if used, is VENDORED and UMD, never a CDN request and never an ES
+     module: a module defers, the capture engine reads window.__timelines
+     synchronously, and the result is a dead page every gate reports as passing.
+<script src="assets/three.min.js"></script> -->
 <script>
-/* ══════════ INITIAL STATES ══════════
-   gsap.set() OUTSIDE the timeline for every initial hidden state.
-   A zero-duration tl.set(sel,{opacity:0},0) does not reliably paint while the
-   playhead sits exactly on 0, so it breaks the cover frame. lint flags it as
-   gsap_timeline_set_initial_hide: that is a wrong frame, not a style nit.
+var tl = gsap.timeline({ paused: true, defaults: { immediateRender: false } });
+window.__timelines = { vidNN: tl };
 
-   After adding a blanket hide-guard, DIFF the guard list against the entrance
-   tweens. An element in the guard with no reveal tween never appears, and lint,
-   validate and inspect all pass it. */
-gsap.set([
-  // "#everyLateElement",
-], { autoAlpha: 0 });
+var FPS = 30, HALF = 0.5 / FPS;
 
-/* ══════════ TIMELINE ══════════ */
-const tl = gsap.timeline({ paused: true });
+/* A zero-duration tl.set() at position 0 is not reliably applied while the
+   playhead sits exactly on 0, so anything inside the first half frame is
+   written IMMEDIATELY and also kept on the timeline, so a seek back to 0
+   restores it. Frame 0 is the cover: it must be a fully composed frame, never
+   a mid-entrance state. */
+function put(sel, vars, t){ if (t <= HALF) gsap.set(sel, vars); tl.set(sel, vars, t); }
+function show(sel, t){ put(sel, { autoAlpha: 1 }, t); }
+function hide(sel, t){ put(sel, { autoAlpha: 0 }, t); }
 
-/* Scene windows LEAD the spoken word so the entrance finishes UNDER the
-   transition and the first visible frame is settled. Opening on the word ships
-   one empty frame per cut, and lint/validate/inspect all pass it. */
-const LEAD = 0.20;
+/* ══════════ THE BEAT MAP ══════════
+   Derive onsets from a 10ms RMS ENVELOPE of his own audio, not from whisper:
+   whisper smears emphatic delivery, and 62 of its word starts moved more than
+   60ms against the envelope on one film. Use whisper only to know WHICH word an
+   onset belongs to. tools/aroll/beats.py.
+   Every boundary here is also a beat in guard.json, and derive_config.py reads
+   THIS OBJECT to build that list. Keep it numeric and in order. */
+var B = {
+  s0:0.000, s1:REPLACE, s2:REPLACE, s3:REPLACE, end:REPLACE
+};
 
-/* Cut helper: wipe peaks AT the cut by construction (run the band symmetrically
-   around t). Wipe colour must CONTRAST the scene it covers, not match the world. */
-function cut(t){
-  // tl.fromTo("#wipe", {xPercent:-120}, {xPercent:120, duration:0.44, ease:"power2.inOut"}, t - 0.22);
-  // flash cuts sit at t - 0.04, opacity 0.42 over 0.13s (0.80 blows the frame to white)
+/* ══════════ THE FACE ══════════ */
+var FACE = {
+  full:  { clip:"inset(0px 0px 0px 0px)",          cam:{ x:0, y:0,       scale:1 } },
+  split: { clip:"inset(REPLACEpx 0px 0px 0px)",    cam:{ x:0, y:REPLACE, scale:1 } }
+};
+function cut(state, t){
+  var f = FACE[state];
+  put("#faceScene", { clipPath: f.clip }, t);
+  put("#faceCam", Object.assign({ transformOrigin:"0 0" }, f.cam), t);
+  put("#btop", { autoAlpha: state === "split" ? 1 : 0 }, t);
+  put("#seam", { autoAlpha: state === "split" ? 1 : 0 }, t);
+  put("#capW", { className: state === "split" ? "" : "full" }, t);
 }
 
-/* three.js, if used: one timeline onUpdate driver. It fires after that tick's
-   tweens apply, so it is order-safe by construction. Never requestAnimationFrame,
-   never Date.now, seeded PRNG only, and derive every pixel from t.
-   Verify determinism by rendering twice and diffing per-frame SHAs.
-   Size against the screen: px_per_unit = frame_height / (2 * cam.z * tan(fov/2)). */
+cut("split", B.s0);   /* REPLACE: one line per cut, with what is on screen */
+cut("full",  B.s1);
+cut("split", B.s2);
+cut("full",  B.s3);
 
-window.__timelines = { main: tl };
+/* ══════════ ENTRANCES ══════════
+   Layout first, animation second: build the static hero frame, then add
+   gsap.from()/fromTo() entrances. fromTo and never from, with every staged
+   element opacity:0 in CSS, so an interrupted seek cannot leave it visible.
+   A scene window LEADS the spoken word by ~0.20s so the entrance finishes UNDER
+   the transition and the first visible frame is settled. No exit tweens except
+   the final scene: transitions handle exits.
+   Stage on the ELEMENT, not on a hidden wrapper: under immediateRender:false a
+   hidden wrapper does not stage its children's own CSS.
+   A beat must clear its own transition, and a payoff frame needs hold time: a
+   clip resolving on its last frame resolves after its card has faded. */
+function bring(sel, t, dy, dur, ease){
+  tl.fromTo(sel, { autoAlpha:0, y: dy || 18 },
+    { autoAlpha:1, y:0, duration: dur || 0.28, ease: ease || "power3.out" }, t);
+}
+
+/* ══════════ CUT DEVICES ══════════
+   Both run symmetrically around t, so the canvas is covered AT the cut by
+   construction. ease:"none" throughout: an eased 0.16s flash collapses into a
+   single-frame strobe under a seek-by-frame capture engine. A wipe colour must
+   CONTRAST the scene it covers, not match the world. */
+function flash(t){
+  var d = 0.16;
+  tl.fromTo("#flash", { opacity:0 }, { opacity:0.40, duration:d/2, ease:"none" }, t - d/2);
+  tl.to("#flash", { opacity:0, duration:d/2, ease:"none" }, t);
+}
+
+/* ══════════ CAPTIONS ══════════
+   One phrase per cue, every change on a word onset. Generate the array with
+   tools/captions/build_captions.py and paste it here: hand-patching a generated
+   array is how round-1 captions shipped inside a round-2 cut. */
+var CAPS = [
+  [0.000, "REPLACE first phrase"],
+  [0.000, "REPLACE second phrase"],
+  [0.000, "REPLACE third phrase"]
+];
+/* Gates and contact sheets seek with suppressEvents, so tl.call() never fires
+   for them. Without this one line the caption element carries no text for every
+   probe, isText is false, and the crown, band, rail, text-on-text and contrast
+   rules ALL measure nothing while printing PASS. */
+window.__CAPS = CAPS;
+(function(){
+  var el = document.getElementById("cap");
+  for (var i = 0; i < CAPS.length; i++){
+    (function(c){
+      tl.call(function(){ el.textContent = c[1]; }, null, c[0]);
+      tl.fromTo("#cap", { scale:0.94 }, { scale:1, duration:0.10, ease:"power2.out",
+        transformOrigin:"50% 50%" }, c[0]);
+    })(CAPS[i]);
+  }
+})();
+
+/* ══════════ CTA ══════════ */
+put("#cta", { autoAlpha:0 }, 0);
+tl.set("#cta", { autoAlpha:1 }, B.s3);
+tl.fromTo("#cta", { scale:0.90, y:16 }, { scale:1, y:0, duration:0.28,
+  ease:"back.out(2.0)", transformOrigin:"50% 50%" }, B.s3);
+
+/* ══════════ BEFORE THE RENDER ══════════
+   npm run check                    lint, validate, inspect
+   npm run gate                     tools/gates/guard.py against guard.json
+   python3 tools/qa/shoot-sheet.py guard.json     the beat contact sheet
+   Only then render. A void is a defect and no structural gate has an opinion
+   about emptiness: look at the sheet before believing the film is composed. */
 </script>
 </body>
 </html>

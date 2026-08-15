@@ -1,6 +1,9 @@
 {
-  "_": "Copy this next to the film's index.html as guard.json and edit it. Every",
-  "__": "number here is a measurement of ONE film. Re-derive them, never inherit.",
+  "_": "A KEY REFERENCE, NOT A RUNNABLE CONFIG. It mixes vid66 and vid67 numbers",
+  "__": "so that every key that exists appears once, which means it describes no",
+  "___": "film. Runnable, real, verified: guard.hf67.json. Bootstrap a new one with",
+  "____": "`python3 tools/gates/derive_config.py <film-dir>` and work its TODOs.",
+  "_____": "Every number in a real config is a measurement of ONE film, re-derived.",
 
   "project": ".",
   "document": "index.html",

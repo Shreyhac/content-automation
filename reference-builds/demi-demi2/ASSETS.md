@@ -178,7 +178,9 @@ fontTools `glyf`, Plex Sans "I" is 1 contour and 12 points, a grotesque's is 4 t
 | `b`/`bo`/`be` | `b1d`, `bo2a`, `bo2b`, `be3` | the client's desk and integrations B-roll |
 | other | `dock2`, `outro2`, `s18a` | the app dock reveal, the client's own outro clip, a screen shot |
 
-Sources, both on an external drive that must be mounted:
+Sources, both on an external drive that must be mounted. **Verified present and readable
+2026-08-15**: the A-roll measured 34.033s, 2160x3840 HEVC, 32.88 Mbps, and all six B-roll clips
+resolve.
 
 - A-roll `/Volumes/Shreyansh/demi new /a roll.mp4`, 34.03s, 2160x3840 HEVC, 30fps, 32.9 Mbps. The
   client's own manual cut, untouched as instructed. His three jump cuts sit at 5.47s, 10.57s and

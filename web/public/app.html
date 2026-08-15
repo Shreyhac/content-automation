@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reel Factory / App</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<header class="hdr">
+  <a class="mark" href="index.html">REEL<span class="acc">/</span>FACTORY</a>
+  <nav class="steps" id="steps" aria-label="Progress"></nav>
+  <button class="btn btn--ghost btn--sm" id="signout" hidden>Sign out</button>
+</header>
+
+<main id="main">
+
+<!-- 1. AUTH -->
+<section class="state" id="s-auth">
+  <div class="wrap col">
+    <p class="kicker">Step 01 / Access</p>
+    <h1 class="d2">Bring your own<br>model key.</h1>
+    <p class="lead">Reel Factory runs the edit on your account. Your key stays in this browser, it is never sent to our server. We check its shape and nothing else.</p>
+
+    <div class="grid2">
+      <div class="card pad">
+        <p class="kicker">Provider</p>
+        <div class="provrow">
+          <button class="btn prov" data-prov="anthropic">Continue with Claude</button>
+          <button class="btn prov" data-prov="openai">Continue with Codex</button>
+        </div>
+        <p class="fineprint">Neither Anthropic nor OpenAI ships a third party OAuth, so this is a provider choice, not a login. Pick one and paste that provider's key below.</p>
+      </div>
+
+      <div class="card pad">
+        <p class="kicker">Or paste a key</p>
+        <label class="lbl" for="provsel">Provider</label>
+        <select class="field" id="provsel">
+          <option value="anthropic">Anthropic (sk-ant-)</option>
+          <option value="openai">OpenAI (sk-)</option>
+        </select>
+        <label class="lbl" for="keyin">API key</label>
+        <input class="field" id="keyin" type="password" autocomplete="off" spellcheck="false" placeholder="sk-ant-...">
+        <p class="err" id="keyerr" role="alert" hidden></p>
+        <button class="btn btn--go full" id="keygo">Enter the factory</button>
+      </div>
+    </div>
+
+    <div class="demo card pad">
+      <div>
+        <p class="d3">No key on you?</p>
+        <p class="fineprint">Runs the full pipeline on a bundled sample. Nothing is charged, nothing is stored.</p>
+      </div>
+      <button class="btn btn--go" id="demo">Skip, use demo account</button>
+    </div>
+    <p class="err" id="autherr" role="alert" hidden></p>
+  </div>
+</section>
+
+<!-- 2. UPLOAD -->
+<section class="state" id="s-upload" hidden>
+  <div class="wrap col">
+    <p class="kicker">Step 02 / Source</p>
+    <h1 class="d2">Drop the raw take.</h1>
+    <p class="lead">One A-roll file. We read the duration locally in your browser. The bytes stay on your machine for this prototype, only the filename and size are sent.</p>
+
+    <div class="drop" id="drop" tabindex="0" role="button" aria-label="Choose a video file">
+      <p class="d3">Drag a video here</p>
+      <p class="fineprint">or click to browse. video/* only.</p>
+      <input type="file" id="file" accept="video/*" hidden>
+    </div>
+    <p class="err" id="uperr" role="alert" hidden></p>
+
+    <div class="card pad meta" id="meta" hidden>
+      <div class="metagrid">
+        <div><p class="kicker">File</p><p class="mono" id="m-name">-</p></div>
+        <div><p class="kicker">Size</p><p class="mono" id="m-size">-</p></div>
+        <div><p class="kicker">Duration</p><p class="mono" id="m-dur">-</p></div>
+        <div><p class="kicker">Type</p><p class="mono" id="m-type">-</p></div>
+      </div>
+      <button class="btn btn--go" id="go">Edit my reel</button>
+    </div>
+    <video id="probe" hidden muted preload="metadata"></video>
+  </div>
+</section>
+
+<!-- 3. PIPELINE -->
+<section class="state" id="s-pipe" hidden>
+  <div class="wrap col">
+    <p class="kicker">Step 03 / Build</p>
+    <h1 class="d2">Cutting.</h1>
+    <p class="lead" id="pipesub">Nine passes. Roughly forty seconds. Every stage below is a real step from the Reel Factory pipeline.</p>
+    <div class="bar"><span id="barfill"></span></div>
+    <ol class="stages" id="stages"></ol>
+    <p class="err" id="piperr" role="alert" hidden></p>
+  </div>
+</section>
+
+<!-- 4. REVIEW -->
+<section class="state" id="s-review" hidden>
+  <div class="wrap col">
+    <p class="kicker">Step 04 / Review</p>
+    <h1 class="d2">Mark it up.</h1>
+    <p class="lead">Pause on a frame, drag a box over the problem, type the note. Coordinates are stored normalised so a note lands in the right place on any screen.</p>
+
+    <div class="revgrid">
+      <div class="player">
+        <div class="stage" id="stage">
+          <video id="vid" playsinline preload="metadata"></video>
+          <canvas id="cv"></canvas>
+        </div>
+        <div class="ctrls">
+          <button class="btn btn--sm" id="play">Play</button>
+          <button class="btn btn--sm" id="prev" title="Back one frame">&#8592; frame</button>
+          <button class="btn btn--sm" id="next" title="Forward one frame">frame &#8594;</button>
+          <span class="mono tc" id="tc">0:00.00</span>
+        </div>
+        <input type="range" id="seek" class="seek" min="0" max="1000" value="0" step="1" aria-label="Scrub">
+        <p class="err" id="viderr" role="alert" hidden></p>
+      </div>
+
+      <aside class="notes">
+        <div class="noteshead">
+          <p class="kicker">Notes <span id="ncount">0</span></p>
+          <button class="btn btn--go btn--sm" id="send">Send to editor</button>
+        </div>
+
+        <div class="card pad composer" id="composer" hidden>
+          <p class="kicker">New note <span class="mono" id="ctime"></span></p>
+          <textarea class="field" id="ctext" rows="3" placeholder="Caption sits on his chin here"></textarea>
+          <div class="crow">
+            <button class="btn btn--go btn--sm" id="csave">Save</button>
+            <button class="btn btn--ghost btn--sm" id="ccancel">Cancel</button>
+          </div>
+        </div>
+
+        <ul class="notelist" id="notelist"></ul>
+        <p class="fineprint" id="noteempty">No notes yet. Pause the video and drag a box on the frame.</p>
+        <p class="err" id="noteerr" role="alert" hidden></p>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- 5. DONE -->
+<section class="state" id="s-done" hidden>
+  <div class="wrap col">
+    <p class="kicker">Step 05 / Delivery</p>
+    <h1 class="d2">Reel is out.</h1>
+    <p class="lead">Notes are with the editor. The cut below is yours to download now, 1080x1920, H.264, bitrate matched to your master.</p>
+
+    <div class="donegrid">
+      <div class="card pad">
+        <video id="dvid" controls playsinline class="dplayer"></video>
+        <div class="crow">
+          <a class="btn btn--go" id="dl" download>Download the MP4</a>
+          <button class="btn btn--ghost" id="again">Edit another</button>
+        </div>
+      </div>
+
+      <div class="card pad">
+        <p class="tag">Prototype, not live billing</p>
+        <p class="d3">Upgrade to Pro</p>
+        <p class="fineprint">These tiers are mocked for the demo. The buttons do nothing on purpose.</p>
+        <ul class="tiers" id="tiers"></ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="ftr"><span class="kicker">Reel Factory prototype</span><span class="kicker" id="sessid"></span></footer>
+
+<script src="app.js"></script>
+</body>
+</html>
