@@ -249,7 +249,7 @@
   function setMode(mode) {
     var real = mode === 'real';
     var txt = real
-      ? 'Real edit: this ran on the file you uploaded.'
+      ? 'Fast pass: cropped, dead air cut, captions burned, loudness normalised on YOUR file. The full graphics pipeline runs in the terminal, see the repo.'
       : 'Sample reel: a bundled cut, not your upload.';
     ['modetag', 'revmode', 'donemode'].forEach(function (id) {
       var n = $(id);

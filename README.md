@@ -3,11 +3,30 @@
 **Upload a raw talking-head take. Get back a finished, posting-ready vertical reel. Change
 anything by drawing a box on the frame.**
 
+**The editor is your terminal. The web app is the intake and review surface.**
+
 ```bash
-node web/server.js     # then open http://localhost:8787
+git clone https://github.com/Shreyhac/content-automation
+cd content-automation && bash tools/check-env.sh
+
+# 1. The real thing. Open Claude Code in this repo and hand it a take.
+#    CLAUDE.md drives it: pipeline, template rules, gates, benchmark, review.
+
+# 2. The web surface: upload, watch, mark up the frame, download.
+node web/server.js     # http://localhost:8787
 ```
 
-Node 18 or newer. No `npm install`, no API key, no network. That is the whole setup.
+Node 18 or newer for the web app. The full pipeline also wants `ffmpeg`, `whisper`,
+`playwright` and `swift`, all checked by `tools/check-env.sh`.
+
+**Be clear about which is which.** The web app runs a fast automatic pass: cover-crop to 9:16,
+dead air cut, transcription, captions burned clear of the Instagram UI band, loudness normalised.
+About 9 seconds for a 20 second clip. That is genuinely their file edited, and it is genuinely
+**not** the full system.
+
+The full system is an agent in this repo authoring a bespoke composition per video, running the
+pre-render gates, and rendering at 4K. It takes 10 to 25 minutes and it is what produced the four
+reels linked below. A web request cannot do that, so this repo does not pretend it can.
 
 ---
 
