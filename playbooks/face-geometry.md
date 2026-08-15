@@ -273,3 +273,37 @@ where the head is.
 - **One `<video>` per face window** in a chunked build, each with its own `data-start` and
   `data-media-start`. Watch that extra wraps carrying their transform in CSS need the geometry
   change made in two places.
+
+---
+
+## Measuring off macOS (`tools/vision/measure_head.py`)
+
+`crown.swift` and `facebox.swift` need Apple's Vision framework, so on any other host the whole
+"measure, never estimate" discipline collapses to guessing. `measure_head.py` is the port:
+MediaPipe selfie segmentation for the crown, the face mesh for the chin and centre-x, the same
+`>= 8 foreground px` run rule, the same normalised columns.
+
+Two failure modes, and both hand you a **plausible CSV rather than an error**:
+
+- **Polarity is inverted.** The selfie segmenter labels the person `0` and the background `255`.
+  Read the obvious way round, every frame reports `crownY 0.0` and a head spanning the full frame
+  width. That looks like a tight close-up, which is exactly the framing this creator usually has,
+  so it survives a glance at the numbers.
+- **`numpy_view()` is `(H, W, 1)`.** Squeeze the channel dimension or every row index is wrong.
+
+**The check that catches both in one look: draw the crown line, the chin line and the centre-x
+onto a single frame and read it as an image.** Verify the crown sits on hair and not on the top of
+the frame. A CSV cannot tell you the mask was inverted; one overlay can.
+
+## A creator's "usual" framing is not a constant either
+
+vid42 documented this creator at crown y45, head 940 to 975px, no headroom at all, and the whole
+"no top lockup" rule follows from that. The very next take measured **crown 419, chin 1290, head
+~800px**: 419px of headroom and 630px of clear space under the chin, from the same person in the
+same room.
+
+Nothing about the take announced this. Both are tight vertical close-ups of one man against a
+plain wall; only the measurement separates them. So the rule is stronger than "re-derive per
+creator": **re-derive per take, and re-check which written rules still have a premise.** A hard
+rule whose premise is a number ("no headroom means no top lockup") is only in force while that
+number holds, and the profile will not tell you it has stopped holding.

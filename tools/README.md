@@ -17,11 +17,24 @@ config block at the top.
 | `gaze-detect.swift` | Eye-openness and contour aspect, per frame, for the gaze pass. |
 | `build_windows.py` | Turns the gaze CSV into a face-safe window map. Runs of >= 2 frames below threshold are a down-look, padded +/- 0.9s, complement kept where >= 1.6s. |
 | `solve_card.py` | Per-window face-card transform, with the coverage floor and the residual veto. |
+| `measure_head.py` | **Cross-platform port of `crown.swift` + `facebox.swift`** (MediaPipe). Same rules, same normalised columns, so `build_windows.py` and `solve_card.py` consume it unchanged. Use it wherever `swift` is not available. |
 
 ```bash
 ffmpeg -i aroll.mp4 -vf fps=5 stills/%05d.jpg
+
+# macOS
 swift tools/vision/crown.swift stills/ > crown.csv
+
+# anywhere
+python tools/vision/measure_head.py stills/ --csv head.csv
 ```
+
+`measure_head.py` needs `mediapipe` and two model files fetched once into
+`tools/vision/models/` (URLs in the module docstring). Two traps, both of which hand you a
+**plausible CSV rather than an error**: the selfie segmenter labels the PERSON `0` and the
+background `255`, and `numpy_view()` returns `(H, W, 1)`. Read either wrong and every frame
+reports `crownY 0.0` with a full-frame-width head, which looks exactly like a tight close-up.
+**Draw the crown and chin onto one frame and look at it before trusting a solve.**
 
 **Vision's face bounding box is not the head.** See `playbooks/face-geometry.md` and
 `playbooks/gaze-detection.md`.

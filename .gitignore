@@ -80,3 +80,6 @@ tools/review/share/.wrangler/
 !**/.env.example
 web/config.local.json
 web/data/
+
+# vision model binaries: fetched on demand, URLs in measure_head.py
+tools/vision/models/
