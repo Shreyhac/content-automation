@@ -1,6 +1,6 @@
 /* Reel Factory: design tokens.
-   Lifted from thepmfguy.com: the palette and the type system are his, so the product
-   reads as part of the same studio rather than as a generic SaaS page.
+   The palette and type system come from the studio's own site, so the product reads
+   as part of that studio rather than as a generic SaaS page.
    Every page imports THIS and adds nothing to it. Do not invent a second accent. */
 
 @font-face{font-family:Anton;src:url(fonts/anton.woff2)format('woff2');font-weight:400;font-display:swap}
