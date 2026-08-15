@@ -54,7 +54,7 @@ def main():
     path = os.path.abspath(os.path.join(HERE, "..", "out", "vid46-final.srt"))
     os.makedirs(os.path.dirname(path), exist_ok=True)
     open(path, "w").write("\n".join(out))
-    print("wrote %s — %d cues, last ends %s" % (path, n, ts(en)))
+    print("wrote %s, %d cues, last ends %s" % (path, n, ts(en)))
 
 
 if __name__ == "__main__":

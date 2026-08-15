@@ -156,6 +156,83 @@ Trust comes from the frame and the link; legibility comes from the rebuild.
 
 ---
 
+## A screen recording has to actually move
+
+vid59 round 1 shipped six Incogni-dashboard "screen recordings". **Every one was a still frame.**
+Measured mean inter-frame luma change on the built crop: **0.05, 0.10, 0.10, 0.15, 0.23, 0.29**,
+where a genuinely scrolling dashboard measures **5 to 8**.
+
+The cause was picking `ss` by content ("this is the panel that beat is about"), and every choice
+landed in a dead moment of the capture. The build script asserted a `>= 1.30x` punch-in so the UI
+would be readable, and asserted **nothing** about motion. One clip's catalogue entry even claimed
+`motion_kept: 3.4`, a number copied from `dur` rather than measured, for a clip cut from `ss=13.2`
+in a source whose scroll **ends at 12.4**.
+
+The client's notes were "need better animations, look so plain here" and, film-wide, "need to add
+the actual screen recordings more in the video, as of now they are very less compared to what i
+expected". **He was counting the ones that move**, and the answer was zero.
+
+**Survey the source first, then pick the timestamp.** Sample at 5fps, diff consecutive frames, list
+the windows where motion stays above threshold, choose `ss` from that list, and only then check the
+content is right. Assert the measured motion on the **built crop** (vid59 uses `>= 0.60`) so it
+cannot regress silently.
+
+Two real exceptions, both of which get written down in the file rather than argued each round:
+
+- **A pre-zoomed capture is already punched in**, so the 1.30x bar misfires. The bar's purpose is
+  "readable", not "the number is 1.30". Flag it, do not fight it.
+- **A clip may legitimately have to be a still.** vid59's resubmission strip existed only inside the
+  recording's PII window, and the privacy gate correctly refuses any *moving* crop there, because a
+  crop proven safe on frame 0 stops being proven the moment the page scrolls under it. A still of
+  the right thing beats motion showing the wrong thing.
+
+**And relink after rebuilding.** Chunks hard-link to the master clips and ffmpeg writes a new
+inode, so every rebuild silently leaves the compositions pointing at the **old** version. Caught
+only because a contact sheet still showed the old crop while every log line said the new one had
+been built.
+
+Classifying the motion matters as much as measuring it: content moving inside a fixed frame is
+usable, a capture tool's own pan or zoom is usable only at its endpoint. See
+`playbooks/chunk-revision.md`.
+
+---
+
+## An in-app mock is a claim about the current product
+
+Found on vid15 round 2, when a client note ("both skill cards show the same photo") turned out to
+be pointing at a UI that no longer existed. The old mock showed "START WITH A SKILL" and a "Product
+Photoshoot" card; the live app had moved to a "Shoots" home with a "New shoot" button requiring
+**2 to 10 photos, not one**. Three VO lines were false as a result: "one bad phone photo", "tapped
+Product Photoshoot", "the photo I already had".
+
+**When a note flags an in-app screen as wrong, ask whether the app itself changed before treating
+it as a styling fix.** If the owner has a logged-in browser session, drive the live app. Fresh
+screenshots from him work equally well. Verify before fixing.
+
+**Scan every screenshot the owner sends before it touches a render.** A photo-picker screenshot
+supplied for compositing included a visible camera roll carrying a Gmail address, a payment and
+refund reference number, and a WhatsApp thread with a third party's name and messages, all inside
+the "select photos" grid. None of it was the point of the screenshot, and all of it would have
+shipped in a public reel verbatim. That element was rebuilt from the project's own product
+photography instead. **Treat a screenshot of a personal device exactly as you would treat pasted
+terminal output**: read the whole frame, not the element you asked for.
+
+**Mock in-app UI full-bleed, not as a floating phone card.** The card version drew a client note
+that the surrounding room looked wrong, and separately measured as a single **5.20s static block**,
+because nothing inside the card was large enough for the frame-diff detector to register a screen
+change as a cut. Full-bleed 9:16 screens with no card chrome fixed both at once: max held block
+**5.20s to 2.10s** with no other change. Reserve the floating-card treatment for screen recordings
+that have to sit inside a non-UI scene.
+
+**Measure highlight-box geometry from the screenshot's pixel data, not from eyeballed
+proportions.** Two rounds of guessing both landed the box straddling a row gap. What worked:
+threshold the screenshot to find the option-row bands directly, `numpy` mean luminance per row with
+contiguous bright runs as pill rectangles. It also caught that one screen's rows sat **102px
+lower** than the others because its title wrapped to two lines, invisible from a quick look and
+obvious from the measured row centres.
+
+---
+
 ## Logos
 
 - **Simple Icons** for brands: `cdn.simpleicons.org/<slug>`, and it takes a hex

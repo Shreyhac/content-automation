@@ -106,6 +106,51 @@ On a split beat:
 
 ---
 
+## Which face state, and when
+
+There is a standing instruction that reads, in short form, "no full-bleed face, card or
+split". **The absolute form is wrong and the shipped films say so.** What one creator's
+brief actually said, on one film, was *stop opening on his full face: split-screen or card,
+and only on important beats*, and that film opens on 1.84s of graphics and is never
+full-bleed at all (face on 13.9s of 30.1, 46%). The three films after it:
+
+| Film | Open | Full-bleed after the open |
+|---|---|---|
+| the graphics-open film | 1.84s of graphics, then card | none, 0% of the cut |
+| the next one | full-bleed 0.000 to 1.660 | card by default, `off` on pure-graphics beats |
+| the one after | full-bleed 0.000 to 1.340 | card by default, `off` on pure-graphics beats |
+| the shot-for-shot copy | split at 0.000 | three full-bleed beats: 2.200 to 3.240, 16.340 to 17.000, and 31.820 to the end (the CTA) |
+
+So the honest rule:
+
+- **Card is the default.** Graphics own the rest of the frame with zero overlap.
+- **Split when the brief asks for it**, or when the shot being copied is a split.
+- **Full-bleed is for the open and for a small number of emphasis beats**, the CTA among
+  them: he asks for the comment, so he is on screen for it.
+- **A copy brief overrides all of it.** When the job is a shot-for-shot rebuild of a
+  reference, the reference's face grammar is the spec.
+- **Every state change is a hard cut, never a tween.** All four builds above set the
+  clip-path with a `cut()`; only the card device itself (`bandOpen()`) travels, and that is
+  a different move, described at the top of this file.
+
+### The arithmetic that picks between them
+
+Run these before choosing, not after placing:
+
+1. **Coverage floor**, `s >= card_height / source_height`. Below it the scaled frame does
+   not cover the card and ffmpeg refuses the crop.
+2. **`rows <= H * 1080 / W`.** A 700x640 card can only ever show 987 source rows, which is
+   a head. If the note is "only his head is visible", the card must get NARROWER.
+3. **The residual.** Where the subject oscillates faster than one constant `tx` per window
+   can cover (187px on one take), that window cannot be carded: play it full-bleed. Eight
+   of 24 windows on one film.
+4. **`freespace.swift`.** If the background free run below y1000 is 0%, there is no
+   graphics zone next to a full-bleed face and the face goes into a band from frame 0.
+
+`playbooks/face-geometry.md` has all four measurements.
+
+---
+
 ## What a card is NOT
 
 **A full-width band across a person's torso is a different device and it reads as a mistake.**

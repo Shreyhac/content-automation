@@ -1,0 +1,20 @@
+name = "reel-review"
+main = "worker.js"
+compatibility_date = "2026-07-01"
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+# without these the asset layer answers "/" with index.html before the worker runs,
+# and swallows unmatched paths that the worker needs to see
+html_handling = "none"
+not_found_handling = "none"
+
+# metadata only (projects, comments, markup frames). The renders live as private
+# GitHub release assets, which have no 25MB ceiling and cost nothing.
+[[kv_namespaces]]
+binding = "KV"
+id = "ece0b9703b5a46a4b71509fd0aa2a2c6"
+
+[observability]
+enabled = true

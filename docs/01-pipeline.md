@@ -58,6 +58,10 @@ If there is no reference, build from the brief using the creator's `GRAMMAR.md`.
 - **Sponsored work: resolve promo codes against the partner URL, never against whisper.** A
   wrong code in a sponsored video is the one unrecoverable error.
 
+**`ffprobe` the colour tags of every non-generated clip at intake**, before it enters a
+composition. One 10-bit HEVC clip tagged `arib-std-b67`/`bt2020` flips the whole render to HLG and
+shifts the untouched A-roll with it. See `docs/06-delivery.md`.
+
 Capture real surfaces with `tools/qa/playwright-capture.py` (dark scheme, `device_scale_factor=2`,
 viewport around 760px for 1080-wide placement). Over-capture in one run.
 
@@ -92,13 +96,54 @@ Then:
   Do not loudnorm, denoise or regrade someone's own mix.
 - Check for a **mirrored** front-camera take: readable text in frame decides it, per take, not
   per creator.
-- Transcode into the project: `scale=1080:1920` for 9:16 (an oversized master is the biggest
-  driver of render memory leaks), `-r 30 -g 15 -keyint_min 15`, libx264 crf 17.
+- Transcode into the project **at the resolution the composition actually outputs**, codec change
+  only: `-r 30 -g 15 -keyint_min 15`, libx264 crf 17, and no `scale` filter at all if the master
+  is already the right aspect. These compositions render at 2160x3840 (a 1080x1920 `#stage`
+  scaled 2x), so a 1080x1920 asset is upscaled back to 4K and the delivered file is a 4K container
+  carrying 1080p of his face. Measured on vid60: the composition rasterises **84% sharper** from a
+  2160x3840 asset than from a 1080x1920 one, 95% of the master's detail against about 52%. vid55
+  and vid57 both shipped with that loss. If a composition genuinely outputs 1080x1920 (client
+  shorts), 1080 is correct. **Match the asset to the OUTPUT, not to a habit.** An oversized master
+  does drive render memory pressure, so pay for it with worker count and `HF_DE_STALL_MS`, not by
+  throwing away resolution. See `docs/03-quality-bar.md` for the delivery contract this serves.
+- **Never grade his A-roll.** No LUT, no curves, no `eq`, no loudnorm on a delivered mix. The
+  renderer already shifts colour 3 to 7% on its own, so a grade on top is a shift nobody can
+  account for. Grades were caught and removed on vid49, vid54 and vid55.
 - **Measure the head with Vision** (`tools/vision/crown.swift`, `facebox.swift`) and solve the
   face geometry. See `playbooks/face-geometry.md`.
 - If the creator has a "don't show me reading my notes" constraint, run the gaze pass now:
   `tools/vision/gaze-detect.swift` then `tools/vision/build_windows.py`. See
   `playbooks/gaze-detection.md`.
+
+### A raw take and a cut master are two clocks, and the folder does not say which
+
+`crown.csv`, `facebox.csv` and `gaze.csv` on one project were measured on `frames5/`, 1851 frames
+at 5fps off the **raw** take, 370.2s. `short-beats.json` was timed against `aroll-cut.mov`, the
+raw take minus two retake spans totalling 18.41s, so 351.9s. Beats 1 to 5 agreed because they all
+sit before the first cut; beats 6 and 7 were 18.41s apart, so the solver framed **the close**, the
+one beat the client had already sent a note about, against footage six seconds of speech away from
+what actually plays. Every number it printed looked plausible.
+
+- **When two files in one folder are both "seconds", check which clock.** Put the mapping in one
+  `cut_to_raw()` built from `cuts.json`, and have the sampler assert no beat straddles a removed
+  span rather than assume it.
+- **Confirm the mapping by matching frames, not by re-reading the arithmetic.** Cut t=331.06
+  best-matched raw `f_01748` (349.4s) at a mean luma error of 1.5, against 9.0 for the unmapped
+  frame. Arithmetic that is wrong still produces a number; a frame match does not.
+
+### Read any lifted B-roll full-frame, alone, before it goes near a card
+
+"Use the B-roll from that reference" does not mean the clip you cut out is the clip you saw. On
+vid66 the reference composited Apple's product footage into the **top half** over its own
+creator's talking head, with his word-captions on the seam. Scene detection gave correct shot
+boundaries, the extracted clips were at the right timestamps, and every contact sheet looked
+right, because a 6-across tile at 270px cannot resolve a second face and a centre-weighted
+`object-fit:cover` crop lands exactly on the seam. It reached a finished 4K render.
+
+Extract one frame from the clip itself at full size and read it alone, not in a tile and not
+composited. If the source is a layered reel, crop at extraction time with `crop=W:H:X:Y`, never
+with an `object-position` nudge: the nudge only moves the window over the same contaminated frame.
+Lifted footage can also carry visible credentials, or contradict its own VO.
 
 ---
 
@@ -182,7 +227,12 @@ Expect two to three fix, render, QA rounds. Renders are cheap. Never batch doubt
 See `docs/06-delivery.md` in full. The short version:
 
 - Two-pass `loudnorm` with `-c:v copy`.
-- Match the raw A-roll's byte size for both Instagram creators.
+- Match the raw A-roll's byte size for both Instagram creators, and verify the delivered
+  resolution and bitrate with `ffprobe` against the master. Pin the bitrate; CRF is not a
+  delivery contract.
 - Grep for em dashes in on-screen text and in the caption pack.
-- Ship the MP4, the SRT and a caption pack with hashtags and keywords.
+- Ship the MP4, the SRT and a paste-ready caption pack. **No hashtags**, current Instagram
+  practice: the caption body is the ranking surface.
+- If the script says "comment X and I'll send you Y", the payload `.docx` ships with the first
+  delivery, not when he asks (`tools/deliver/make_cta_doc.py`).
 - Update `creators/<creator>/HISTORY.md` and promote reusable lessons into `playbooks/`.

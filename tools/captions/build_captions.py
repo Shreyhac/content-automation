@@ -3,7 +3,7 @@
 
 usage: python3 build_captions.py <chunk_start> <chunk_end> <prefix> [mute_ranges]
   mute_ranges: comma list of absolute a-b spans where an on-screen card already
-               states the words, so the caption is suppressed (the vid39 rule —
+               states the words, so the caption is suppressed (the vid39 rule,
                never print the same words twice in one frame).
 
 Captions are GENERATED, never hand-typed: the only way they can stay in sync with
@@ -46,7 +46,7 @@ MAXWORDS = 7
 # Joining the stream with a plain space then prints "$7 .99" and "30 -day", which
 # shipped into c5/c6/c8 and reads as a typo at 4K. A token that OPENS with attaching
 # punctuation belongs to the word before it: no space, and never across a clip break.
-CONT = re.compile(r"^[.,;:!?)\]%'’–—-]")
+CONT = re.compile(r"^[.,;:!?)\]%'’–\u2014-]")
 
 
 def fix_word_stream(ws):
@@ -78,7 +78,7 @@ def group(ws):
         cur.append(w)
         txt = ' '.join(x['word'] for x in cur)
         gap = (ws[i + 1]['start'] - w['end']) if i + 1 < len(ws) else 99
-        # never break between a word and its attaching tail — "money" / "-back"
+        # never break between a word and its attaching tail, "money" / "-back"
         # split across two clips left c5cap8 opening on a bare hyphen
         if i + 1 < len(ws) and CONT.match(ws[i + 1]['word']):
             continue

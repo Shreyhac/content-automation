@@ -8,6 +8,66 @@ Run it every round. Extract a frame at every beat plus frame 0, and read them al
 
 ---
 
+## Step 0: shoot the contact sheet BEFORE the render
+
+```bash
+python3 tools/gates/guard.py hf67/guard.json        # geometry, paint, assets, voids
+python3 tools/qa/shoot-sheet.py hf67/guard.json     # every beat, as an image
+```
+
+A render round costs minutes; the sheet costs seconds and answers the question no
+geometry gate can: does this beat look like anything? A void, a colour that dies, a
+character standing in the wrong place, a card open before its content, all read instantly
+on a tiled sheet and are invisible to every structural check. This is the single most
+repeated round-one defect in this system's history.
+
+`shoot-sheet.py` reads the same JSON as `guard.py` (one beat list for both) and burns the
+timecode plus your label under each tile, so a note can name the beat instead of a tile
+number.
+
+**For a delivery sheet, use `--from-clips`, not the beat list.**
+
+```bash
+python3 tools/qa/shoot-sheet.py hf64/guard.json --from-clips --cols 6 --rows 4
+```
+
+It reads every element's own `data-start`/`data-duration` and samples inside each window
+(start + 0.30s, past the entrance ease, plus the midpoint for anything over 1.2s), then
+labels each tile with the element it is there to check. A fixed beat grid never samples an
+element whose window falls between two beats: a marker-to-marker splice once swallowed a
+whole GRID scene, its tweens kept firing at nothing, every gate passed, and the beat
+played as bare footage plus caption for **three delivered versions**, because the sheets in
+those rounds sampled around 9.x and never inside it. Three things make its frames real, and each was found by the sheet lying first:
+
+- **it replicates the renderer's clip scheduling.** On a plain page load every element
+  with a `data-start` is in the tree at once and the sheet shows a pile, not a beat.
+- **it seeks every `<video>` by hand** to `t` minus that clip's own `data-start`, and
+  waits for `seeked`. Without it every beat shows frame 0 of the A-roll.
+- **it replays the caption cues**, because `tl.time(t, false)` suppresses events and the
+  caption is written by a `tl.call()`. See `playbooks/gates.md`.
+
+It also listens for `pageerror`: a page that threw on load screenshots perfectly well.
+
+### After any splice, two checks before anything else
+
+```bash
+python3 tools/gates/guard.py hf64/guard.json --ids hf64/ids.json   # before the splice
+# ... splice ...
+python3 tools/gates/guard.py hf64/guard.json --ids hf64/ids.json   # after
+```
+
+1. **Diff the element ID list.** A disappeared id is a disappeared beat. That is how the
+   swallowed GRID scene above would have been caught on the day.
+2. **Count `<div>` opens against closes.** An imbalance closes `#root` early and **browsers
+   silently repair it**, so the page looks correct and the render is not. That one shipped
+   as well.
+
+Both run automatically in `guard.py`; the id diff needs the `--ids` baseline.
+
+Doctrine and the full gate order: `playbooks/gates.md`.
+
+---
+
 ## Extract by frame number, not by time
 
 ```bash
@@ -39,6 +99,22 @@ beats. It invented a whole round of phantom bugs once.
 
 ---
 
+## Contact sheets lie, at every tile size anyone has tried
+
+- At **250px**, two frames looked like they had face ghosts bleeding through the graphics.
+  Re-extracted at **420px** they were clean: the "ghost" was neighbouring tiles blurring
+  together.
+- So the tile size went up, and it lied again. At **420px** a working 0.36s dissolve looked
+  like a tween that had never fired.
+- At **300px** an arm rotation looked correct. At **2160** it was lying across the slab it
+  was supposed to be reaching past.
+
+**A sheet is for finding candidates, never for confirming one.** Re-extract the single
+suspect frame at full resolution before changing any code. Two of the three cases above
+would have cost a code change that fixed nothing.
+
+---
+
 ## Reading the frames
 
 Ask, in order:
@@ -55,6 +131,34 @@ Ask, in order:
    opposite of the narration. A count-up mid-tween once displayed a wrong audited figure.
 7. **Is anything visible that should not be?** A stale card, a retired 3D prop still orbiting, a
    wrapper's ring floating over the cover for 30 seconds.
+
+---
+
+## Show the artefact, not an abstraction of it
+
+A compression beat drew 168 cells for a 10,000-token prompt and then threw them away,
+leaving an empty rectangle still labelled "10,000 TOKENS". The note was *"need better and
+relevant animations here"*. The fix was to stop abstracting: the actual verbose prompt, the
+actual compressed prompt, and **one answer card under an equals sign**, which is literally
+what "keeping nearly the same output" claims. When a frame has to argue something, show the
+real thing being argued about.
+
+---
+
+## Look at the assets before you build with them
+
+- **Text chips are not brands.** 24 providers and 11 fallback-tier members rendered as
+  monospace text in rounded pills drew "too shitty", twice, on two different beats. Real
+  marks: `cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.91.0/icons/<name>.svg`. The
+  monochrome ones carry `fill="currentColor"`, which resolves to black inside an `<img>`:
+  correct on ivory paper with no work. **Render every logo to one sheet and look at it
+  before building.** A dead mark is worse than the text it replaced.
+- **One film, one cast.** One round had the real Claude pixel sprite in the hook and a
+  hand-drawn white robot for the limit beat. The note named the hook; the fault was two
+  characters doing one job. Lift the house sprite and let it act through its body (one
+  build kills it with `rotate(104deg)` plus a hue shift). Gotcha: `.mascot` is
+  `position:relative`, so an unpositioned copy lands at flow origin, half off frame, and
+  reads as "it did not render". Position every instance.
 
 ---
 
@@ -108,7 +212,9 @@ grep -nE '^  #[a-zA-Z0-9]+\{left:' index.html | grep -v position
 grep -nE '#[0-9a-fA-F]{3,6}|rgba?\(' index.html
 
 # em dashes, before every delivery
-grep -n "—" index.html *.srt *caption*.md
+# em dashes, before every delivery. The pattern is built with printf so this
+# file itself stays clean of the character it is hunting.
+grep -n "$(printf '\xe2\x80\x94')" index.html *.srt *caption*.md
 ```
 
 ---

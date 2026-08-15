@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Reel Review</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body class="gallery">
+<div class="wrap">
+  <h1>Reel Review</h1>
+  <p class="lede">Scrub, draw on the frame, leave notes. <b>Send to editor</b> writes them to a
+    <span class="mono">-feedback-roundN.md</span> at the repo root.</p>
+  <div id="open"></div>
+  <div id="new"></div>
+</div>
+<script>
+const fmtD = (s) => s ? `${Math.floor(s / 60)}:${String(Math.round(s % 60)).padStart(2, '0')}` : '';
+const mb = (b) => (b / 1048576).toFixed(1) + ' MB';
+
+fetch('/api/projects').then(r => r.json()).then(({ projects, unregistered }) => {
+  const A = document.getElementById('open');
+  if (projects.length) {
+    A.innerHTML = '<h2>In review</h2>';
+    projects.forEach(p => {
+      const a = document.createElement('a');
+      a.className = 'row';
+      a.href = '/v/' + p.slug;
+      a.innerHTML = `<div>
+          <div class="nm">${p.name}</div>
+          <div class="meta mono">${p.path} · ${fmtD(p.duration)} · v${p.versions}${p.rounds ? ` · ${p.rounds} round${p.rounds > 1 ? 's' : ''} sent` : ''}</div>
+        </div>
+        <div class="cnt">
+          ${p.open ? `<span class="badge t">${p.open} open</span>` : '<span class="badge ok">clear</span>'}
+          <span class="badge v">${p.total} total</span>
+        </div>`;
+      A.appendChild(a);
+    });
+  }
+
+  const B = document.getElementById('new');
+  if (unregistered.length) {
+    B.innerHTML = '<h2>In out/ · not opened yet</h2>';
+    unregistered.forEach(f => {
+      const a = document.createElement('a');
+      a.className = 'row';
+      a.href = '#';
+      a.innerHTML = `<div><div class="nm">${f.name}</div>
+        <div class="meta mono">${f.path} · ${mb(f.bytes)} · → slug <b>${f.slug}</b></div></div>
+        <div class="cnt"><span class="badge v">open</span></div>`;
+      a.onclick = async (e) => {
+        e.preventDefault();
+        a.querySelector('.cnt').innerHTML = '<span class="badge v">reading…</span>';
+        const p = await fetch('/api/open', {
+          method: 'POST', headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ path: f.path }),
+        }).then(r => r.json());
+        location.href = '/v/' + p.slug;
+      };
+      B.appendChild(a);
+    });
+  }
+
+  if (!projects.length && !unregistered.length) {
+    A.innerHTML = '<p class="lede">Nothing in <span class="mono">out/</span> yet. ' +
+      'Run <span class="mono">npm run review path/to/video.mp4</span>.</p>';
+  }
+});
+</script>
+</body>
+</html>

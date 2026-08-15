@@ -1,0 +1,218 @@
+[
+ {
+  "id": "b01_tree_a",
+  "start": 0.0,
+  "dur": 1.04,
+  "ref": [
+   0.0,
+   1.15
+  ],
+  "cropY": 0,
+  "shot_len": 1.15,
+  "short_by": 0.0
+ },
+ {
+  "id": "b02_tree_b",
+  "start": 1.04,
+  "dur": 1.16,
+  "ref": [
+   1.15,
+   2.3
+  ],
+  "cropY": 0,
+  "shot_len": 1.15,
+  "short_by": 0.01
+ },
+ {
+  "id": "b03_gh_repo",
+  "start": 3.24,
+  "dur": 0.96,
+  "ref": [
+   3.6,
+   5.1
+  ],
+  "cropY": 300,
+  "shot_len": 1.5,
+  "short_by": 0.0
+ },
+ {
+  "id": "b04_gh_readme",
+  "start": 4.2,
+  "dur": 1.02,
+  "ref": [
+   5.1,
+   6.567
+  ],
+  "cropY": 300,
+  "shot_len": 1.467,
+  "short_by": 0.0
+ },
+ {
+  "id": "b05_gh_desc",
+  "start": 5.22,
+  "dur": 1.42,
+  "ref": [
+   6.567,
+   8.0
+  ],
+  "cropY": 300,
+  "shot_len": 1.433,
+  "short_by": 0.0
+ },
+ {
+  "id": "b06_arch",
+  "start": 6.64,
+  "dur": 1.229,
+  "ref": [
+   8.0,
+   9.333
+  ],
+  "cropY": 240,
+  "shot_len": 1.333,
+  "short_by": 0.0
+ },
+ {
+  "id": "b07_claude_app",
+  "start": 7.869,
+  "dur": 0.791,
+  "ref": [
+   9.333,
+   10.4
+  ],
+  "cropY": 0,
+  "shot_len": 1.067,
+  "short_by": 0.0
+ },
+ {
+  "id": "b08_menu",
+  "start": 8.66,
+  "dur": 0.76,
+  "ref": [
+   10.4,
+   11.3
+  ],
+  "cropY": 0,
+  "shot_len": 0.9,
+  "short_by": 0.0
+ },
+ {
+  "id": "b09_usage",
+  "start": 9.42,
+  "dur": 0.96,
+  "ref": [
+   11.3,
+   12.4
+  ],
+  "cropY": 0,
+  "shot_len": 1.1,
+  "short_by": 0.0
+ },
+ {
+  "id": "b10_clone",
+  "start": 10.38,
+  "dur": 1.16,
+  "ref": [
+   12.4,
+   13.633
+  ],
+  "cropY": 300,
+  "shot_len": 1.233,
+  "short_by": 0.0
+ },
+ {
+  "id": "b11_skills",
+  "start": 13.84,
+  "dur": 1.12,
+  "ref": [
+   15.967,
+   17.5
+  ],
+  "cropY": 0,
+  "shot_len": 1.533,
+  "short_by": 0.0
+ },
+ {
+  "id": "b12_dash",
+  "start": 14.96,
+  "dur": 1.38,
+  "ref": [
+   17.5,
+   19.367
+  ],
+  "cropY": 100,
+  "shot_len": 1.867,
+  "short_by": 0.0
+ },
+ {
+  "id": "b13_type1",
+  "start": 16.34,
+  "dur": 0.66,
+  "ref": [
+   19.367,
+   20.067
+  ],
+  "cropY": 300,
+  "shot_len": 0.7,
+  "short_by": 0.0
+ },
+ {
+  "id": "b14_type2",
+  "start": 17.0,
+  "dur": 1.02,
+  "ref": [
+   20.067,
+   21.2
+  ],
+  "cropY": 300,
+  "shot_len": 1.133,
+  "short_by": 0.0
+ },
+ {
+  "id": "b15_type3",
+  "start": 18.02,
+  "dur": 1.02,
+  "ref": [
+   21.2,
+   22.3
+  ],
+  "cropY": 300,
+  "shot_len": 1.1,
+  "short_by": 0.0
+ },
+ {
+  "id": "b16_type4",
+  "start": 19.04,
+  "dur": 0.78,
+  "ref": [
+   22.3,
+   23.4
+  ],
+  "cropY": 300,
+  "shot_len": 1.1,
+  "short_by": 0.0
+ },
+ {
+  "id": "b17_type5",
+  "start": 19.82,
+  "dur": 1.36,
+  "ref": [
+   23.4,
+   24.9
+  ],
+  "cropY": 300,
+  "shot_len": 1.5,
+  "short_by": 0.0
+ },
+ {
+  "id": "b18_reply",
+  "start": 21.18,
+  "dur": 1.1,
+  "ref": [
+   24.9,
+   26.3
+  ],
+  "cropY": 300,
+  "shot_len": 1.4,
+  "short_by": 0.0
+ }
+]

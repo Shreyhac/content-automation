@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""vid47 — capture the real product surfaces + real GitHub repo headers."""
+"""vid47, capture the real product surfaces + real GitHub repo headers."""
 import os, sys
 from playwright.sync_api import sync_playwright
 

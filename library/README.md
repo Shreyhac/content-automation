@@ -4,7 +4,7 @@ Shared assets. Everything here is licensed for commercial use or vendored delibe
 
 ---
 
-## `fonts/` (24 faces)
+## `fonts/` (29 faces)
 
 Deduped across the whole portfolio, newest project wins. Copy the ones a build needs into its
 `assets/fonts/` rather than referencing across directories, so a project stays self-contained.
@@ -22,6 +22,17 @@ Deduped across the whole portfolio, newest project wins. Copy the ones a build n
 | Inter | `inter-400/600/800` | tech-launch subjects |
 | Poppins | `poppins-500/600/700/800` | the older paper listicle family |
 | Space Grotesk | `space-grotesk-500/700` | music and audio subjects |
+| Gaegu | `Gaegu-400`, `Gaegu-700` | shreyansh, the hand-drawn marginalia voice. Loaded by every build from hf63 onward. |
+| IBM Plex | `IBMPlexSans-VF`, `IBMPlexMono-Regular/Medium` | Demi. Their brand book specifies Plex. |
+
+**One face a build needs is deliberately NOT here.** Demi's display face,
+`SeasonMixUprightsVF.woff2`, is a paid licence held by the client, so it is not redistributed in
+this repo. A Demi rebuild will fall back and look wrong until you copy it in from the client's
+brand package. See `creators/demi/PROFILE.md`.
+
+Verify a face rendered, do not assume it loaded. A missing face falls back silently and a
+downscaled QA crop will hide the difference: check at native resolution, and treat the
+`[Compiler] Embedded local font` line in the render log as the ground truth.
 
 Geist Mono advances **0.609em**, not 0.600, and `letter-spacing` on the same element silently adds
 to it. That matters whenever you size a typewriter or a mono field against a container.

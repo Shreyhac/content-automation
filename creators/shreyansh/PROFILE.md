@@ -8,7 +8,8 @@ A-rolls arrive in.
 | Format | 9:16 Instagram Reels, 30 to 40s |
 | Subjects | AI product launches, prompt and workflow tips |
 | Setting | Seated indoors, tight close-up, a lit wall and a large action figure in the lower third |
-| Current grammar | vid42 v3: face-led open into the floating card, three.js as a recurring object. Reference build: `reference-builds/shreyansh-vid42/` |
+| Current grammar | The paper theme (vid63 onward): ivory paper, ink, one alert red, card-format face. No build has been named the canonical template yet. See `GRAMMAR.md`. |
+| Older grammar | vid42 v3: face-led open into the floating card, three.js as a recurring object. Reference build: `reference-builds/shreyansh-vid42/` |
 
 ---
 
@@ -104,6 +105,69 @@ fit (e.g. 560x700 at s=0.519), SPLIT runs a native 1:1 column to the frame edge 
 shrinking. Never a full-width lower-third slab (rule 2) and never full-bleed again after the
 open: a mid-film face panel was tried and rejected once already (vid53: *"no need to show my
 face from here, just show the animations and the content in the full screen"*).
+
+**vid64 round 1 narrowed it again:** *"the split screen looks weird, use the card format
+instead."* vid64 and vid65 both shipped with **no split state in the file at all**, CARD only.
+vid66's brief then asked for *"card + split"* by name and shipped a vertical column at x540-1080.
+So the current reading is: **the card is the default return and the split is opt-in, per film,
+on his say-so.** Do not add a split he did not ask for.
+
+**The one standing exception is a shot-for-shot reference copy.** vid67 shipped three mid-film
+full-bleed beats and a horizontal seam at y700, because the instruction was *"do the exact same
+editing"* and the reference cuts that way. A copy brief overrides the face law; nothing else does.
+
+### 11. Real logos, and one cast per film
+
+vid60 round 2: 24 providers and 11 fallback members rendered as monospace text in rounded pills
+were called **"too shitty", twice, on two different beats.** The fix is real marks
+(`cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.91.0/icons/<name>.svg`, ~29 in one loop).
+**Render every logo to one sheet and look at it before building:** a dead mark is worse than the
+text it replaced.
+
+Same round, same class: round 1 had the real Claude pixel sprite in the hook and a hand-drawn
+white robot for the limit beat. His note named the hook; the fault was **two characters doing one
+job**. One film, one cast. (Gotcha: the house sprite is `position:relative`, so an unpositioned
+copy lands at flow origin, half off frame, reading as "it didn't render".)
+
+---
+
+## House rules confirmed on client films, and why they apply here
+
+These three came off the Nader and Demi productions rather than his own reviews. They are recorded
+separately on purpose: rule 8 above exists because a motion grammar was ported from another
+creator's file without checking whose it was. These are process and copy rules, not camera
+grammar, and the source explicitly reasons about how the first one lands for this creator.
+
+### Graphics are not the default. Showing him is
+
+Stated on vid56: reach for an animated overlay when it is carrying information that cannot come
+from him speaking (a number, a comparison, a mechanism). Do not reach for it to fill a beat, and
+**never let it replace him at the moment he is making the direct ask.**
+
+The source records the per-creator resolution explicitly: it still holds for him, and *how* he is
+on screen at the CTA is the **card**. vid65 shipped with the CTA as a CARD beat, never
+graphics-only. Two preconditions the client films added: an unwatchable shot at a smaller size is
+still an unwatchable shot, so if the take is unusable for a span the picture comes OFF rather than
+shrinking; and a face-safety pass that excludes a window silently removes the presenter from a
+beat, so check the raw signal (a blink cluster padded into a 2.4s exclusion is not a defect).
+
+### A recurring complaint means remove the whole category, not tune the instance
+
+Demi round 5: *"typing sfx"* survived three evidence-based fixes (literal typing cues, then the
+whole click/tick family by measured attack, then the music bed's 0.465s percussion grid) because
+he was naming a sound **category**: any added effect at all. The five notes landed exactly on the
+five surviving whoosh and impact cues, the ones every acoustic measure said were not clicks.
+
+**When the same complaint survives two evidence-based fixes, stop refining the classifier and
+remove the class.** The correct move at round 2 was one question: "should ALL added sounds go, or
+just the clicky ones?"
+
+### On-screen copy is not build notes
+
+vid62 short shipped three eyebrows through every gate as notes-to-self ("One beat of price, at the
+end") and as third-person narration about the man in frame ("What he would tell a friend").
+**Read every literal on-screen string as a viewer before the delivery render.** No gate has an
+opinion about what the words mean.
 
 ---
 

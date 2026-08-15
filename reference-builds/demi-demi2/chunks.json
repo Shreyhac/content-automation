@@ -1,0 +1,146 @@
+[
+  {
+    "name": "c1",
+    "t0": 0.0,
+    "t1": 4.7667,
+    "f0": 0,
+    "f1": 143,
+    "nframes": 143,
+    "clips": [
+      "ar_a1",
+      "bo2a",
+      "chips"
+    ],
+    "videos": [
+      "ar_a1",
+      "bo2a"
+    ],
+    "nclips": 7
+  },
+  {
+    "name": "c2",
+    "t0": 4.7667,
+    "t1": 8.7333,
+    "f0": 143,
+    "f1": 262,
+    "nframes": 119,
+    "clips": [
+      "ar_a2",
+      "ar_sp",
+      "bo2b",
+      "chips",
+      "toolpane"
+    ],
+    "videos": [
+      "ar_a2",
+      "ar_sp",
+      "bo2b"
+    ],
+    "nclips": 8
+  },
+  {
+    "name": "c3",
+    "t0": 8.7333,
+    "t1": 14.4667,
+    "f0": 262,
+    "f1": 434,
+    "nframes": 172,
+    "clips": [
+      "ar_a3",
+      "b1d",
+      "grid",
+      "midchips"
+    ],
+    "videos": [
+      "ar_a3",
+      "b1d"
+    ],
+    "nclips": 10
+  },
+  {
+    "name": "c4",
+    "t0": 14.4667,
+    "t1": 17.8667,
+    "f0": 434,
+    "f1": 536,
+    "nframes": 102,
+    "clips": [
+      "ar_a3",
+      "b1d",
+      "dock2",
+      "s18a"
+    ],
+    "videos": [
+      "ar_a3",
+      "b1d",
+      "dock2",
+      "s18a"
+    ],
+    "nclips": 6
+  },
+  {
+    "name": "c5",
+    "t0": 17.8667,
+    "t1": 20.8667,
+    "f0": 536,
+    "f1": 626,
+    "nframes": 90,
+    "clips": [
+      "be3"
+    ],
+    "videos": [
+      "be3"
+    ],
+    "nclips": 4
+  },
+  {
+    "name": "c6",
+    "t0": 20.8667,
+    "t1": 27.4333,
+    "f0": 626,
+    "f1": 823,
+    "nframes": 197,
+    "clips": [
+      "ar_f",
+      "ui"
+    ],
+    "videos": [
+      "ar_f"
+    ],
+    "nclips": 7
+  },
+  {
+    "name": "c7",
+    "t0": 27.4333,
+    "t1": 32.2,
+    "f0": 823,
+    "f1": 966,
+    "nframes": 143,
+    "clips": [
+      "ar_g1",
+      "stack"
+    ],
+    "videos": [
+      "ar_g1"
+    ],
+    "nclips": 6
+  },
+  {
+    "name": "c8",
+    "t0": 32.2,
+    "t1": 37.7667,
+    "f0": 966,
+    "f1": 1133,
+    "nframes": 167,
+    "clips": [
+      "ar_g2",
+      "ctapill",
+      "outro2"
+    ],
+    "videos": [
+      "ar_g2",
+      "outro2"
+    ],
+    "nclips": 4
+  }
+]

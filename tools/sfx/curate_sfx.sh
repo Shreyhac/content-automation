@@ -1,23 +1,23 @@
 #!/bin/bash
-# vid46 ROUND 2 — SFX curation from the repo's own licensed library.
+# vid46 ROUND 2, SFX curation from the repo's own licensed library.
 #
 # What round 1 got wrong, measured:
 #   * 236 placements over what LOOKED like 17 files, but boom.mp3/cboom.mp3 are
-#     byte-identical and so are riser.mp3/riser2.mp3 — so it was 15 distinct sounds,
+#     byte-identical and so are riser.mp3/riser2.mp3, so it was 15 distinct sounds,
 #     and ONE of them (boom) carried 48 hits. Top four distinct sounds = 130/236 = 55%.
 #     His "why are you just using two or three SFX" was closer to the truth than the
 #     round-1 audit was.
 #   * volumes 0.16-0.34 with a median of 0.20, which he heard as too loud.
 #   * the library files come at wildly different levels, so a single data-volume number
 #     meant a different loudness per file, and the fix each time was to nudge the
-#     volume up — which is how the bed ended up hot.
+#     volume up, which is how the bed ended up hot.
 #
 # So this pass does three things the round-1 curation did not:
 #   1. a real ROTATION per gesture class (5 impacts, 6 ticks, 4 pops, 4 risers,
 #      5 wooshes, ...) so no single file can exceed ~8% of placements
 #   2. TRIM LEADING SILENCE. Several library files have 20-80ms of digital black at
 #      the head, which lands the transient late against its word. `silenceremove` on
-#      the front only — tails are left alone because they carry the decay.
+#      the front only, tails are left alone because they carry the decay.
 #   3. PEAK NORMALISE every file to -3 dBFS, so data-volume finally means the same
 #      thing everywhere and the mix can sit at a 0.12 median instead of chasing levels.
 set -euo pipefail

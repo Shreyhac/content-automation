@@ -1,0 +1,59 @@
+{
+  "_": "The real vid67 payload, kept as the worked example. Copy it, replace",
+  "__": "the content, keep the shape: the honest caveats come SECOND, right",
+  "___": "after the one-line what-it-is, never at the bottom where nobody reads.",
+
+  "keyword": "AGENT",
+  "out": "out/vid67-launch-your-agent.docx",
+  "sources": "Read out of the repo itself on 2026-08-14 via the GitHub API: anthropics/launch-your-agent (Apache-2.0, 940 stars, 177 forks, created 2026-06-16, last pushed 2026-07-07), files README.md and the top-level tree. Not from memory, not from the reference video, not from third-party posts.",
+
+  "title": "Launch your first AI agent",
+  "subtitle": "anthropics/launch-your-agent, Anthropic's own Claude Code skill, Apache-2.0, 940 stars",
+
+  "blocks": [
+    { "type": "para", "after": 14,
+      "text": "This is the repo from the reel. It interviews you about what you want built, scopes a v0, launches it in your own Anthropic account, grades it against your definition of done, and if the job recurs, puts it on a schedule. You do not write the agent code." },
+
+    { "type": "h", "text": "Two things to know before you start" },
+    { "type": "rich", "parts": [
+      ["You will use the terminal. ", true],
+      ["The video says \"without ever touching the terminal\", but the repo's own Quickstart is three terminal commands. What you actually skip is writing the agent code and wiring up APIs, which is the hard part. If three commands is a dealbreaker, stop here.", false]
+    ]},
+    { "type": "rich", "after": 14, "parts": [
+      ["It costs money. ", true],
+      ["It runs on an Anthropic API key from your own account, and runs cost cents, not free credits. Put a few dollars on the account first, or the launch fails at the last step with \"your credit balance is too low\".", false]
+    ]},
+
+    { "type": "h", "text": "Setup, exactly" },
+    { "type": "para", "after": 4, "text": "1. Have Claude Code installed and signed in." },
+    { "type": "para", "after": 6, "text": "2. Clone it and open Claude Code inside the folder:" },
+    { "type": "code", "lines": [
+      "git clone https://github.com/anthropics/launch-your-agent.git",
+      "cd launch-your-agent",
+      "claude"
+    ]},
+    { "type": "para", "after": 6, "text": "3. Then type the slash command:" },
+    { "type": "code", "lines": ["/launch-your-agent"], "after": 6 },
+    { "type": "para", "after": 14,
+      "text": "The skills in .claude/skills/ are picked up automatically because you opened Claude Code inside this folder. There is nothing to install and no marketplace to add." },
+
+    { "type": "h", "text": "What you end up with" },
+    { "type": "bullet", "parts": [
+      ["A live managed agent ", true],
+      ["in your Anthropic Console: the agent, its environment, a graded run, and a scheduled deployment if your task recurs.", false]
+    ]},
+    { "type": "bullet", "parts": [
+      ["A my-agent/ folder: ", true],
+      ["the build sheet, the exact API payloads it sent, a resumable launch script, an eval scaffold, an overview page, and a NEXT-DIRECTIONS.md laying out what v1 and v2 should be.", false]
+    ]},
+    { "type": "space" },
+
+    { "type": "h", "text": "Fair warnings" },
+    { "type": "bullet", "text": "It is a reference implementation. Anthropic states it is not maintained and not accepting contributions: treat it as a teaching repo you fork, not a dependency you track." },
+    { "type": "bullet", "text": "It is deliberately token-heavy. It explains each step as it goes, so it burns more tokens than a purpose-built agent would. That is the trade for understanding what it built." },
+    { "type": "space", "after": 10 }
+  ],
+
+  "footer_link": "Repo: github.com/anthropics/launch-your-agent",
+  "footer_note": "Apache-2.0 - created 16 Jun 2026 - verified 14 Aug 2026"
+}

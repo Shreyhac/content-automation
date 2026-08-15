@@ -19,7 +19,7 @@ DRY = '--dry' in sys.argv
 CLIP = re.compile(
     r'(<div id="(\w+)" class="cap clip" data-start="[\d.]+" data-duration="[\d.]+"'
     r'[^>]*>)(.*?)(</div>)')
-CONT = re.compile(r"^(?:<[bi]>)?[.,;:!?)\]%'’–—-]")
+CONT = re.compile(r"^(?:<[bi]>)?[.,;:!?)\]%'’–\u2014-]")
 
 total = 0
 for path in sorted(glob.glob(os.path.join(HERE, 'c*', 'index.html'))):

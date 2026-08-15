@@ -74,12 +74,45 @@ swift tools/vision/crown.swift stills/ > crown.csv
 
 ---
 
+## `gates/` the pre-render gate
+
+| Script | What |
+|---|---|
+| `guard.py` | Drives the composition timeline in Chromium and measures what **actually paints** at every beat: assets on disk, broken images, occlusion (position is not visibility), the Instagram bands, graphics on the presenter, text on text, void beats, contrast over the picture, `<video>` windows, stylesheet coverage, timed elements painting outside their own window, and (with `--ids`) the element-id and `<div>`-balance diff a splice needs. Config-driven, nothing per-film is hardcoded. |
+| `guard.example.json` | The config, annotated. Copy it next to a film's `index.html`. |
+
+```bash
+python3 tools/gates/guard.py hf67/guard.json -v
+```
+
+Read `tools/gates/README.md` for the config and the per-check table, and
+`playbooks/gates.md` for the doctrine: when to add a gate, why gates lie, and the running
+order. **Exit 0 means every check RAN and passed. Read the coverage line before believing
+it:** a green run and a gate that silently did nothing produce identical output.
+
+---
+
 ## `qa/`
 
 | Script | What |
 |---|---|
+| `shoot-sheet.py` | The beat contact sheet, shot from the live page **before** any render. `--from-clips` derives the samples from every element's own `data-start` window, which is what a delivery sheet needs: a fixed grid never samples an element whose window falls between two beats. Replicates the renderer's clip scheduling, seeks every `<video>` to its own local time, replays the caption cues that `tl.time(t, false)` suppressed, and tiles labelled beats. A void passes every structural gate and only a sheet shows it. Reads the same JSON as `guard.py`. |
 | `exact-frame-qa.sh` | One decode pass with a frame-number select expression. **Never `-ss` before `-i`.** |
 | `playwright-capture.py` | Real page capture. Dark scheme, `device_scale_factor=2`. Over-capture in one run. |
+
+---
+
+## `deliver/`
+
+| Script | What |
+|---|---|
+| `make_cta_doc.py` | The .docx behind "comment X and I'll send you Y". Content is a JSON, the house format is in the tool. |
+| `cta.example.json` | The real vid67 payload as the worked example. |
+
+**The CTA doc is a required deliverable at FIRST delivery**, not when he asks. It is also
+where the reel's overstatements get corrected: one film's VO said "without ever touching
+the terminal" and the repo's own Quickstart is three terminal commands. `deliver/README.md`
+has the rule and the schema.
 
 ---
 
@@ -88,3 +121,28 @@ swift tools/vision/crown.swift stills/ > crown.csv
 `pexels_search.py` and `pexels_fetch.py`. The download endpoint works without an API key given a
 plain browser User-Agent. **Extract a midframe from every clip and look at it**: the reject rate is
 about one in three even on hand-shortlisted results.
+
+---
+
+## `review/` the feedback loop
+
+The Reel Review tooling itself, vendored so a collaborator can run it and not just read about
+it. `rr` is the launcher; `review/` is the local player, markup canvas and round exporter;
+`share/` is the Cloudflare Worker that serves one private link to a client.
+
+```bash
+tools/review/rr out/vid68-final.mp4                     # local review
+tools/review/rr share out/vid68-final.mp4 --name "..."  # private client link
+tools/review/rr inbox                                   # notes left since your last pull
+tools/review/rr setup                                   # once, before the client channel works
+```
+
+It assumed it sat at the repo root, so vendored two levels down it would have looked for `out/`
+inside `tools/review/` and written the exported rounds there. The launcher exports **`RR_ROOT`**,
+defaulting to the repo root, and both Node entry points honour it. Set it yourself if your
+deliverables live elsewhere.
+
+`review/data/` (notes and markup frames) and `share/config.json` (your keys) are gitignored.
+`share/config.example.json` shows the shape. `tools/review/README.md` covers running it,
+`docs/08-review-workflow.md` is the operating manual and the one that matters: it carries the
+ordering rule, fix, reply, push, then share.

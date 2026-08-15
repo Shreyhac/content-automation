@@ -215,12 +215,45 @@ them may change his head size:
     CARD   narrower     the same camera, same head size, clipped narrower (a WIDEN, not a resize)
     CLOSE  full width   a real size change, pushed in; only safe landing on a hard cut into a new shot
 
+**Do not read the layout off the CSS; drive the composition and measure it.** Both vid56's short
+and vid58's short round 1 came out inverted (face top, graphics under) because someone read
+`#faceCam`'s declared `top:0; height:1210` as a placement. It is the untransformed camera. What
+lands on screen is `#faceScene`'s clip-path plus the transform `faceSet()` writes, which at frame 0
+resolves to a card at the BOTTOM of frame. Seek the timeline and read `getBoundingClientRect` on
+the CLIPPED result. Cost of not taking that one screenshot: a whole rebuilt short.
+
 BAND and CARD sharing one camera is what makes cutting between two formats safe in one short:
 vid46's short cut between two literal camera sizes and the owner read it as a bug. On vid59's short,
 the choice between CARD and BAND for a given beat came down to a measured constraint (his contour's
 sweep against the card's width), not a preference: a beat failing a residual/framing threshold was
 reread by hand against both of his sway extremes before being demoted to the wider BAND, and CARD
 to BAND to CLOSE was found to escalate naturally into a CTA.
+
+**A card collapses inside the rect it started in.** One shared `off` state
+(`inset(1574px 0 346px 0)`) was used for every picture exit on vid62's short, so a picture leaving
+a CARD widened to full frame on the way down and slid a full-bleed strip of his neck out past an
+empty card border. That single fault was BOTH of his "glitchy/weird transition" notes on that cut.
+Give the card its own `cardOff` that keeps the left and right insets, and fade the card frame WITH
+the picture rather than leaving the border standing.
+
+**At a hard cut, SET the picture state. Never tween across the cut.** A wipe exists to hide the
+swap, and a 0.34s `faceTo()` starting at the cut finishes after the wipe has cleared, in full view.
+That was a third "weird transition" note on the same short. `faceTo` is for moves INSIDE a beat.
+
+**Centre the card on the MEDIAN head position, not on the midpoint of his extremes.** Extremes
+centring maximises the smaller margin, which answers "will his face leave the rect" and not "does
+this look centred". On vid62's short one 0.4s lean dragged a card 55px and he sat off centre for
+the whole beat; his note was "this is not centered aligned". If median centring then breaches
+FACE_MARGIN, the beat cannot be a CARD at all and plays as a BAND.
+
+**Solve the crop over the spans he is VISIBLE in, not over the whole beat.** Five of vid62 short's
+nine beats showed him for only part of their runtime, and a beat-wide median is a median over
+frames nobody sees.
+
+**"Full screen" is not automatically a 9:16 crop.** He asked for a full-screen close on vid62's
+short; a true edge-to-edge 1215px-wide 9:16 window put 43px of his cheek outside the frame on both
+sides and his chin at y1601, inside the UI band. It shipped instead as a full-WIDTH 1080x1468
+picture from y106 down to the same y1574 floor the band uses: whole head, caption under his chin.
 
 On a split beat **the caption moves ABOVE the card**. Leaving it in the low band prints it on
 the jaw.

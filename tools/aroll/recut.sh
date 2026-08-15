@@ -1,5 +1,5 @@
 #!/bin/bash
-# vid46 ROUND 2 — the A-roll re-cut.
+# vid46 ROUND 2, the A-roll re-cut.
 #
 # The owner reversed the round-1 "keep both takes" decision, so the two duplicated
 # passages come out. Both splices are expressed in ORIGINAL frame numbers on the
@@ -41,7 +41,7 @@ case "${1:-all}" in
 
 audio)
   # 1. the cleaned VO master, spliced. Sample-accurate atrim, not packet-level
-  #    aselect — a 21ms packet rounding at each join would drift the whole film.
+  #    aselect, a 21ms packet rounding at each join would drift the whole film.
   echo "--- spliced VO master ---"
   ffmpeg -y -nostdin -v error -i "$SRC" -filter_complex \
     "${ATRIM};[ac]highpass=f=75,afftdn=nr=14:nf=-28:tn=1,adeclick,aresample=48000[out]" \
@@ -55,7 +55,7 @@ audio)
 frames)
   # 2. 5fps stills off the SPLICED video, for the Vision detectors. Extracted with
   #    the same frame-select expression, so the gaze/box/crown maps are measured on
-  #    exactly the footage that ships — no remapping of the round-1 CSVs, which
+  #    exactly the footage that ships, no remapping of the round-1 CSVs, which
   #    would have had to resample a 5fps signal across two non-multiple-of-6 cuts.
   echo "--- 5fps detection stills ---"
   rm -rf recut/frames5; mkdir -p recut/frames5

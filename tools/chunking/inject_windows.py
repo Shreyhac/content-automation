@@ -2,7 +2,7 @@
 """Rewrite the `const Wn = {...}` face-window constants in every chunk from the
 solved card-transforms.json.
 
-The transforms are measurements, not taste — they must never be typed by hand into a
+The transforms are measurements, not taste, they must never be typed by hand into a
 composition. This regenerates them in place so the HTML can only ever carry what
 solve_card.py actually computed.
 """
@@ -13,7 +13,7 @@ data = json.load(open(os.path.join(HERE, "card-transforms.json")))
 wins = {w["win"]: w for w in data["windows"]}
 
 def js(w):
-    # ROUND 2: no `track`. One constant tx per window — the smoothed follow read as a
+    # ROUND 2: no `track`. One constant tx per window, the smoothed follow read as a
     # glitch to the owner. `resid` rides along so a composition can be read against
     # the reason a window is card or full-bleed without opening the solver.
     return ("const W%d={a:%.2f,b:%.2f,s:%.4f,tx:%.1f,ty:%.1f,ok:%s,resid:%d};"

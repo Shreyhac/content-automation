@@ -13,7 +13,7 @@ Targets:
     crown          -> card top + TOP_M
     head height    -> HEAD_FRAC of card height   (caps s so a lean-in cannot crop the chin)
 
-ROUND 2 — ONE CONSTANT PER WINDOW. The tracking curve is gone.
+ROUND 2, ONE CONSTANT PER WINDOW. The tracking curve is gone.
 
 Round 1 gave each window a smoothed tx track (+-1.4s moving average at 0.4s spacing),
 reasoning that a constant is only correct at the median and he sways up to 594px. The
@@ -27,7 +27,7 @@ window median still leaves him more than RESID_MAX off card centre, that window 
 FULL-BLEED, where the source framing already holds him.
 
 Subdivision is also gone. Round 1 split long windows at 5.5s to keep the transform
-close to him, which is only safe if every sub-window boundary coincides with a cut —
+close to him, which is only safe if every sub-window boundary coincides with a cut,
 otherwise the face jumps mid-shot, which is worse than the drift it was fixing. One
 window, one transform, no exceptions.
 
@@ -117,6 +117,6 @@ json.dump({"card": CARD, "s_min": round(S_MIN, 4), "crown_bias": CROWN_BIAS,
 nc = sum(1 for o in out if o["card_ok"])
 cs = sum(o["b"] - o["a"] for o in out if o["card_ok"])
 fs = sum(o["b"] - o["a"] for o in out if not o["card_ok"])
-print(f"\nwrote card-transforms.json — {len(out)} windows")
+print(f"\nwrote card-transforms.json, {len(out)} windows")
 print(f"s range {min(o['s'] for o in out):.3f} .. {max(o['s'] for o in out):.3f}")
 print(f"{nc} card ({cs:.1f}s) · {len(out)-nc} full-bleed only ({fs:.1f}s)")

@@ -5,7 +5,7 @@ Pexels rate-limits to roughly ONE search per browser session: the second query i
 reused context comes back empty or challenged. So every query gets its own
 sync_playwright() block and a ~20s gap, which is the only pattern that has worked here.
 
-Writes vid46/broll/pexels.json — {theme: [ids...]} — for pexels_fetch.py to download.
+Writes vid46/broll/pexels.json, {theme: [ids...]}, for pexels_fetch.py to download.
 """
 import json, os, re, sys, time
 
@@ -18,15 +18,15 @@ os.makedirs(OUT, exist_ok=True)
 UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36")
 
-# One theme per act. Each must connect to the line it plays under — the vid39 rule:
+# One theme per act. Each must connect to the line it plays under, the vid39 rule:
 # b-roll that does not illustrate the claim is worse than no b-roll.
 THEMES = {
-    "brokers":   "server room data center racks",       # A2 — where the records live
-    "collect":   "woman shopping online phone credit card",  # A2 — how it gets collected
-    "buyers":    "call center telemarketing office",    # A2 — who buys it
-    "bundle":    "laptop screen night working alone",   # A4 — the security bundle
-    "pricing":   "credit card payment closeup hands",   # A5 — the price act
-    "outro":     "crowd walking street anonymous",      # A8 — your data is already out there
+    "brokers":   "server room data center racks",       # A2, where the records live
+    "collect":   "woman shopping online phone credit card",  # A2, how it gets collected
+    "buyers":    "call center telemarketing office",    # A2, who buys it
+    "bundle":    "laptop screen night working alone",   # A4, the security bundle
+    "pricing":   "credit card payment closeup hands",   # A5, the price act
+    "outro":     "crowd walking street anonymous",      # A8, your data is already out there
 }
 
 

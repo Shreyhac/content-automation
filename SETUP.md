@@ -12,7 +12,7 @@ what is missing.
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 brew install ffmpeg node python@3.12 expat
-pip3 install --user openai-whisper playwright
+pip3 install --user openai-whisper playwright Pillow python-docx
 python3 -m playwright install chromium
 ```
 
@@ -20,7 +20,9 @@ python3 -m playwright install chromium
 |---|---|---|
 | `ffmpeg` / `ffprobe` | Everything. Transcode, crop, bake, concat, loudnorm, frame extraction. | |
 | `node` 18+ | `npx hyperframes` pulls itself. | No global install needed. |
-| `python3` | Captions, SFX beds, chunk planning, solvers. | Standard library only, plus playwright. |
+| `python3` | Captions, SFX beds, chunk planning, solvers, the pre-render gate. | Standard library, plus playwright, Pillow and python-docx. |
+| `Pillow` | The contrast check in `tools/gates/guard.py`, and every contact sheet. | `guard.py` FAILS rather than skipping when it is missing, on purpose: a gate that quietly stops checking is worse than one that stops. |
+| `python-docx` | `tools/deliver/make_cta_doc.py`. | The CTA doc is a required deliverable at first delivery, so this is not optional. |
 | `whisper` | Word-level transcripts. | `--model small` is the default. |
 | `playwright` + chromium | Real page capture, and the pageerror gate. | |
 | `swift` | The Vision measurement tools. | Ships with Xcode command line tools. |

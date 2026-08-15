@@ -40,9 +40,13 @@ check it before stating it as fact: especially before it drives a build decision
 hangs at 0% CPU, with plenty of memory free.**
 Single-worker screenshot leak, not RAM. On <= 8GB, HyperFrames forces low-memory mode (one worker
 plus screenshot capture), and Chrome leaks per screenshot until a session crashes. Bigger frames
-exhaust it sooner. Two levers together: transcode every A-roll to `scale=1080:1920` (an oversized
-master is 2.25x the pixels), and render with `--no-low-memory-mode --workers 4` so each session
-captures fewer frames. Raising `--protocol-timeout` only makes a hang wait longer.
+exhaust it sooner. Render with `--no-low-memory-mode --workers 4` so each session captures fewer
+frames. Raising `--protocol-timeout` only makes a hang wait longer.
+
+**Do not reach for `scale=1080:1920` on the A-roll to relieve this.** An oversized master is 2.25x
+the pixels and it does drive the leak, but downscaling an asset feeding a 2160x3840 composition
+costs 84% of the picture's sharpness and shipped three times. See `docs/03-quality-bar.md`. Pay
+for the pixels with worker count, `HF_DE_STALL_MS`, and chunking.
 
 **`--workers 4` times out on all workers at about 25%.**
 Drop to 2. Render cost varies wildly with machine state: the same length composition has taken
@@ -58,10 +62,83 @@ reproduce it on one machine, 31 did on another.
 Do not pipe the renderer's TTY output. Redirect to a log file.
 
 **Two `<video>`/`<audio>` elements pointing at the same large media file deadlocks the frame
-extractor.** Distinct from the `HF_DE_STALL_MS` watchdog stall below: the tell is *all* capture
-workers dying at once on a protocol timeout (`Runtime.callFunctionOn timed out`), not a stall
-parked at one fixed frame. Give every clip its own file (a plain `cp` of the source is enough) and
-put any spoken audio on its own extracted `.m4a`.
+extractor, and the clips that survive render BLACK.** Distinct from the `HF_DE_STALL_MS` watchdog
+stall below: the tell is *all* capture workers dying at once on a protocol timeout
+(`Runtime.callFunctionOn timed out`), not a stall parked at one fixed frame. The log says so
+outright:
+
+```
+Some video elements did not decode within 45000ms: c3.mp4, c3.mp4, c4.mp4, c4.mp4
+[... affected videos will appear as blank/black frames]
+```
+
+**One element, one physical file.** A plain `cp` of the source is enough, and any spoken audio goes
+on its own extracted `.m4a`. Ten `<video>` tags from 4 files was enough to trigger it; a six-clip
+montage that pushed two clips to **five referencing elements each** stalled a 12-minute render
+repeatedly. Copying per usage also renders **faster**, 74s against a timeout at 25%. Disk is free;
+a stalled 12-minute render is not.
+
+This is what `lint`'s `duplicate_media_discovery_risk` warning is pointing at. It reads as
+cosmetic and it is not.
+
+The deliberate exception: two `<video>` elements on the same file with the **same `data-start`**
+(a blurred full-frame ground behind a clip-path card) stay in frame-sync and are fine. The failure
+is decode pressure and element count, not sharing per se.
+
+**A render that fails still leaves yesterday's file on disk.** One render stalled deterministically
+at frame 568/1264 twice, and both times `renders/vidNN.mp4` was still v1: right duration, right
+bitrate, right frame count, wrong film.
+
+```
+Sequential drawElement capture stalled: no frame progress for 60000ms (stuck at frame 568/1264)
+```
+
+`ffprobe` cannot tell you a file is stale. **Check the mtime and check the CLI's exit line, every
+time: exit 0 is not success and a valid file is not a fresh one.** Two theories worth skipping on
+this symptom, both tested and wrong: the clips all decoded clean end to end, and dropping CRF 14 to
+18 with `-tune fastdecode` moved the stall by four frames.
+
+**A CSS transform on a box containing a `<video>` deadlocks the capture engine.** A 0.20s
+`scale:1.045 → 1` punch-in on 24 B-roll wrappers stalled a render at 40% with 15 workers alive and
+no frames appearing for ten minutes. Removing the punch-in let the same file capture all 796
+frames. This is the same fault as repeated `<video>` srcs: the engine will not survive compositing
+transforms over video elements. **Get the life from the cut itself.**
+
+**ffmpeg's encode step has its own 600s timeout, separate from the render's watchdog, and blowing
+it discards the entire capture.** A 2160x3840 encode at 42 Mbps ran at `speed=0.015x` and was
+killed at exactly 10:00 **after a completely successful capture**. The log reports a generic
+`ffmpegEncodeTimeout`, which reads like a mystery. Always export:
+
+```bash
+export FFMPEG_ENCODE_TIMEOUT_MS=3600000
+export PRODUCER_ENABLE_CHUNKED_ENCODE=true
+```
+
+**A 4K video-heavy composition hard-resets an 8GB machine, and it is the video EXTRACTION stage,
+not the workers.** 28 `<video>` elements at 2160x3840 and 52 to 100 Mbps in one page reset an M2
+Air with a blank screen, three times. The evidence is only ever in
+`/Library/Logs/DiagnosticReports/ResetCounter-*.diag` reading `Boot faults: wdog,reset_in_1`, plus
+a `WindowServer_*.userspace_watchdog_timeout.spin`. **There is never a `.panic` file**: the kernel
+gets too wedged to panic and the SoC watchdog cuts power. (`rst btn_rst` in the same file is just
+someone holding the power button.)
+
+It is not the worker count. `--low-memory-mode` auto-enables at 8GB or less and already pins one
+worker, which is why the crashed logs read `workerCount:1` under a header saying "auto workers".
+Extraction runs **before** any frame is captured and pulls frames from every `<video>` in the page
+regardless of workers; the log died on `Extracting frames from video 28/28`. The only lever is
+**videos per page**, so the fix is to chunk: 28 down to a maximum of 5 rendered the whole 36.4s
+film at 4K in 4 minutes with the machine untouched. See `playbooks/chunk-revision.md`. Being at
+91% disk capacity is the other half of the cause, because macOS cannot grow swap enough to absorb
+the spike.
+
+**And some stalls are not fixable by any of this.** One render stalled at the same frame with 18
+videos and with 2 (frames 746 and 743 of 1057). Collapsing seventeen B-roll clips into one
+pre-composed band track did not move it, so the ceiling is per-frame accumulation on an 8GB
+machine, not video count. Three chunks of about 350 frames each rendered in 2 to 2.5 minutes.
+
+**Diagnose a stall by rate, not by log.** Count frames on disk twice, 45 seconds apart. Zero delta
+is a hang. A per-worker plateau at the same **count** across workers (not the same absolute frame
+number) is media-seek exhaustion against a long-GOP source.
 
 **A long-GOP source video hangs each render worker at the same per-WORKER frame count, not the
 same timeline position.** If N workers each stop after roughly the same count of frames produced
@@ -76,14 +153,25 @@ frame/sec, because a second 4K x264 job was running at the same time. The log re
 encode timeout, which reads like a mystery unless you check for a second ffmpeg process. Run 4K
 renders strictly sequentially.
 
-**Renders killed with no error at 97–98% disk usage.** `df -h` is worth checking the moment a
-render dies silently partway through encoding: a 65s 1080×1920 render needs several GB of frame
-scratch space, more at 4K. Clearing superseded `renders/*.mp4`, old QA directories and raw capture
-PNGs is usually enough.
+**Renders killed with no error at 97–98% disk usage.** `df -h` **before** kicking off a 4K render,
+not after it dies: a 65s 1080×1920 render needs several GB of frame scratch space, a 26.5s
+2160×3840 render with PNG frame extraction wants **over 15GB**, and PNG extraction of 29s of 4K is
+**4.7GB** on its own. One render died on ENOSPC at 95% full and needed 7.2GB of unreferenced
+intermediates moved off before it would go. A 4K round costs about 800MB in `renders/`, and the
+repo grows 5 to 6 GB per film, so this recurs.
+
+Safe to move: `hf*/.assembly/video.mp4` (a pure intermediate), superseded review copies whose
+hosted version lives on release assets, and cut masters whose transcode already sits in the
+project. **Do not move an `out/*.mp4` that `review/data/<slug>/project.json` still points at.**
 
 **`apad` with no explicit length is an infinite audio source, and a bare `atrim` downstream does
 not reliably terminate the graph.** A multi-cue SFX-bed mix spun at ~99% CPU for nine minutes and
 wrote a short file. Give `apad` a `whole_dur=` and cap the output with `-t`.
+
+The same graph can work for months and then hang the first time a round **removes** something. With
+every SFX cue stripped out, demi2's mix had zero bounded inputs left, and those inputs were the
+only thing that had been terminating the trailing bare `apad`: ffmpeg spun forever. `whole_dur=DUR`
+is not an optimisation, it is what makes the graph terminable independent of its inputs.
 
 **`--video-frame-format png` deadlocks the capture path.** It stalls deterministically at the same
 frame with many source videos and a large extracted-frame count; `--experimental-fast-capture=false`
@@ -125,6 +213,13 @@ the five sample times.
 Do not chase the list. Check the sample timestamp against the clip window, then recompute the
 actual foreground and background token pairs by hand and fix only what genuinely fails.
 
+**`inspect` crashes with `Cannot read properties of undefined (reading 'totalDuration')`.**
+Two causes, and the second is the common one. It is genuinely broken on some machine and version
+combinations, confirmed against an untouched previously-shipped gold-standard project. But the
+identical error is also produced by a missing attribute: **`lint` only demands `data-start="0"` on
+the root, and `inspect` also needs `data-duration` on the ROOT composition.** Check that before
+concluding the tool is out of action.
+
 **`inspect` passed something that is visibly broken.**
 It samples static times, so it misses collisions born from group moves, and mid-tween states.
 And `data-layout-allow-overflow` on a parent **blinds the gate for its whole subtree**: audit
@@ -162,6 +257,74 @@ gates that sound complementary can both miss one bug for different reasons.
 project would have rendered silent with every missing logo. Copy real files into the project
 directory instead of linking them.
 
+**A staleness hash that misses one stylesheet ships the film without the fix.** `pichash` hashed
+`chunk.js` and `base.css` but not `vid62.css`, which held most of the film's look (`.eyeb`,
+`.crit`, `.svc`, `.figw`, `.lad`). A one-rule eyebrow-ground fix that changed every chunk's pixels
+invalidated **no** stamps; the flight script would have reported "all chunks already current",
+skipped all 18, and shipped a film without the fix while every gate passed, because the gates read
+the DOM and not the render.
+
+**Whenever a per-film stylesheet or helper script is added, add it to the hash's `SHARED` list in
+the same commit**, and check the stamps actually went stale before a resumable render:
+
+```sh
+for c in c1 c9 c17; do
+  [ "$(python3 pichash.py $c)" = "$(cat $c/renders/.pichash)" ] && echo "$c CURRENT (bad)"
+done
+```
+
+Three siblings in the same family. The hash strips `<audio>` so audio-only edits do not force a
+picture re-render, but it does **not** strip the HTML comment beside each cue, so every audio edit
+changed the hash and cost two unnecessary re-renders on one film. **A guard that is correct but
+expensive to change gets changed at the START of a round, never in it**, because the fix
+invalidates every stored stamp at once. And a stamp taken **after** the work is not a staleness
+stamp: a chunk rendered its old timeline at 03:34, a fix landed at 03:38, and the 03:40 stamp
+declared the stale render fresh. Capture the hash before the work, write it after.
+
+**A guard reporting PASS is not a guard that ran.** One build passed lint, validate and five
+custom gates and every one of these would have shipped: a PII gate read a JSON file its producer
+never wrote, so **on a film about published home addresses the privacy gate had never executed
+once**; a CSS gate was hardcoded to `c1..c11` from when the film had eleven chunks; a card gate
+defaulted to `["c1"]`, so one OK line read as a clean film-wide pass; a band gate was correct and
+had simply never been run, while four chunks printed graphics under the caption band; and
+**Playwright's browser binary was missing, so every DOM gate was crashing rather than checking.**
+
+- **Derive scope from the plan file, never from a literal.**
+- **Print what a gate measured, not just its verdict.** One gate's leaf rule
+  (`txt.length > 0 && el.children.length === 0`) skipped every caption carrying a `<b>` accent, so
+  six of twenty-two cues were never measured as a box, and its 0.39s sampling interval missed six
+  more against a 0.30s shortest cue. It now prints the distinct element set it measured and refuses
+  to pass on fewer than 20.
+- **Grep a guard's matcher for folder-name and class-name string filters before trusting it on new
+  content.** `if "broll" not in src` silently exempted three new clips in a different directory.
+- **Run a negative control on every new gate**, including permissive changes to an existing one. A
+  rect-intersection change made a gate pass a deliberately planted violation, because `#root` is
+  `overflow:hidden` and computes to height 0 on a plain load: the gate reported PASS having tested
+  nothing at all.
+- **An allowlist entry that matches nothing is worse than no entry**, because it reads as "this was
+  considered and handled". One inherited exemption blanket-covered a whole 15.8s chunk under a
+  description of a scene that no longer lived there. Grep the allowlist's selectors against the
+  current build, or delete them.
+
+**Assert that an edit actually changed something.** A `re.sub` that matches nothing returns the
+input, and the script prints success.
+
+- Round 1's caption injection consumed its own `<!-- CAPTIONS-BEGIN -->` markers, so round 2's
+  injection silently no-opped and **a full render shipped round-1 captions**, up to 3s out of sync
+  with the wrong band on the close. It passed lint, validate, the safe-zone gate and a full render.
+  It was caught only by grepping the file for the band class that had just been added.
+- `afade=t=in:st=X` **silences everything before X.** Meant as 45ms on one beat's head, applied to
+  the assembled VO it **muted 46 of 61 seconds**. The assembler's own loudness print caught it:
+  LRA 4.4 to 25.6 LU, integrated down to −25.5.
+- A correction table needs a test that proves it **fires**. Three films' worth of price corrections
+  were dead code that read as a safety net, because whisper puts a leading space on every ordinary
+  word and every entry was written to match the unspaced token.
+
+**Read the numbers the pipeline already prints.** Loudness, LRA, frame count and duration are free
+assertions, and a 6x LRA jump is not a taste question. And a render in flight is not a sunk cost:
+one caption duplicate was found four chunks into a 45-minute render, and stopping cost twelve
+minutes against a film to throw away.
+
 **Hardlinked shared assets go stale when an editor REPLACES a file instead of truncating and
 rewriting it.** A shared kit file (`base.css`, `chunk.js`) hardlinked into every chunk directory is
 supposed to make one fix visible everywhere by construction: except some edit paths allocate a new
@@ -193,7 +356,51 @@ These are all frame-QA-only, and each has cost at least one round.
 - **Stacking follows DOM order, not `data-track-index`.** Move the element after the thing it must
   sit on top of.
 - **A `<video>` with `data-start` nested inside another element with `data-start` renders frozen.**
-  Put the timing on the video, leave the wrapper untimed.
+  Put the timing on the video, leave the wrapper untimed. Stated as a structural rule: **`.clip`
+  videos must be direct children of the stage.** Author face shots as a bare
+  `<video class="clip vid">` on the stage and put per-scene chrome in a sibling timed div. `lint`
+  does catch this, but only after the scene wrapper is already written.
+- **Every `<audio>` needs an `id` or it is SILENT in the render.** `lint` flags it as an error and
+  **the preview still plays it**, so it is invisible to the one check most likely to be run.
+- **An `<svg class="clip">` element's visibility is not managed by the framework.** Only div, video
+  and img clips get visibility control. A timed squiggle-arrow SVG at `data-start 15.35` painted
+  for the **entire film**, appearing beside chips at 0:05, on cards at 0:07 and inside the graph at
+  0:13. Wrap a timed SVG in a timed `<div class="clip">`, or do not time SVGs directly. Found by
+  the owner watching, because a per-element contact sheet samples each element's own window and
+  never asks whether it is absent **outside** it.
+- **Same-z videos stack by DOM order, not `data-track-index`.** A `<video>` inserted mid-stack
+  painted **under** a later-in-DOM full-bleed video despite carrying a higher track index. Every
+  gate passed and the chunk extracted both files; the QA contact sheet was the only thing that
+  showed a couch where the B-roll should have been. New overlay videos go at the **end** of the
+  video stack.
+- **`gsap.from()` with `keyframes` is unreliable.** `from` plus keyframes has no well-defined start
+  state. Use `fromTo()` with the keyframe array in the **to** vars.
+- **`letterSpacing` tweens fail the motion gate.** Layout properties snap to integer device pixels
+  and stutter under seek-by-frame capture. For a type entrance use `scale` plus `y` from
+  `transformOrigin:"left top"`.
+- **`gsap_exit_missing_hard_kill` on a clip element is real, not a lint nit.** An exit fade on a
+  clip element, or one ending at a clip boundary, needs a `tl.set(..., {opacity:0})` after it, or a
+  non-linear seek lands past the fade with stale visibility. The linter's `fixHint` gives the exact
+  line.
+- **`opacity:0` still occupies layout, so a column that is supposed to GROW never does.** A
+  comparison scene reserved its full final height from the first frame, which is why "the left one
+  ends short while the right keeps going" read as two static boxes. Wrap each deferred block in
+  `.grow{overflow:hidden;height:0}` and tween `height:"auto"`. Measured: both columns then start at
+  232px and end at 341 against 656. **The gap is the argument, so the gap has to open on screen.**
+  Related and distinct: `opacity:0` on a wrapper leaves every child fully measurable to a gate,
+  whereas `visibility` **is** inherited, so `tl.set(sel,{visibility:"hidden"})` genuinely removes a
+  subtree.
+- **`tl.seek(t)` suppresses `onUpdate`; `tl.seek(t, false)` does not.** GSAP's second parameter is
+  `suppressEvents` and it defaults to `true`, while **the renderer seeks with it false**. A canvas
+  driven by the documented proxy-plus-`onUpdate` pattern renders correctly under
+  `hyperframes render` and draws **nothing** in a local Playwright harness that seeks with the
+  default. Half an hour went into "why is the orb blank" when the composition was fine and the
+  harness was lying. **Any local seek-and-screenshot rig must pass `false`**, and the same applies
+  to `tl.pause(t)`.
+- **A screenshot harness does not move `<video>` elements at all.** Driving the timeline places
+  every graphic correctly and leaves each `<video>` wherever it was, because nothing sets
+  `currentTime`. A QA rig that seeks by hand is not applying the renderer's clip scheduling, so it
+  cannot see media-timing bugs at all.
 - **An element styled and animated but never present in the DOM.** GSAP no-ops silently on an empty
   selector. Grep every `#id` used in the timeline against the markup.
 - **A scene background painting over its own video.** An opaque wash on the same element that
@@ -227,6 +434,58 @@ These are all frame-QA-only, and each has cost at least one round.
   `-s <file>` (non-empty) is not proof a video file is decodable. Frame-count every A-roll source
   and probe every recording/screen-capture asset as part of the pre-render checklist, not just
   confirm they exist.
+- **A `<video>`'s `data-duration` must cover every frame its wrapper paints, or the uncovered
+  frames render as a dead grey rectangle with a red X.** One stock plate was cut to 1.1s inside a
+  1.82s beat, so the last 0.72s was grey. A guard for this walks every `<video>` at every beat and
+  checks `painted && t ∈ [data-start, data-start + data-duration]`; verify it by shortening a
+  window on purpose and watching it fire. Same family: a scene clip that expires mid-crossfade
+  pops, so the window has to run past the end of the fade.
+- **Staging belongs in CSS on the element that animates, not on its parent.** With
+  `defaults:{immediateRender:false}` an element sits at its **own CSS value** until its tween
+  starts, so a hidden wrapper does not stage its children. A staged `.cad` row whose `.num` child
+  computed to `opacity:1` put "60" and "90" on screen a second before either number was spoken,
+  then snapped to zero and re-entered on the word. The container version of the same bug: every
+  `#sN` scene div visible from frame 0 until its own `show()` means any child without a staging
+  class paints early, and an arrowhead from scene 7 sat on the first beat for its whole duration.
+  One `put("#s1,#s2,...", {autoAlpha:0}, 0)` closes the whole class.
+- **A beat must clear its own transition.** The film's biggest number landed at 28.220 on the
+  envelope peak for "free", and the CTA wipe is 0.42s centred on 28.480, so it starts at 28.270:
+  **0.05s in the clear, one and a half frames.** Nothing in lint, validate or any DOM gate has an
+  opinion about this; only the render sheet showed it. Assert
+  `t_land + 0.25 < t_nextcut − wipe_duration/2` before rendering, for every slam, stamp and
+  counter landing. When it fails, **move the landing to the previous stressed syllable, not the
+  cut.**
+- **A tween scheduled past a chunk's end never runs; one scheduled before its start SHIFTS the
+  whole timeline.** Four cards scheduled at 44.6 to 48.5 in a chunk ending at 42.751 never appeared
+  and the chunk played 17 seconds of one still frame. In the other direction, a cue meant for
+  121.100 against a chunk starting at 122.372 put **every** tween in that chunk 1.272s late,
+  uniformly: GSAP does not clamp. The guard has to scan the **whole script**, not just literal
+  `tl.*` position arguments, because helper functions wrap them internally, and it has to strip JS
+  comments first. Chunked-build specifics are in `playbooks/longform-chunking.md` and
+  `playbooks/chunk-revision.md`.
+- **A font can silently fall back through every gate.** Verify glyphs at **native resolution or not
+  at all**: IBM Plex Sans's serifed capital "I" disappears when a 2160-wide caption crop is
+  downscaled into a comparison image, which made a true Plex render read as a fallback and launched
+  a data-URI embed, two `@font-face` rewrites and a woff2 conversion, all chasing a ghost. One
+  native-res crop settled it in a minute, and the same weak eyeballing had produced a false
+  positive the round before. **The renderer's compile log is the ground truth**, so grep for it
+  instead of squinting at glyphs:
+
+  ```
+  [Compiler] Embedded local font file: ... → data URI
+  Fetched N font face(s) for "IBM Plex Mono" from Google Fonts
+  ```
+
+  The compiler embeds any local file the `@font-face` references (ttf or woff2, any `format()`
+  string) and auto-fetches built-in families. **Only a MISSING file falls back silently**, which is
+  what actually shipped across two delivered cuts when a chunk emitter matched `src="assets/..."`
+  and never `url("assets/...")`. A glyph question is also answerable from the font file itself:
+  fontTools `glyf` says Plex Sans "I" is 1 contour and 12 points (serifed), a grotesque's is 4 to 8.
+- **Contact sheets lie at small tile sizes, in both directions.** At 250px two frames looked like
+  they had face ghosts bleeding through; at 420px they were clean and the "ghost" was neighbouring
+  tiles blurring. Then at 420px a working 0.36s dissolve looked like a tween that had never fired.
+  A 6-across tile at 270px is too small to resolve another creator's face in a lifted plate.
+  **Verify any suspected no-op at full resolution before touching code.**
 
 ---
 
@@ -254,6 +513,17 @@ These are all frame-QA-only, and each has cost at least one round.
 
 - **Broken `pyexpat` on this machine breaks yt-dlp, pip and venv.** Prefix with
   `DYLD_LIBRARY_PATH=/opt/homebrew/opt/expat/lib`.
+- **Spotlight indexing is disabled on this machine**, so Finder Recents and `mdfind` will never
+  surface a file written since it was turned off: `mdfind -name "vid66"` returns nothing for files
+  that exist and decode fine. Verify every deliverable with `ls` and `ffprobe` on the real path.
+  See `docs/06-delivery.md`.
+- **`hyperframes preview` (the Studio) silently rewrites the project's `index.html`**, stamping
+  `data-hf-id="hf-xxxx"` on every timed element. Two things break: every text-anchor edit script
+  misses and its asserts fire, and a chunker's `\bid="..."` regex **matches inside `data-hf-id=`**,
+  because the hyphen is a word boundary, so the planner and emitter read machine ids. The root
+  duration assert was the only loud symptom. If the Studio has been opened on a project, strip the
+  attributes before any pipeline run (and restore the `<!doctype html>` casing it changes), and
+  never leave the Studio server running while editing the source.
 - `timeout` does not exist on macOS by default.
 - **zsh `set -- $var` does not word-split** (unlike bash), so `for spec in "a b c"; do set -- $spec`
   passes the whole string as `$1`. Use explicit `${spec%%:*}` parsing.

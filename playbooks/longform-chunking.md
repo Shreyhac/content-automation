@@ -71,7 +71,29 @@ amix weights='1 0.9'  →  loudnorm I=-14:TP=-1.0
 
 **And build the SFX bed beside the render, never out of it.** See `docs/05-audio-and-sfx.md`.
 Reconstructing the bed from each chunk render's audio couples sound to picture, so changing one
-volume means re-encoding 4K video to hear it.
+volume means re-encoding 4K video to hear it. The payoff is that an audio-only note becomes a
+30-second remux with the picture untouched.
+
+**Concatenate the video, rebuild the audio.** Video is stream-copied so every delivered frame is
+bit-identical to its chunk render. Audio is laid once across the full duration from the continuous
+VO plus absolute-timed cues, because **AAC has encoder priming at the start of every stream** and
+joining three of them puts a discontinuity at each boundary: exactly the shape of a "weird audio
+cut" note.
+
+## Prove the joins, then prove the film
+
+The frame pair either side of each boundary must be identical in caption, face state and face
+position, with only the intended element changing.
+
+**Then scan every frame for the one artefact the design could produce.** On a 1057-frame film that
+meant a band that is black while the composition is in SPLIT, which would read as a one-frame black
+flash: zero of 1057 frames had it. Reasoning about `round` against `ceil` boundaries produced two
+contradictory predictions and the full-frame scan answered it in one command. **A frame scan is
+cheaper than an argument about boundary arithmetic.**
+
+A stale baseline makes this lie: a PSNR run against an earlier probe render reported a failure that
+was really a source edit made after that probe. Confirm what the baseline contains first. See
+`playbooks/chunk-revision.md`.
 
 ---
 
@@ -120,6 +142,22 @@ roughly triples the chunk bitrate.
 `-q high -w 4` runs about 4x realtime at 4K on this machine: a 23.7s chunk in about 90 seconds, a
 239s pass in about 16 minutes. **4K is affordable because of chunking**, since you almost never
 re-render everything.
+
+**Pass `--resolution portrait-4k` explicitly.** Without it a 1080x1920 composition renders at
+1080p, delivers a quarter of the pixels, and looks like a clean success.
+
+**Chunking is also the only lever on videos-per-page, which is a hard machine limit rather than a
+tuning knob.** 28 `<video>` elements at 4K in one page hard-reset an 8GB machine three times at the
+frame-extraction stage, before any worker ran. Split to a maximum of 5 per chunk and the same film
+rendered in 4 minutes. Separately, one composition stalled at the same frame with 18 videos and
+with 2 (frames 746 and 743 of 1057), and collapsing seventeen B-roll clips into one pre-composed
+band track did not move it: that ceiling is per-frame accumulation, not video count, and three
+chunks of about 350 frames each rendered in 2 to 2.5 minutes. See `docs/07-troubleshooting.md`.
+
+**`data-duration` gets emitted, not typed.** HyperFrames **ceils** `duration * fps`, so 4.7667 on a
+143-frame chunk renders 144 frames, and rounding is not safe either because 4.2 * 30 is
+126.00000000000001 in binary float. Emit `(nframes - 0.001) / FPS` and assert the count per chunk.
+`playbooks/chunk-revision.md` has the arithmetic and the boundary rules that go with it.
 
 Set `HF_DE_STALL_MS=420000`. A render dying at the same frame number repeatedly is the 60-second
 watchdog killing a healthy render, not a hang. See `docs/07-troubleshooting.md`.

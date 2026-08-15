@@ -1,0 +1,22 @@
+#!/bin/sh
+# Reel Review
+#
+#   ./rr out/vid47-final.mp4      review locally (re-renders stack as v2, v3, ...)
+#   ./rr                          gallery of everything in out/
+#
+#   ./rr share out/vid47-final.mp4 --name "Nader"   upload, print the private client link
+#   ./rr pull vid47                                 bring the client's notes into review/data/
+#   ./rr push vid47                                 send your replies + resolved marks back
+#   ./rr inbox                                      what clients left that you have not pulled
+#   ./rr shared                                     what is live, and who has commented
+#   ./rr revoke vid47                               rotate the key, old link dies
+#   ./rr unshare vid47 --yes                        delete it from R2
+D="$(cd "$(dirname "$0")" && pwd)"
+# out/ and the -feedback-roundN.md exports belong at the repo root, not next to this script.
+: "${RR_ROOT:=$(cd "$D/../.." && pwd)}"
+export RR_ROOT
+case "$1" in
+  share|pull|push|inbox|shared|revoke|unshare) exec node "$D/review/share.js" "$@" ;;
+  setup)  shift; exec node "$D/share/setup.js" "$@" ;;
+  *)      exec node "$D/review/server.js" "$@" ;;
+esac

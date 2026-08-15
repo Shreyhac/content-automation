@@ -3,11 +3,181 @@
 Newest first. **The most recent approved grammar supersedes older entries.**
 
 > **Open before you start.** Two client notes on vid46 have never been answered. See
-> "Round 4" below and `open-notes/`.
+> "Round 4" below and `open-notes/`. They are still the ONLY open notes on any Nader film.
+
+## Review status, verified against `review/data/` on 2026-08-15
+
+| Film | Where it was reviewed | Notes | State |
+|---|---|---|---|
+| vid46 long-form | hosted client link, v1 | 2, both `status: "open"`, null reply since 2026-07-30 | **unanswered**; the client link never moved past v1 |
+| vid46 short | not put through review | 0 | delivered 2026-07-30 |
+| vid56 long-form | local, 2 versions | 36 | all resolved |
+| vid56 short | local, 5 versions | 7 | all resolved |
+| vid58 long-form | local, 1 version (the 2026-08-13 retrofit render) | 0 | delivered, no notes taken |
+| vid58 short | local, 3 versions | 4 | all resolved |
+| vid59 long-form | local | 9 | all resolved |
+| vid59 short | shared link v1, 2026-08-07 | 0 returned | out for the owner's own review, never sent to Nader |
+| vid62 long-form | hosted link | 11, all `source: "client"` | all resolved with replies, v3 shipped 2026-08-10 |
+| vid62 short | private link, v2 stacked 2026-08-11 | 9 | all resolved with replies written back |
+
+The three dashboard retrofits (vid46, vid56, vid58, 2026-08-13) exist as LOCAL review versions
+only. **None of them was re-shared with the client.** vid46's hosted link still serves the July v1
+that its two open notes were written against, so answering those notes and pushing the retrofit are
+one job, not two.
 
 ---
 
-## vid62, Incogni ep5 comparison, sponsored 16:9 long-form (hf62/, date not stated in source)
+## The Incogni dashboard retrofit: vid46, vid56, vid58 (2026-08-13), LOCAL only
+
+Nader supplied three 4K screen recordings of his own Incogni dashboard on 2026-08-06, after all
+three films had already shipped. Rather than re-cut anything, each film had the smallest possible
+set of chunks re-rendered and the rest stream-copied from the approved delivery. The general
+technique is in the chunk-revision playbook; what follows is the per-film record.
+
+**None of the three was re-sent to Nader.** All three sit as local review versions
+(`review/data/vid46` v2, `vid56` v2, `vid58` v1). The hosted vid46 link still serves the July v1,
+which is the version his two open notes were written against.
+
+| Film | Chunks changed | Result |
+|---|---|---|
+| vid46 | 2 of 8 | 6702 frames, 28.19 Mbps against the original's 28.47, keyframes landing exactly on the join times |
+| vid56 | 2 of 8 | 5844 frames, 16.34 Mbps (v1 was 16.28), 53 SFX cues |
+| vid58 | 1 of 11 | 9586 frames, one chunk re-rendered |
+
+### What each film got
+
+- **vid46** is the only 30fps film of the three, so its clips needed `setpts=PTS*1.251564` to map
+  23.976 to 30 one frame in, one frame out. Playing at 79.9% speed is invisible on a UI scroll;
+  duplicated frames on a linear scroll are not. vid56 and vid58 are natively 23.976 and needed no
+  retiming at all. Two SFX cues were added for the new material, which cost seconds rather than a
+  render because `build_bed.py` lays the bed at assembly from its own cue table.
+- **vid58** got the highest-value swap available on any of his films: c6 S2 sits under the headline
+  "You track it in a dashboard" and had been carrying a hand-built Incogni panel with ten invented
+  broker rows (Whitepages, Spokeo, BeenVerified) and REMOVED / IN PROGRESS / RE-SENT chips, labels
+  Incogni does not use (theirs are "Completed" and "In progress"). **Replacing a mock of the
+  sponsor's own product with a real capture of it is the one case where a recording always beats a
+  drawing.** Check what the mock ENCODES first: its last row read "and 412 more, RECURRING", which
+  is how it carried the 420 claim, and it was only safe to drop because S3's "420+, independently
+  verified by Deloitte" figure lands 3.2s later.
+- **vid56**'s new panel had to come in from 1840px to 1828px wide to sit inside the card at x2080,
+  a real constraint that `card_guard` had never been able to state because it skipped any element
+  with no text, no image and no background, which is exactly what a transparent bordered card
+  around a `<video>` is.
+
+### His supplied recordings, and what they can and cannot carry
+
+**One of the three can only ever contribute a still.** R3 was listed as moving between 15.75 and
+17.00, and it does, but the movement is the capture tool's own auto-PAN and it only lands its
+framing on the file's last frame. Thresholding the blue input border per frame gave constant height
+292px from 16.0 onward (a translate, not a zoom) with x sliding 1780 to 406 on an ease, and until
+t is about 16.75 the target card is physically off the right edge, so no in-bounds crop exists.
+**Before planning a beat around a window of "motion" in one of his captures, measure which KIND it
+is**: content moving inside a fixed frame is usable, the frame moving over static content is usable
+only at its endpoint.
+
+**Crop at 1:1 display size.** On a 3840-wide canvas the first vid46 crop put a 2670px panel into a
+1380px card, delivering body copy at about 5px. Decide the card rect first, then crop exactly that
+many source pixels. Where a source is already a zoomed capture, scale to fit and pad with the
+page's own sampled background rather than cropping again, and give both clips in one slot the SAME
+rect so the card cannot resize across the cut between them.
+
+**A crop is bounded in TIME as well as in space, at BOTH ends.** vid58's activity-log crop was
+verified on one frame and both edges were wrong for the frames either side of it: at the top the
+site's own nav bar sat clipped in half at source 10.55, which is the scene's CUT frame, so the
+first render shipped a half-cut element on a cut frame (origin moved y280 to y380); at the bottom
+"Viewing 16 to 30 of 35" scrolls into view by about t=13.3, so the clip stops live at 12.40 and
+freezes.
+
+**The film's own honesty devices can veto a crop.** The obvious content for vid58's slot was the
+real "Removal from data brokers" table, broker names with Completed / In progress chips, the true
+counterpart of the mock. It was rejected because its "Avg. resolution time" column reads 6 days,
+39 days, 45 days, 63 days while the same frame carries the film's own disclaimer that "Incogni's
+own word for the cycle is 'recurring', they publish no interval". Day numbers beside that line
+contradict it. The activity log, names plus "has completed our removal request" and no intervals,
+was used instead. **The count trap is not only about totals: any number a crop imports has to agree
+with every claim already on that frame.**
+
+### Two things not to do to a shipped film of his
+
+**Read the composition before proposing to replace something in it.** From one frame, vid46 c1's
+"Nader N. / Bay St / 1,240 signals" card looked like a fabricated stand-in worth swapping for the
+real panel. It is a prop in a 7-second mechanic: the record assembles, gets priced, then sells down
+a spine to three named buyers, with matching geometry across the c1 to c2 join. The swap was also
+semantically backwards, since Incogni's panel shows what Incogni REMOVED under a line about brokers
+COLLECTING. Placement is an argument, not a picture match.
+
+**Pre-existing faults are not this round's scope.** At vid46's "$14.99 a month" the numeral and the
+caption collide. The delivered July film has the identical collision at the identical frame. Flag
+it; do not silently change an approved frame nobody asked about. Related: the handoff into the c6
+interlude looked like a frozen muddy double exposure, and sampling every frame across it showed the
+two layers overlap for **2 frames**, a normal 0.3s dissolve. Any dissolve looks like mush in a
+still. Measure a suspected transition fault before re-rendering it.
+
+---
+
+## vid62 short, the Incogni ep5 vertical (hf62s/, 2026-08-12, v2)
+
+Built in `hf62s/` off `hf59s/`. 1460 frames, 60.89s, 27.9 Mbps, -14.0 LUFS. Nine owner notes on v1,
+all nine carry `status: "resolved"` and a written reply; v2 stacked on the same private link.
+
+Script approved before any build (`vid62-short-script.md`, v2): nine beats cut entirely from the
+long-form A-roll, no new recording. Zones reused from `hf59s/` unchanged: graphics y150 to y640,
+captions y674 to y826, picture y838 to y1574 as a band or an x260 to x1080 card, plus a full-bleed
+close. His picture is on screen about 38 of the 56 planned seconds, no beat holds one placement
+longer than 7.4s, and the states alternate band, band, card, band, card, off, band, card, full.
+
+**Three rules decided the cut before a frame was drawn**, and each is one of his standing notes:
+animation on top with captions in the middle and him on the bottom (vid56/vid58); lead with
+coverage, re-requests and the exposure scanner and let price be one beat near the end (vid58); real
+graphics from the device kit plus stock, because his round-1 note on this very film was *"No stock
+footage is there from Pinterest. No stock footage from other sources. No animations. Only a
+text-based thing is really too shitty."* Deliberately excluded: the four-competitor price
+comparison and the OneRep/Nuwber material, both of which need their full caveats to be fair, which
+is 90 seconds the cut does not have.
+
+### The master can be gone and you can still cut
+
+The drive was unmounted and `vid62/master.mov` deleted. The long-form's own chunk A-roll assets
+(`hf62/assets/aroll/c*.mp4` at 59.8 Mbps) ARE the master in eighteen pieces. Check that no beat
+straddles a join, then seek `beat.a - chunks[c].t0` into the one file that contains it. Assert the
+containment rather than trusting it.
+
+### The four notes that were one fault, and the two that were script faults
+
+Three of his nine notes were "weird / glitchy transition" and one was "this is not centered
+aligned". They are two root causes, both now in GRAMMAR.md: a shared `off` state that let a card
+widen to full frame on its way out, dragging a full-bleed strip of his neck past an empty card
+border; and a 0.34s `faceTo()` tweening the picture state ACROSS a hard cut so it finished in full
+view after the wipe had cleared. The centring note measured at +55px, from centring the crop on the
+midpoint of his extremes instead of on his median head position over the frames he is visible in.
+
+Both audio notes were clean at signal level and editorial at script level: one join cut his sentence
+mid-list, the other opened a beat on a dangling "And" bridging topics 68 seconds apart. The fixes
+traded against each other, +3.7s and -2.8s.
+
+His "show nader's a roll in full screen here" did not resolve to a 9:16 crop. See GRAMMAR.md; it
+shipped as a full-width 1080x1468 picture.
+
+### Three build faults that every gate passed
+
+- **A `re.sub` that matches nothing returns the input, and the script prints success.** Round 1's
+  caption injection had consumed its own `<!-- CAPTIONS-BEGIN -->` markers, so round 2's injection
+  silently no-opped and a full render shipped round-1 captions, up to 3s out of sync with the wrong
+  band on the close. Assert the delta; never print success unconditionally.
+- **`afade=t=in:st=X` silences everything BEFORE X.** Intended as 45ms on one beat's head, applied
+  to the assembled VO it muted 46 of 61 seconds. The assembler's own loudness print caught it, LRA
+  4.4 to 25.6 LU. An absolute-time filter belongs on the segment, not on the assembly.
+- **libx264 with yuv420p exits 187 on odd bake dimensions.** Round every computed bake width and
+  height to even and derive the placement from the rounded value.
+
+### Read every on-screen string as a viewer before the delivery render
+
+Three eyebrows went through every gate carrying build notes to myself ("One beat of price, at the
+end") or third-person narration about the man in frame ("What he would tell a friend").
+
+---
+
+## vid62, Incogni ep5 comparison, sponsored 16:9 long-form (hf62/, v3 shipped 2026-08-10)
 
 v1 passed every structural gate (`lint`, `validate`, `card_guard`, `dead_guard`, `css_guard`) and
 was queued to render with defects none of them could see. Full detail in `vid62-breakdown.md` §8.

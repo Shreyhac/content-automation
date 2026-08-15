@@ -7,12 +7,40 @@ Done last, after the file has already passed frame QA, safe zones and contrast.
 ## 1. Render settings
 
 ```bash
-HF_DE_STALL_MS=420000 npx hyperframes render -q high --workers 3 --video-bitrate 16M
+HF_DE_STALL_MS=420000 FFMPEG_ENCODE_TIMEOUT_MS=3600000 PRODUCER_ENABLE_CHUNKED_ENCODE=true \
+  npx hyperframes render -q high --workers 3 --video-bitrate 16M
 ```
 
 **Set the delivery bitrate at render time, not in a re-encode.** `-q high` alone gives about
-6 Mbps; pushing that through a second lossy pass to raise it is worse than asking for it up front.
-`--video-bitrate` and `--crf` are mutually exclusive.
+6 Mbps at 1080 and **15.5 Mbps at 4K, roughly half what his phone writes**; pushing that through a
+second lossy pass to raise it is worse than asking for it up front. `--video-bitrate` and `--crf`
+are mutually exclusive.
+
+**The delivery contract is the master's resolution AND the master's bitrate**, measured, both
+verified with `ffprobe` on every render round. `docs/03-quality-bar.md` carries the evidence: the
+84% sharpness loss from a downscaled asset, what `-q high` actually picks, and why CRF cannot be a
+delivery contract. The operational form:
+
+```bash
+# 1. measure the master, every project, before choosing anything
+ffprobe -v error -select_streams v:0 \
+  -show_entries stream=width,height,bit_rate,r_frame_rate -show_entries format=duration,size \
+  -of default=nw=1 "$MASTER"
+
+# 2. render at that number, pinned
+npx hyperframes render --resolution portrait-4k --video-bitrate <master_Mbps>M -f 30
+
+# 3. verify the delivered file against the master, not against last project's number
+ffprobe -v error -select_streams v:0 -show_entries stream=width,height,bit_rate -of default=nw=1 out/vidNN-final.mp4
+```
+
+`--resolution portrait-4k` is not optional on a 4K project: without it a 1080x1920 composition
+renders at 1080p, delivers a quarter of the pixels, and looks like a success.
+
+Delivered numbers on record, for calibration: vid59 38.4 Mbps against a 43.9 Mbps master (round 1
+shipped 26.7); vid60 v5 28.3 Mbps against 28.0; vid61 36.8 Mbps against 36.25; vid62 37.18 against
+32.78; vid67 38.28 against 33.15; demi2 75.1 Mbps against sources running 52.0 / 64.7 / 99.9 min,
+median and max. **The number to aim at comes from the source in front of you.**
 
 Worker counts are machine-dependent. On the 8GB machine this system was built on, `--workers 2`
 is the safe default and `--workers 3` to `4` works when memory is free; `--workers 4` has died
@@ -62,6 +90,12 @@ the value from a previous project:
   count is measured.
 
 ### An HDR/HLG source clip silently forces the WHOLE composition into HDR output
+
+**This is the one colour fault that breaks the never-grade rule without anyone applying a grade.**
+The A-roll has no filter on it, nobody touched it, and it still ships shifted, because a single
+imported B-roll clip changed the output colour space for everything. `docs/03-quality-bar.md` says
+never grade his footage; this is how it happens by accident. `ffprobe` the colour tags of every
+non-generated clip at intake, not at delivery.
 
 One 10-bit HEVC B-roll clip tagged `bt2020nc`/`arib-std-b67` (HLG) made HyperFrames auto-detect and
 render the **entire** composition as `yuv420p10le`/HLG: shifting every other clip's colour,
@@ -131,21 +165,12 @@ A two-pass x264 encode cannot land on a byte by formula alone; it takes an itera
    rule. **Keep the grain layer below any face card or product UI in z-order**: at the very top of
    the stack it makes a real face read as a noisy, low-quality video, the opposite of the intent.
 
-### CRF is a quality target; it is not a delivery contract
+### Pin the rate, not the quality
 
-The same `--crf` value on the same resolution and duration can land on very different bitrates
-depending on content: one round measured 36.8 Mbps against a 36.25 Mbps master (a match) at a
-given CRF, and the next round at the **identical CRF** landed at 24.9 Mbps because the content got
-cheaper to encode (an intricate drawn scene replaced by a static screen recording). Nothing was
-broken; CRF simply spent fewer bits to hit the same quality target.
-
-**When matching a specific master's data rate is the actual requirement, pin the rate, not the
-quality**: `--video-bitrate <N>M` at the master's own measured bitrate, not a CRF guessed from a
-different production. Use CRF when the goal is a quality floor; use a bitrate target when the
-number itself is the deliverable. And the CRF that matches one master is not portable to
-another: measure the new master's bitrate first, pick CRF (or bitrate) for it specifically, then
-verify the delivered file with `ffprobe` rather than assuming the last project's number still
-applies.
+`docs/03-quality-bar.md` has the measurements. Operationally: use CRF when the goal is a quality
+floor, and `--video-bitrate <N>M` at the master's own measured bitrate when the number itself is
+the deliverable. Never carry a CRF value across projects, and never call a file delivered until
+`ffprobe` has been run on it against the master.
 
 ### Rendering genuinely native at a higher output resolution
 
@@ -184,7 +209,8 @@ identical hang.
 copy, all creators, owner rule.
 
 ```bash
-grep -n "—" index.html captions.srt caption-pack.md
+EMDASH=$(printf '\u2014')     # zsh; the literal character never enters this file
+grep -n "$EMDASH" index.html captions.srt caption-pack.md
 ```
 
 Replacements: "·" for label separators ("Price · annual billing"), a comma or a colon inside a
@@ -216,14 +242,93 @@ Generate both from the same source so the burned text and the uploaded track can
 out/
   vidNN-final.mp4
   vidNN-final.srt
-  vidNN-caption-pack.md      # caption, hashtags, bracketed meta keywords, short, no emojis
+  vidNN-caption-pack.md      # paste-ready blocks only
+  docs/<Payload-Title>.docx  # only when the script says "comment X and I'll send you Y"
 ```
 
-Caption pack notes:
+**Verify each of these with `ls` and `ffprobe` on the real path.** Spotlight indexing is disabled
+on this machine (`mdutil -s /System/Volumes/Data` reports "Indexing disabled"), so Finder Recents
+and `mdfind` will never surface a file written since it was turned off: `mdfind -name "vid66"`
+returns nothing for files that exist and decode fine. Hand him the folder with `open <dir>` rather
+than telling him to scroll a Spotlight view. Re-enabling needs his password and a full reindex that
+grinds the disk, so flag it as his call rather than running it.
 
-- If the video is a paid placement, say so in the pack: YouTube needs the paid-promotion flag.
-- Credit any CC BY assets used.
-- No em dashes.
+### Instagram caption practice: no hashtags
+
+This changed and the old guidance in this system was wrong. Researched 2026-08-12.
+
+- **No hashtags at all.** Mosseri, July 2026: hashtags are a *context* signal, not distribution,
+  and Instagram removed hashtag-following in December 2024. An early pass cut 15 tags to 4 on the
+  "still useful for context" line and he pushed back twice, *"you just said hashtags are not
+  relevant then why to use them"*, and he was right. The keywords are already in the caption body,
+  so `#claudecode` under a caption whose first sentence says "Claude Code" repeats a signal rather
+  than adding one. **Default to none**, and justify any topic tag against what the body already
+  says.
+- **The caption body is the ranking surface.** Instagram has real keyword search and reads the
+  caption, so the primary keywords go in the **first two sentences**.
+- **Only about 125 characters show** before "... more". The hook and the keyword both have to fit
+  inside it. Measure the first line, do not eyeball it.
+- **Sends per reach is a top-3 ranking signal** (Mosseri, January 2025), alongside watch time and
+  likes per reach. The caption has to be worth DMing to a friend, which means **putting the actual
+  commands and steps in it** rather than withholding them behind the comment trigger.
+- **Comment-trigger CTAs beat "link in bio"** (one vendor dataset: 444 against 293 average reach).
+  Keep the mechanic and phrase it as a real deliverable: "like if you agree" phrasing trips the
+  engagement-bait classifier. And the CTA converts on topic strength, not on the mechanic, see
+  `playbooks/scripting-and-research.md`.
+- **His own first comment should be a sentence, not an emoji.** Multi-word comments and reply
+  threads weigh more. Reply inside the first hour.
+
+Caveat on all of the above: it is secondhand reporting of Mosseri plus agency blogs, not a Meta
+spec. The 125-character preview is solid; the specific reach numbers are directional. Re-check
+before treating it as current.
+
+### The caption pack is paste-ready only
+
+His words on a pack that opened with a researched "what changed and why" section, a character-count
+analysis of the preview cutoff, posting tips and a sources list: *"in the md file just give
+captions or any other stuff that needs to be there on my video, no other jargon please."*
+
+**It is a clipboard, not a report.** He opens it on his phone while posting, and anything he cannot
+paste is in his way. The file contains only paste-ready blocks:
+
+- two or three caption options
+- the comment trigger
+- bracketed meta keywords
+- his own first comment
+
+No preambles, no rationale, no character counts, no source links, no emojis unless asked. The
+research still happens and still shapes the writing; it goes in the chat message or in
+`vidNN-breakdown.md`.
+
+Two things that do belong in the pack because they are facts he needs at posting time: **say so if
+the video is a paid placement** (YouTube needs the paid-promotion flag), and **credit any CC BY
+assets used**. No em dashes.
+
+### The CTA document is a required deliverable at first delivery
+
+Any time the script's CTA is "comment X and I'll send you Y", the payload `.docx` ships **alongside
+the caption pack, at first delivery, without being asked**. On vid66 the on-screen CTA was "comment
+APPLE and I'll send you the skill", the video and caption pack were delivered, and he had to ask
+"is the shareable doc ready for this?" before it existed. Treating it as optional makes the CTA a
+promise with nothing behind it.
+
+Build it with `tools/deliver/make_cta_doc.py`. What the document has to contain:
+
+- **Every claim sourced live** (repo API, npm registry, docs), the same way the video's claims were
+  verified, never from memory.
+- **A "what the reel says that this doc corrects" section.** The VO overstates something more often
+  than not: see `playbooks/scripting-and-research.md`. vid67's doc leads with the fact that the
+  reel's "never touching the terminal" claim is false.
+- **What the video had no room for**: prerequisites, scope limits, cost, and a manual path for
+  anyone who will not run the one-liner.
+
+House format, matching the sixteen generators already on disk: Letter, 1.25in side margins and 1in
+top and bottom, Calibri 11pt body, 28pt bold title, 16pt bold accent headings, Consolas 10.5pt
+code, `space_after` 8pt, line spacing 1.15. Colours `INK #1A1A17`, `MUTE #6E685C`, terracotta
+accent `#B24A32`. Section shape that works: title, one paragraph of framing, "two things to know
+before you start", "setup, exactly" (numbered, with code), "what you end up with", the undocumented
+extra, "good first agents", "fair warnings", then the repo line and a license / created /
+verified-date footer. **No em dashes**, owner rule, same as everywhere else.
 
 ---
 
@@ -246,11 +351,11 @@ Caption pack notes:
 
 ## 8. The review round
 
-**The review tooling is not in this repo.** It lives in the production repo as `review/` plus the
-`./rr` CLI, backed by a Cloudflare worker that serves the same player to a client on a private
-link. This section is the contract; **`docs/08-review-workflow.md` is the manual**: read it before
-running any `./rr` command for the first time on a machine, and whenever the local/hosted review
-loop is behaving unexpectedly.
+**The review tooling is vendored at `tools/review/`**: the `rr` CLI, the local frame.io player, and
+the Cloudflare worker that serves the same player to a client on a private link. This section is
+the contract; **`docs/08-review-workflow.md` is the manual**: read it before running any `rr`
+command for the first time on a machine, and whenever the local or hosted review loop is behaving
+unexpectedly.
 
 Two channels, and they are not the same reviewer:
 
@@ -273,6 +378,8 @@ Rules that cost real rework when skipped:
   `creators/nader/HISTORY.md`.
 - Re-sharing a new render stacks as v2 on the **same** link, so the reviewer can wipe the old cut
   against the new one. Never hand-edit an existing `-feedback-roundN.md`.
+- **`rr share` caps at 2 GiB**, which is about 46 Mbps on a six-minute film. Over that, the
+  deliverable and the review copy are two different files. See `docs/08-review-workflow.md`.
 - **The fix → reply/status → push → share sequence is order-sensitive, not a list of steps to do
   eventually.** Sharing a new render before writing `resolved`/`reply` into the previous round's
   `comments.json` and pushing means the reviewer's next open of the link shows all prior notes

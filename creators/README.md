@@ -1,6 +1,6 @@
 # Creators
 
-Three creators, three complete systems. **The creator's rules override every general rule in
+Four accounts, four complete systems. **The account's rules override every general rule in
 this repo**, including `CLAUDE.md` and `docs/`.
 
 | Folder | Channel | Format |
@@ -8,6 +8,7 @@ this repo**, including `CLAUDE.md` and `docs/`.
 | `nader/` | Nader Nadernejad, Nadernejad Media | 16:9 YouTube long-form plus 9:16 cutdowns |
 | `gaurav/` | thepmfguy, also called "gaurav" | 9:16 Instagram Reels |
 | `shreyansh/` | shreyansharora05, the "slot 1" creator | 9:16 Instagram Reels |
+| `demi/` | Demi (demi.ai), a client product, not a creator | 9:16 paid Meta ads |
 
 Each folder has:
 
@@ -34,11 +35,12 @@ either with the slot-1 creator (shreyansharora05), who is a different person.
 
 ---
 
-## Two rules that apply to all three
+## Two rules that apply to all four
 
 1. **No em dashes** in on-screen text, captions or published copy. Grep before every delivery.
 2. **Match the raw A-roll's file size on delivery** for the two Instagram creators. See
-   `docs/06-delivery.md`.
+   `docs/06-delivery.md`. Nader is exempt, and Demi pins a bitrate floor instead
+   (`creators/demi/PROFILE.md`).
 
 ---
 

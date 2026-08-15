@@ -1,0 +1,69 @@
+{
+  "_": "Copy this next to the film's index.html as guard.json and edit it. Every",
+  "__": "number here is a measurement of ONE film. Re-derive them, never inherit.",
+
+  "project": ".",
+  "document": "index.html",
+  "timeline": "vid67",
+  "stage_id": "stage",
+  "stage_w": 1080,
+  "stage_h": 1920,
+  "asset_prefix": "assets/",
+
+  "beats": [0.0, 1.21, 2.2, 3.24, 5.22, 8.887, 12.805, 17.0, 22.17, 27.58, 35.1],
+
+  "bands": {
+    "top_text": 150,
+    "band_y": 1600,
+    "rail_x": 960,
+    "rail_y0": 900,
+    "rail_y1": 1600,
+    "left_pad": 60
+  },
+
+  "caption_replay": { "array": "__CAPS", "target": "cap" },
+
+  "face": {
+    "element": "faceScene",
+    "default": "full",
+    "off_state": "off",
+    "rules": [
+      { "state": "off",   "when": { "top": [">=", 1580] } },
+      { "state": "split", "when": { "left": ["==", 540] } },
+      { "state": "split", "when": { "top": [">=", 610] } },
+      { "state": "card",  "when": { "top": [">", 0] } }
+    ]
+  },
+
+  "states": {
+    "split": {
+      "text_must_clear_y": 660,
+      "videos_painting": ["aroll", "vband"],
+      "ink_zone": [60, 240, 500, 1400],
+      "min_ink_frac": 0.14
+    },
+    "card": {
+      "text_forbidden_rects": [[250, 870, 830, 1590]],
+      "ink_zone": [70, 248, 1010, 740],
+      "min_ink_frac": 0.14
+    },
+    "full": {
+      "videos_painting": ["aroll"]
+    }
+  },
+
+  "face_windows": [[0.0, 3.2], [8.8, 17.0], [27.5, 35.1]],
+
+  "void": { "after_t": 1.4, "min_ink_frac": 0.14 },
+
+  "contrast": { "enabled": true, "bright": 150, "max_bright_frac": 0.35, "min_area": 2500 },
+
+  "paint": { "enabled": true },
+
+  "stylesheets": ["base.css", "vid67.css"],
+
+  "allow": [
+    { "kind": "TXTTXT", "match": "eyebrow", "t0": 0.0, "t1": 0.4,
+      "reason": "the glitch decode deliberately doubles the hook for 12 frames, verified in frame 0" }
+  ]
+}

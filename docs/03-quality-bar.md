@@ -4,9 +4,15 @@
 timing and beat-matching, which is necessary and not sufficient. Budget three review rounds.
 This is the job, not scope creep.
 
-The owner will not itemise a fix list that solves the problem. He describes a feeling. Almost
-every rejection this system has seen falls into one of four classes, and each has a known fix
-that is structural rather than cosmetic. Diagnosing the class correctly is most of the work.
+Two halves to the bar. The first is **measured**: resolution, bitrate, held time, void area,
+colour against the master. Those are arithmetic and there is no argument about them. The second is
+the **rejection taxonomy**: the owner will not itemise a fix list that solves the problem, he
+describes a feeling, and almost every rejection this system has seen falls into one of five
+classes, each with a known fix that is structural rather than cosmetic. Diagnosing the class
+correctly is most of the work.
+
+Passing the measured half is not passing the bar. Failing it is failing the bar without a
+conversation.
 
 ---
 
@@ -123,6 +129,284 @@ Supporting facts, each learned the expensive way:
 
 ---
 
+## Class 5: "too AI slopped", "this theme looks very off and weird"
+
+**AI-slop is the carrier, not the palette.** Swapping hues does not fix it, and this system proved
+that by shipping the same look twice.
+
+The signature, exactly: near-black ground, terracotta radial glow, a visible dot grid, and a
+drifting point cloud with proximity threads. Every one of those is a default and stacked together
+they are *the* generic AI-video signature. vid49 v1 was rejected as "too AI slopped". vid55 v1
+rebuilt the identical look from the entry that recorded the rejection and came back as "this theme
+looks very off and weird". vid63 made it three dark grounds rejected in a row.
+
+**The fix is to skin the film in what the subject is physically made of.**
+
+| Subject | The material it is made of |
+|---|---|
+| Printed credentials (vid49) | Ink navy stock, gold foil stamping, guilloche engraving, a wax seal, engraved Fraunces caps |
+| An API key (vid55) | A `.env` file, a terminal, an editor: dev-tool paper surfaces |
+| A pentest tool (vid63) | Ivory paper, ink, one alert red, a marker ring, margin handwriting, a rubber stamp |
+| Apple's design language (vid66) | Apple's own values: `#F5F5F7` page, `#1D1D1F` ink, `#0071E3` link blue, an 8-point grid |
+
+Ask what the subject is physically made of before reaching for a palette.
+
+Two corollaries:
+
+- **Collapse competing brand accents into ONE system.** vid55's three vendor hues (violet, green,
+  lime, one per scene) became one syntax-highlight system: keyword violet, string green, number
+  orange, refusal red. That single move fixed "off and weird" better than any palette swap could,
+  because the incoherence was three competing accent systems, not the individual colours.
+- **A recurring object earns its place by being literal.** "The three.js is off and irrelevant"
+  was fair: an abstract point cloud has nothing to do with certifications. A guilloche rosette is
+  what is actually printed on certificates and banknotes.
+
+**Authenticity does not override how a frame looks to the person whose face is in it.** "It is the
+subject's own material" is a good argument and it still lost once, on vid63's green-on-black
+terminal. Which is why the theme decision goes through a real mock, below.
+
+---
+
+## The delivery contract is measured, not assumed
+
+He judges the delivered file against the one his camera produced, and he has asked for it in those
+words more than once: *"is this video rendered in the same file size that I gave you the a roll
+as"*, then *"make sure that the final file is rendered in the exact size of the A-roll that I gave"*.
+
+### A 4K container carrying a 1080p face shipped three times
+
+The transcode step used to say `scale=1080:1920`. These compositions render at **2160x3840** (a
+1080x1920 `#stage` at `transform:scale(2)`), so a 4K master was downscaled to 1080p and then
+upscaled back to 4K by the renderer: right resolution, wrong detail. Measured by swapping only the
+asset and re-rasterising the same frame:
+
+| Asset feeding the composition | Sharpness (Laplacian variance) | Against the master |
+|---|---|---|
+| 1080x1920, as shipped | 6.51 | about 52% |
+| 2160x3840, native | 11.99 | about 95% |
+| the master itself | 12.58 | 100% |
+
+**84% sharper.** vid55, vid57 and vid60 all shipped with the loss. **Match the asset to the
+composition's OUTPUT size, never to a habit**: 1080 stays correct for a client short that genuinely
+outputs 1080x1920.
+
+That measurement itself needed a controlled comparison. Frame-seeking two codecs with `-ss` lands
+on different frames and the sharpness swung 69% to 274%, which is meaningless. **When a metric
+disagrees with itself between samples, fix the experiment before believing either result.**
+
+### `-q high` is not high
+
+vid60 shipped at 2160x3840 from a 2160x3840 master, asset chain correct, and he still said "it is
+very much compressed."
+
+| | Resolution | Bitrate | Size |
+|---|---|---|---|
+| His A-roll master | 2160x3840 | 28.0 Mbps | 102 MB |
+| Delivered at `-q high` | 2160x3840 | **15.5 Mbps** | 57 MB |
+| Re-render at `--crf 12` | 2160x3840 | 28.3 Mbps | 103 MB |
+
+`-q high` picked about half what a modern phone writes. **Resolution is not quality**: a 4K
+container at half the source's data rate passes every resolution check you can think to run and
+still reads as compressed. The re-render cost 2m46s and bought +13.2% high-frequency detail in the
+face region.
+
+### CRF is a quality target, so it cannot be a delivery contract
+
+vid61 round 1 rendered at `--crf 10` and landed at **36.8 Mbps** against a 36.25 Mbps master, a
+match. Round 2, same CRF, same resolution, same length, landed at **24.9 Mbps**, because the
+content got cheaper to encode: three intricate drawn artboards were replaced by one dark screen
+recording. Nothing was broken. CRF simply spent fewer bits to hit the same quality target.
+
+And the CRF that matches one master is not portable to another. `--crf 12` was tuned against
+vid60's 28 Mbps master; vid61's is 36.25.
+
+**When matching the master's data rate is the actual requirement, pin the rate, not the quality.**
+Measure the master's bitrate first, then pick the number for it specifically, then verify the
+delivered file with `ffprobe`. See `docs/06-delivery.md` for the commands.
+
+### Never grade his A-roll
+
+His words: *"I really don't want to touch my A-roll at any given cost."* Caught three times,
+vid49, vid54 and vid55, twice from a grade applied out of habit because the measured stats invited
+it.
+
+**The transcode is a codec change and nothing else.** No `colorbalance`, no `eq`, no saturation
+touch, no `scale` when the master is already 9:16, and no `loudnorm` on a mix he made himself.
+
+**The renderer shifts colour on its own, 3 to 7%**, so a grade on top is a shift nobody can
+account for. Isolated on vid57 by measuring the face band only (y520 to y1300): master and the
+ffmpeg transcode are bit-exact at p95 246/158/154, `hyperframes render` shifts to 235/155/150, and
+the delivery pass changes nothing further. That is about 11/255 off R at the top end and 3 to 4 on
+G and B: a highlight roll-off, not a hue rotation, and it lives entirely in the browser
+compositing path. Per-channel ratios measured elsewhere: vid54 R 0.955 / G 0.963 / B 0.986, vid53
+R 0.925 / G 0.926 / B 0.944.
+
+**The rule can be broken with no grade applied anywhere.** One 10-bit HEVC B-roll clip tagged
+`bt2020nc`/`arib-std-b67` made the renderer output the **entire** composition as HLG, shifting the
+untouched A-roll by about 50 units on G and B. Nobody graded anything. `ffprobe` every
+non-generated clip's colour tags at intake: `docs/06-delivery.md` has the re-tag and the `--sdr`
+flag, and you need both.
+
+**Measure the cast, report the number, do not apply a correction.** And **measure a crop of pure
+ungraphic'd source footage**: a full composed frame samples your own ivory cards and reports a
+catastrophe that means nothing. A separate effect on some films is a range squeeze, master and
+asset tagged `pc` against a `tv` render, measured at R−12 / G−6 / B−2 on vid61 with zero grading
+filters anywhere in the chain.
+
+---
+
+## The measurable bar
+
+Four things that can be asserted rather than argued.
+
+### A void is a defect
+
+Three vid61 scenes passed every gate and still had **0.8 to 1.8s** where one element sat at the top
+of an 1120px column over blank paper. Nothing measures this: lint has no opinion, the motion guard
+sees plenty of movement, the safe-zone gate sees nothing out of bounds. **A frame can be moving,
+in-bounds and contrast-safe while two thirds of it is blank.**
+
+Only a contact sheet of every beat shows it, and it is worth a full shoot round **before**
+rendering.
+
+The fix that generalises: **the scene's structure arrives on the cut, its content arrives on his
+words.** The scene opens on a node already reading `CODING AGENT` and rewrites it to `DESIGNER`;
+artboard slots open empty and dashed and fill later; a repo card lands as a skeleton (bar, mark,
+rule, `README.md`) and fills in. **An empty slot is composed. An absent slot is a hole.** And a
+placeholder sits **behind** its replacement rather than being removed, which keeps the no-exit-tween
+rule intact.
+
+The contact sheet has to be generated from the clip list, not from hand-picked timestamps. A
+spliced-out grid scene on demi2 played as bare footage for **three delivered versions** because the
+sheets sampled around 9.x and never inside it. Tile every composition element's window at least
+once, and verify a timed element is absent **outside** its window too.
+
+### Nothing static for more than about 1 second
+
+This was in the grammar since vid2 and nothing checked it until `motion_guard.py`: fingerprint the
+graphics every 0.2s (box, opacity and transform, rounded; exclude `<video>`, whose box never
+changes while its picture does) and report runs with no change.
+
+| Film | Held share |
+|---|---|
+| vid56 short round 1 | 10.0s held, **23% of the cut**, runs of 3.6s, 3.8s and 4.8s |
+| vid58 short, first pass | **86%**, every graphics zone composed at its cut then sitting 5 to 6s |
+| vid58 short round 2 | 7%, two deliberate 1.6s breaths |
+| vid59 | 66%, the cut that drew "very boring b roll" |
+| vid62 round 1 | 71%, rebuilt onto word onsets to 56%, then 35% |
+| vid57 | 0 held blocks across 36.93s, the first cut in the system to hit it |
+| vid63 | 0 blocks held over 1.0s, 13 scenes, mean 2.3s |
+
+A held frame can be deliberate, so this is not a hard fail. **The point is that the decision gets
+made on purpose instead of discovered by the client.** Staging arrivals on actual word onsets is
+what fixes it, and doing that on vid58 also surfaced that the "420+" figure was on screen 4.5
+seconds before he says the number.
+
+Two gate traps worth knowing: `borderColor` and `boxShadow` tweens **register as nothing**, because
+the fingerprint is id, rect, opacity and transform. And a guard that fingerprints scene *wrappers*
+rather than descendants reports 50% on a hook where a decode, a slam and a stamp all fire. A gate
+that swings from 50% to 0% after one edit is telling you about the gate.
+
+### Position is not visibility
+
+vid56's short shipped with **captions invisible for 27 of its 43 seconds** and every gate passed.
+The caption rule carried no `z-index`, so it computed to `auto` while the A-roll sat at 2.
+
+Lint and validate check the document and the console; a caption behind a video is neither. The
+safe-zone gate measures **where** an element is, and the captions were exactly where they belonged
+at y1396. WCAG contrast passed because contrast is computed from declared colours. **Hit-test what
+actually paints**, at the composition's real pixel size, with the renderer's clip scheduling
+replicated. See `docs/07-troubleshooting.md`.
+
+### The reserved bottom band must be lit, not black
+
+He sent back a frame with "What the fuck is this?". Measured on the delivered file: content stopped
+at y1530 and the bottom **390px, 20% of the frame, averaged 13/255**, with a pure-black seam at
+y1000 to y1040 where the face band's feather ran to solid.
+
+He reviews the exported 9:16 file in a player, where an unlit reserved zone reads as a broken black
+bar. **Reserving a zone means keeping text out of it, never leaving it black.** A wide shallow
+stage lift along the floor took the band from 13.4 to 28.5 mean and softened the seam to 7.0.
+
+---
+
+## Rebuild the UI, do not screenshot it
+
+His note on vid54, on real screenshots that had already replaced a mock: *"cannot be just a
+screenshot... rebuilt exactly how it is being shown, with proper zoom-ins and zoom-outs, and actual
+typing... looks very vague."*
+
+**A screenshot is inert.** It cannot type, cannot focus a field with a ring, cannot be pushed in on
+without going soft, and at reel resolution a real product screenshot reads as a blurry rectangle,
+which is what "vague" names. **A screenshot can only assert; a built panel can enact.**
+
+- Keep the real captures **out** of the film and use them as the design spec.
+- Rebuild as live DOM that **actually types** character by character with a blinking caret, using
+  the product's verbatim strings, and that opens the product's own affordances (its slash menu, the
+  highlight walking the options).
+- Drive the typing off transcript word onsets, not a flat duration guess.
+- **A zoom is only legible if the content survives it.** vid54: a 780px document with 724px of
+  content at 1.24x maximum gives 898 against a 904 view.
+- A built panel performs the claim. vid49's enrol counter runs to 1,886,772, the lessons tick off,
+  the $99 is struck through and drops to $0.00 under a FEE WAIVED stamp.
+
+**The carve-out:** compositing real UI onto a generated screen is optional, not a rule. On a
+*background* plate whose screen is never the subject, a soft out-of-focus screen is more believable
+than a pixel-perfect pasted one. Ask which the screen is, subject or texture. And a mis-measured
+perspective transform looks worse than no attempt: delete it rather than ship it half right.
+
+---
+
+## Graphics are not the default. Showing him is.
+
+His note, and he said explicitly that it generalises to every video, not just the beat he wrote it
+on: *"No need to show any animation here when Nader says [the line]... just the A-roll should be
+shown. Any animation, error, just A-roll with captions should be there. At the last line, CTA."*
+
+What the beat had been doing: the 4.6s closer, the line where the presenter makes the direct ask,
+was graphics-only for its whole duration with no face at all. Rebuilt, the first 1.9s is bare
+A-roll with the caption low and the only motion a slow push on the picture itself (scale 1 to
+1.02), and **the CTA arrives ON the last line** rather than owning the whole beat.
+
+**Reach for an animated overlay when it is carrying information that cannot come from him
+speaking**: a number, a comparison, a mechanism. Never to fill a beat, and never to replace him at
+the moment he makes the ask. Audit every closing and CTA beat in every project against this rather
+than waiting for the note.
+
+**The precondition is that showing him is worth doing.** When the take itself is unusable for a
+span (he is reading from notes: eyeOpen 0.45 to 0.13 across 32 consecutive samples), the answer is
+to take the picture off and let the graphics own the frame, **not to shrink the problem**. An
+unwatchable shot at a smaller size is still an unwatchable shot.
+
+And check the exclusion is real. One graphics-only beat existed because a gaze scan excluded 2.4s;
+the underlying data showed `eyeOpen` dipping to 0.12 to 0.26 for two to four samples twice and
+recovering immediately, with the frames showing him square to camera. **They were blinks**, and
+`min_sustain`/`pad` turned two blink clusters into one exclusion. A face-safety false positive
+silently removes the presenter from a beat and nothing downstream flags that as a defect.
+
+---
+
+## When the same complaint survives a fix, remove the whole category
+
+demi2's "typing sfx" note survived **three** evidence-based fixes across three rounds. Round 2
+measured the click and tick family by envelope and removed it. Round 3 transient-scanned the mixed
+bed and found a metronomic 0.465s percussion tick baked into the **music**, on a strict 129 BPM
+grid, and swapped the bed. Round 4 removed the two remaining click-attack reveal cues (2ms attack).
+Each fix was correctly diagnosed and verified.
+
+Round 5's five timestamped notes (14.32, 17.31, 19.03, 21.43, 33.85) landed exactly on the five
+surviving whoosh and impact cues, the ones every acoustic measure said were **not** clicks. He was
+naming a sound **category**: any added effect at all. The film is now voice and music only.
+
+**When the same complaint survives two evidence-based fixes, stop refining the classifier and
+remove the whole class.** A measurement-based classifier can converge on the wrong category
+boundary and then get re-validated against itself round after round, because every fix looks
+locally justified. The strongest signal is recurrence at the same literal timestamps a note
+previously pointed at. The correct move in round 2 was one question: "should ALL added sounds go,
+or just the clicky ones?" One question instead of three rounds.
+
+---
+
 ## Things that are round-scoped, not law
 
 An owner's earlier correction can be reopened by a later verdict. A locked-off frame and a ban
@@ -137,15 +421,35 @@ into `HISTORY.md` with its date rather than into the grammar as law.
 ## Process rules that protect the bar
 
 - **Mock the style in HTML plus Playwright before building.** A three-frame static mock renders in
-  two minutes. One was rejected and its replacement approved in a single round, and the second
-  mock's fixes became the build's design rules. Cost of learning in mocks: minutes. In renders:
-  hours.
-- **Offer palettes as previews before building.** Three rounds of re-theming cost three full
-  renders. ASCII palette previews in a question let the owner reject a direction in seconds.
+  two minutes, or about four including the screenshots. One was rejected and its replacement
+  approved in a single round, and the second mock's fixes became the build's design rules. vid55's
+  mock caught a wrapped card number, two stamps overlapping their own text and a wrong face-card
+  scale before a single frame was rendered. Cost of learning in mocks: minutes. In renders: hours.
+- **Mock REAL frames, never ASCII.** An ASCII box inside a question is not a mock: it conveys
+  structure and not look, and look is the entire thing being judged. vid63's dark terminal theme
+  was approved from an ASCII preview and rejected thirty seconds after he watched the render, as
+  "very shitty and vibe coded and very very weird". Building the three-way mock sheet after the
+  rejection cost 20 minutes, and it would have cost the same before. It works: the round-2 theme
+  mock sheet drew **zero** notes on the theme. This applies to any whole-film decision, theme, hook
+  device or layout family.
+- **After any theme rejection, the next artefact is a mock, not a cut.**
+- **A vague note is not a spec: ask, do not guess.** vid63's hook was rejected as "very shitty and
+  weird, think of something better please", with no description of what better meant. A replacement
+  was designed and rendered, and round 2 spelled out something entirely different. When a note names
+  something as wrong but gives no positive description of the fix, that is the signal to ask before
+  building. This is the opposite case to the mock rule: mock when the **choice** is unclear, ask
+  when the **requirement** is.
 - **Validate a new look on one chunk before mass-producing.** The 4K type-scale finding came out
   of reading chunk one three times and applied to all eight. Finding it on chunk seven would have
   meant re-authoring six.
 - **Read your own render before handing it over.** The owner should not be your first QA pass.
   A round-one review that finds bugs you could have found is a round spent on nothing.
+- **Read every literal on-screen string as a viewer before the delivery render.** Three of vid62's
+  eyebrows went through lint, validate, the safe-zone gate and a full 67-frame shoot as build
+  notes: "One beat of price, at the end" sat over the CTA for four seconds, and "His own Incogni
+  account" and "What he would tell a friend" were third person about the man whose face was in the
+  same frame. List every eyebrow, chip, stamp, source pill and button string and read the list on
+  its own, out of context. Anything describing the edit is a build note that escaped; anything in
+  the third person about the person on screen gets recast as a label.
 - **Two failed passes on a decorative element means cut it, not tune it.** Negative space beats a
   graphic that needs explaining.

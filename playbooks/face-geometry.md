@@ -47,6 +47,22 @@ Where `screen_y = top + src_y * scale`.
 
 Solve for the placement, do not pick one and check it.
 
+**Full-bleed needs its own safe zone, and this is the one everybody forgets.** One film's
+card gate enforced the graphics/face split **only while the face was carded**: in full-bleed
+there is no card edge, so nothing checked anything and elements were placed by eye into the
+middle band, where he is. 180 frame-hits of text on his face across 23 elements, in one
+film: a promise rail across his chin (22% of his face), caveats across his mouth (15%), two
+headlines across his neck, the CTA on his chest. In full-bleed the A-roll paints 1:1, so the
+check is cheap: measure the contour against the source face track and a placement is
+checkable in seconds instead of after a 25-minute render. Two corrections it took to get
+right: **box for painted elements, glyph rects for bare text** (a dark card occludes his jaw
+wherever its words sit, while a centred full-width headline has a full-width box and its ink
+is dead centre), and **skip frames where a full-frame cover is up**. And the top band is NOT
+safe: his hair is in it.
+
+Which state to use, and the arithmetic that picks between them, is in
+`playbooks/face-card-device.md`.
+
 ---
 
 ## Worked solves from this system

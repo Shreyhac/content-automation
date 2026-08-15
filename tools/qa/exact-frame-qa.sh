@@ -1,5 +1,5 @@
 #!/bin/bash
-# vid47 frame QA — EXACT frames.
+# vid47 frame QA, EXACT frames.
 # `-ss` before `-i` fast-seeks to a keyframe and silently hands back a frame up
 # to half a GOP early, which in round 2 looked exactly like a scene-bleed bug.
 # A single decode pass with a select expression is exact and only costs seconds.

@@ -1331,3 +1331,312 @@ especially before it drives a build decision.** Corollary: `lsof`, `xattr -l`, a
 -f null -` decode pass are three free checks that rule out "the file itself is broken" before
 blaming the app that opens it: all three were clean on the first report and would have pointed
 straight at the cache/path issue.
+
+---
+
+## vid64, "Claude builds the $10,000 website" (hf64/, 2026-08-11)
+
+1264 frames, 42.133s, 2160x3840 at 35.30 Mbps against a 33.35 Mbps master. Style parent vid63:
+same paper theme, same face rules. Six award-winning websites shown as real recordings.
+
+### Award-winning sites mostly do not scroll, and two capture pipelines died finding out
+
+`document.documentElement.scrollHeight == innerHeight` with `window.scrollY` never leaving 0 is
+the signature of a **virtual scroller**: the wheel drives an eased WebGL scene, not the document.
+Five of six sites were that (igloo.inc, garden-eight, lusion, oio, exoape); only jacobandco,
+basement and locomotive scrolled a document, and **bruno-simon.com is a driving game** that needs
+arrow keys. **Write the probe before building anything.**
+
+The failure modes in the order they bit:
+
+1. Step the scroll, screenshot per frame: **3.8s a frame** even headed with a real GPU. 110 frames
+   times 6 sites is not a plan.
+2. Screenshotting 70ms after a wheel tick catches an eased scroller **mid-flight**, so the scene
+   rocks back and forth instead of travelling. It looked like a bug in the site.
+3. `Page.startScreencast` fixes the cost and then throttles to ~3fps, because `wait_for_timeout`
+   does not pump CDP events in sync Playwright. Tick with `pg.evaluate("1")`.
+4. Chrome throttles rAF and compositor commits for windows it thinks are backgrounded. Needs
+   `--disable-background-timer-throttling --disable-backgrounding-occluded-windows
+   --disable-renderer-backgrounding --disable-features=CalculateNativeWinOcclusion` plus
+   `bring_to_front()`.
+5. `Page.startScreencast` returns **CSS-pixel frames** and ignores the deviceScaleFactor override.
+   Ask for a bigger window, not a bigger DPR.
+
+**Then the owner screen-recorded all six in about five minutes** on his own Mac, and measured
+motion came out **4 to 80 times better** than anything the pipeline produced. **When a capture
+problem has eaten more than two approaches, ask: his machine is a tool in the kit.**
+
+### Cutting someone else's screen recording
+
+- **Speed it up.** A 6s pass compressed to about 2s is what makes a 1.1s scene read as movement
+  rather than a still. Cut each clip to its longest usage so the whole chosen window plays inside
+  the scene.
+- **Pick the window by motion survey, then override by eye.** Three of six moved after the survey:
+  one landed on a newsletter footer, one on a contact footer, one opened on a headline containing
+  a word that should not go on this account's feed.
+- **Some sites cannot be shown whole.** garden-eight sizes its hero type to overflow the viewport;
+  in a wide short window its last line sits below the fold at *every* scroll position. Use a
+  different section rather than shipping what reads as a crop error.
+
+### Three composition faults
+
+- **Stage the scene CONTAINERS, not just their children.** Every `#sN` div was visible from frame
+  0 until its own `show()`, so any child without a staging class painted early: a scene-7 arrowhead
+  sat on the first website beat for its whole duration. One `put("#s1,#s2,...", {autoAlpha:0}, 0)`
+  closes the class; chasing each unstaged child does not.
+- **`object-fit: cover` silently shaves video when the picture area's ratio differs from the
+  source.** 916x582 against a 1600x1000 clip is 1.573 against 1.600: small enough to look like a
+  design choice, large enough to cut a headline. Make the picture area *exactly* the source ratio
+  and cover becomes a no-op.
+- **Entrance animations on the hook leave the cover blank.** An eyebrow arriving at 0.14 and a
+  claim plate at 0.40 means frame 0, the Instagram thumbnail, carries no text at all.
+
+### vid64 round 1: "the split screen looks weird, use the card format instead"
+
+Plus *"we need to show the screen recording for website ... proper motion should be there in the
+recordings"*. The rebuild has **no split state in the file at all**: FULL 0.000 to 1.660, CARD on
+10 beats (27.8s of 42.1, **66%**) at 560x700, x260,y880, video `scale 0.70`, `translate(260,730)`,
+and OFF collapsing into the card's own rect. The scale is solved, not typed: a card of width W at
+scale s shows W/s source columns, so s=0.70 shows 800, putting his head centre (source x400) on
+the card centre (x540) while the video still covers the card's left edge. Crown lands y1017,
+chin y1490, 110px above the y1600 band.
+
+### vid64 round 2: three faults with a general form
+
+- **A hit test beats a model of where the head is.** The card had been solved from a head centre
+  averaged over the take; his note was "the frame here is shifted to the right". A head detector
+  written to settle it produced a *third* number, 130px off the hand-read. What settled it was
+  rendering the **real card crop**, same scale and same rect, at five candidate centres across
+  four beats and reading the sheet. **When a geometry question is about what lands on screen,
+  render what lands on screen.**
+- **A caption band has a height, and two lines is a different height.** 66px at line-height 1.06
+  is 140px tall; the gap between caption top and card top was 104px. Every one-line caption passed
+  and every two-line caption put its second line on his face, twice in one film, reported as two
+  separate notes. **Size type against the worst-case line count.**
+- **A render that fails still leaves yesterday's file on disk.** v2 stalled deterministically at
+  frame 568/1264 twice and both times `renders/vid64.mp4` was still v1: right duration, right
+  bitrate, right frame count, wrong film. `ffprobe` cannot tell you it is stale. **Check the mtime
+  and the CLI's exit line: exit 0 is not success and a valid file is not a fresh one.** The cause
+  was **repeated `<video>` sources**, two clips at five referencing elements each. The repo already
+  carried "repeated `<video>` src renders black" and two uses had been getting away with it, so it
+  read as survivable rather than a limit. **One element, one physical file:** copy the clip per
+  usage.
+
+---
+
+## vid65, "Control Claude Code from your phone" (hf65/, 2026-08-11)
+
+735 frames, 24.500s, 2160x3840 at **38.63 Mbps** against a 32.28 Mbps master. Style parent hf64,
+on his note *"replicate the editing style of the last video."* Brief: quirkier animations, a Claude
+cartoon that actually works at a desk, Telegram visibly connecting to Claude, **card format, not
+split**.
+
+**This film shipped with no LEARNINGS writeup.** Everything below is reconstructed from
+`vid65-breakdown.md` and the delivered file. No review round is recorded for it, so either it
+drew no notes or the notes were never written down.
+
+- **The claim was verified before anything was drawn.** Anthropic's own first-party plugin,
+  `anthropics/claude-plugins-official/external_plugins/telegram`, and all six on-screen commands
+  are the real ones in the real order. The restart step is genuinely mandatory, so the "restart
+  once" beat is the step people skip rather than padding.
+- **Beats came off the RMS envelope, not whisper.** 69 onsets over 24.51s; **54 of whisper's word
+  starts moved by more than 60ms.**
+- **Face law re-measured on this take.** FULL 0.000 to 1.340 only. CARD 560x700 at x260,y880,
+  `scale 0.62`, `translate(174,753)`, solved from the worst-case landmarks (crown including flyaway
+  hair y350, chin y1160, face centre x590) and then **hit-tested** at s=0.60/0.64/0.68 and at the
+  shipped rect across 8 beats. Crown lands y970, chin y1472, 108px above the band. He leans in and
+  drifts right by the CTA, x555 at t=0.5 to x620 at t=23.0, the same thing that bit vid64. Face on
+  screen 11.7s of 24.5 (**48%**) and **the CTA is a CARD beat, never graphics-only**.
+- **One new accent, and only because the subject is.** vid64's warm paper carried over intact plus
+  Telegram blue, which appears **only on Telegram objects**: the mark, its bubbles, its node, its
+  shield. Nothing else in the film is blue, so the colour reads as "that is the phone side" with no
+  label. It splits in two for contrast: brand `#229ED9` for fills, `#1B7FAE` under white text
+  (3.09:1 fails AA, 4.58:1 passes).
+- **Four as-built fixes that each came from a frame, not from taste.** The cartoon alone in 940x502
+  of blank paper was a void by the repo's own definition, so the zone became one `agent session`
+  window. The empty-room beat needed furniture and an **empty chair**, which is the beat. A setup
+  timer that counted *down* to `0s` under a label reading TOTAL SETUP TIME says the setup took no
+  time at all, so it counts up 0 to 60 and the number takes the hit on "sixty". The door was
+  animating the wrong way, collapsing to nothing, which read as the door vanishing rather than
+  shutting.
+- **Two band numbers moved by 16px and 4px of type.** The CARD graphics zone is 486px, not 502: at
+  502 the zone's bottom edge landed exactly on the caption's first ink row. The OFF caption is 48px
+  in an 820px column, because 52px in 940 put a long line's real glyphs at x967, inside the rail.
+- **Measure the ink box, not the block box.** `guard65.py` walked 122 beats and 3,417 painted
+  elements, 1,105 of them text, using a Range over the text nodes. A centred 940px caption has a
+  block box that reaches the rail while its glyphs are nowhere near it; chasing that phantom would
+  have shrunk type for no reason.
+
+---
+
+## vid66, Apple's design language as a skill (hf66/, 2026-08-12)
+
+796 frames, 26.533s, 2160x3840 at 40.24 Mbps. Style parent hf65. Brief: proper animations,
+cartoon acting allowed, face full-bleed for the first 1.5s then **card and split**, licensed stock,
+fast paced. Face on screen 21.6s of 26.5 (**82%**): FULL 1.4, CARD 15.9, SPLIT 4.3.
+
+### A reference's B-roll carries the reference creator's face and burned-in captions
+
+He asked for the Apple footage out of Jack Roberts' reel. Scene detection gave clean boundaries,
+three clips came out at the right timestamps, every contact sheet looked right, and the render
+showed **Jack's face across the bottom half of the plate with his own word-captions over it**. His
+reel composites the Apple footage into the TOP half over his talking head; a 6-across tile at 270px
+is too small to see that, and a centre-weighted `object-fit:cover` crop lands exactly on the seam.
+**Read an extracted clip full-frame, on its own, before it goes anywhere near a card.** The fix was
+a crop at extraction (`crop=1080:514:0:180`), not an `object-position` nudge.
+
+### A `<video>`'s `data-duration` must cover every frame its wrapper paints
+
+S13's stock plate was cut to 1.1s and the beat ran 1.82s, so the last 0.72s rendered as a dead grey
+rectangle with a red X on it. Nothing structural sees this: the element is present, positioned,
+opaque and inside every band. The guard now walks every `<video>` at every beat and checks
+`painted && t in [data-start, data-start+data-duration]`, and was **verified by shortening a window
+on purpose and watching it fire**.
+
+### A full-width bottom band cannot hold a head, and that is arithmetic
+
+His head is 745px crown to chin worst case in a 1080-wide frame. A full-width band can only be 1080
+wide at `scale 1`, and the room above the Instagram chrome is `1600 - 845 = 755` rows. Every wider
+band fails harder. **When "split screen" is asked for and the numbers rule out top-graphics over
+bottom-face, the split is vertical:** a column at x540 to x1080, `scale 0.85`, `translate(343,0)`,
+which the same face contour clears by 58px. Solved from the contour, not the bbox: worst face-left
+lands x598, worst face-right x1048. CARD this film is 580x720 at x250,y870, `scale 0.72`.
+
+### Skin the film in the subject's own material, and reserve the house colour
+
+A film about Apple's design language built in hf65's warm marked-up paper argues against itself.
+Every value came from Apple (`#F5F5F7` page, `#1D1D1F` ink, `#0071E3` link blue, `#30D158` and
+`#FF3B30` system colours, an 8-point ground grid), with **Anthropic terracotta reserved only for
+Claude objects**. That two-colour rule made the S9 handover, the skill file crossing from the blue
+side into the terracotta terminal, legible with no label on it.
+
+### Three cheap checks this film added
+
+- **Check free disk before a 4K render and do not pass `--video-frame-format png`.** The first
+  render died on ENOSPC at 95% full: a 26.5s 2160x3840 render with PNG frame extraction wants over
+  15GB of scratch. It rendered fine on the default extractor.
+- **Diff the validator's warning count against a shipped project.** 45 "GSAP target not found"
+  warnings looked like noise until hf65 returned 0 for the same check: `#capW` had CSS and a caption
+  engine but no element in the DOM. One comparison, one line to fix.
+- **Contrast warnings clustered on scene starts are the wipe, not the design.** All 11 sat inside a
+  `wipe()`'s own 0.28s window, measuring type against the transition panel covering it.
+
+### Cross-fading text into a fast cut is a cost with no benefit
+
+Stripping `opacity` out of every arrival helper (`bring`, `bringX`, `pop`, `slam`) left motion-only
+entrances, which read as harder cuts, suit a fast edit better, and remove every frame where legible
+copy sits at 20% alpha over paper.
+
+---
+
+## vid66b, the same reel rebuilt shot-for-shot from its reference (hf66b/, 2026-08-13)
+
+*"Save this edit as well, but can we copy the exact b roll and editing from the reference reel."*
+**Both cuts ship**: hf66 is the original build, hf66b the replica of Jack Roberts' `DboEouole47`.
+796 frames, 26.533s, 42.74 Mbps.
+
+- **A reference reel's B-roll is a layered composite, not a clip.** It plays its Apple footage in
+  the top ~47% over its creator's talking head and burns word-captions on the seam at **y960 on
+  split shots and y1290 on full-bleed ones**. Every lifted clip needs a crop window chosen per
+  shot, 1080x700 here, with the offset picked so the content survives (the magnifier lens at y846,
+  the GitHub breadcrumb at y847, the prompt box at y864, the progress bar at y1190). **Three of 24
+  needed re-cutting** because the first offset landed on blank paper or on his forehead, and the
+  only way to know is to read each cropped clip.
+- **Copy the shot list, re-derive the geometry.** The reference splits at y900 because Jack sits
+  further from his lens; on this take that puts the chin at y1645, inside the chrome. The seam moved
+  to **y700 with the picture translated down 352**, landing worst-case crown y748 and worst-case
+  chin y1547. **The rhythm is copyable, the numbers never are.**
+- **A CSS transform on a box containing a `<video>` deadlocks the capture engine.** A 0.20s
+  `scale:1.045 to 1` punch-in on 24 B-roll wrappers stalled the render at 40% with 15 workers alive
+  and no frames for ten minutes. Removing it (the reference cuts hard anyway) captured all 796
+  frames. Same fault family as "repeated `<video>` src renders black".
+- **ffmpeg's encode step has its own 600s timeout, separate from the render.** 2160x3840 at 42 Mbps
+  encoded at `speed=0.015x` and was killed at exactly 10:00 after a *successful* capture, throwing
+  the whole capture away. Set `FFMPEG_ENCODE_TIMEOUT_MS=3600000` and
+  `PRODUCER_ENABLE_CHUNKED_ENCODE=true` for any 4K render.
+- **Chromium collapses `inset(700px 0px 0px 0px)` to three numbers.** A state detector requiring
+  four back from `getComputedStyle` called 24 SPLIT beats FULL and produced 28 confident, wrong
+  failures. **Parse defensively, then prove the detector by driving it to a known state.**
+- **A full-width centred text container measures 1080px wide.** `#serif` tripped the left-edge and
+  right-rail gates on its box while its ink sat dead centre. Wrap the word in an inline-block span
+  so the box IS the ink, otherwise every edge gate lies about centred text.
+
+---
+
+## vid67, "launch your agent" (hf67/, 2026-08-14)
+
+*"Do the exact same editing ... you can use the exact same visuals from the creator's video as
+well. No block around that."* Same instruction as vid66b, different reference (Dr Alvaro Cintas'
+`DbqcQUgxlyC`), and this time **he had recorded the reference's script verbatim**, which is what
+made the method possible. 1057 frames, 35.233s, 2160x3840 at **38.28 Mbps** against a 33.15 Mbps
+master, 168.6 MB. 11 lifted shots, 6 rebuilt, 3 full-bleed, 70 captions. Delivered chin max
+**1548.7** against the y1600 band. VO -22.6 LUFS in, -22.5 out.
+
+### When the script is verbatim, re-time by WORD, not by ratio
+
+39.53s of reference onto 35.23s of delivery is not a linear squeeze. difflib over the two
+normalised word sequences anchored **136 of 148 words**; each reference cut is mapped through the
+piecewise-linear result and snapped to the nearest word onset in his take. Every boundary landed
+within 0.24s of an onset, most inside 0.10s. A ratio would have drifted a third of a second by the
+CTA.
+
+### "Use the creator's visuals" still has content that cannot ship
+
+Permission was not the constraint. Six windows were unusable on their own terms: the creator's
+account name in four shots, his **live `ANTHROPIC_API_KEY` in plaintext**, a third party's meeting
+notes, and a real person's inbox. Two mattered more than all of those: the reference's own screen
+shows the launch **failing** ("insufficient credit balance") and the spec page stamped `PLANNED ·
+NOT LAUNCHED`, underneath a voiceover claiming it deployed and runs daily. **Read the reference for
+what its frames SAY, not just whether they are clean.** The creator faked the payoff; lifting it
+would have shipped a contradiction at the beat the reel exists to sell.
+
+### A guard that has never fired is not a guard
+
+The first face detector thresholded skin fraction at 0.10 and passed a clip cut deliberately from a
+known face segment, which measured 0.059. Calibrating at the crop geometry the clips actually use
+showed **skin does not separate at all**: a face frame measures 0.0455 and a UI lift 0.0452. But
+**luminance separates by 28 levels with no overlap** (face 107 to 113, UI 37 to 80). Requiring both
+in the same frame flags all eight known-face cuts and passes all eleven UI lifts. **Verify a
+detector by driving it to the state it is supposed to catch, every time.**
+
+Related: **vision misses a face that is only a forehead.** It found two full-bleed segments in the
+reference; a skin-fraction sweep over the band found three, and the one it missed (19.40 to 20.10,
+only forehead and eyes in frame) is exactly the one that bled into two lifted clips.
+
+### Two gate holes that made the caption invisible to every caption rule
+
+`tl.time(t, false)` suppresses events, so the `tl.call()` that writes the caption never fires for a
+gate: `#cap` carried no text and `isText` was false. And `#cap` is `display:inline-block` and
+statically positioned, so a `position === absolute|relative` filter skipped it, while its parent
+`#capW` has no text node of its own. Between them the top-band, bottom-band, left-edge, right-rail,
+crown and text-on-text rules were **all measuring nothing**, in this project and probably in hf66b
+too. Any element carrying its own text is now measured regardless of position.
+
+### Three mechanical findings
+
+- **`-t` before `-i` limits what is READ, after `-i` it truncates the RESULT.** With `setpts`
+  slowing a clip, `-t` as an output option silently cut two clips back to their source length, so
+  they were shorter than the slots they had to fill. Frame-count asserts caught it.
+- **A slot must not be able to contain a cut, and seeking is approximate.** Slots on eyeballed
+  midpoints crossed cuts twice, one clip ending on the creator's forehead. Deriving slots from the
+  detected cut list makes that structurally impossible, and every source window is pulled with
+  **0.13s of pad at both ends** because input seeking lands where it likes.
+- **The render stalled at the same frame with 18 videos and with 2.** Frames 746 and 743 of 1057,
+  "Sequential drawElement capture stalled". Collapsing seventeen B-roll clips into ONE pre-composed
+  band track did not move it, which is how we know the ceiling is per-frame accumulation on this
+  8GB machine, not video count. Three chunks of about 350 frames rendered in 2 to 2.5 minutes each,
+  with boundaries on real cuts so every join is a hard cut the edit already had.
+
+### Concatenate the video, rebuild the audio, then prove both
+
+Video is stream-copied so every delivered frame is bit-identical to its chunk render. Audio is laid
+once over the full 35.233s from the continuous VO plus absolute-timed cues, because AAC has encoder
+priming at the start of every stream and joining three of them puts a discontinuity at each
+boundary: the exact shape of a "weird audio cut" note.
+
+**Prove the joins, then prove the film.** The frame pair either side of each boundary must be
+identical in caption, face state and face position, with only the B-roll changing. Then scan EVERY
+frame for the artifact the design could produce: here, a band black while the composition is in
+SPLIT would be a one-frame black flash. Zero of 1057 frames had it. Reasoning about `round` against
+`ceil` boundaries produced two contradictory predictions; the full-frame scan answered it in one
+command.

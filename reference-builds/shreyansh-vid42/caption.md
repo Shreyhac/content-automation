@@ -1,15 +1,15 @@
-# vid42 — post copy (shreyansharora05)
+# vid42: post copy (shreyansharora05)
 
 ## Caption
 
 ElevenLabs just gave AI music your actual voice.
 
 It's called Vocals, on ElevenMusic. Upload a few of your own tracks and Music v2 fine-tunes to
-your tone, texture and style — every song you generate after that carries your voice. Only have
+your tone, texture and style, every song you generate after that carries your voice. Only have
 one recording? One-shot it: same lyrics, your voice, in minutes. Or skip cloning entirely and
 pick from their Vocal Library.
 
-They also shipped Styles — upload reference tracks to fine-tune the sound, or grab a pre-built
+They also shipped Styles, upload reference tracks to fine-tune the sound, or grab a pre-built
 one, and a full track holds the same sound the whole way through. Every upload gets screened for
 copyright compliance first.
 
@@ -29,10 +29,10 @@ Comment **VOCAL** and I'll send you the link.
 
 ## Fact notes for whoever answers comments
 
-- Announced Jul 22, 2026 via an X thread from @ElevenLabs — there is no blog post.
+- Announced Jul 22, 2026 via an X thread from @ElevenLabs, there is no blog post.
 - Real surfaces, both verified live: `elevenmusic.io` and `elevenlabs.io/creative`.
   `elevenmusic.io/finetunes` exists but is login-gated.
-- **`elevencreative.io` does not resolve** — never send that as "the link".
+- **`elevencreative.io` does not resolve**: never send that as "the link".
 - The library voices shown on screen (Lucas, Sofia, Ethan, Olivia, Mia, Noah, Aurora) and the
   genre chips are read off ElevenLabs' own launch film, not invented.
 - The 3 CLEARED / 1 HELD screening result on screen is illustrative of the stated policy

@@ -42,6 +42,16 @@ else
   bad "playwright  ->  pip3 install --user playwright && python3 -m playwright install chromium"
 fi
 
+# Pillow: the contrast check in tools/gates/guard.py and the whole contact sheet.
+# Without it guard.py reports the contrast pass as a failure rather than skipping it silently,
+# which is deliberate: a gate that quietly stops checking is worse than one that stops.
+if python3 -c "import PIL" 2>/dev/null; then ok "Pillow"
+else bad "Pillow  ->  pip3 install --user Pillow   (tools/gates contrast + tools/qa/shoot-sheet.py)"; fi
+
+# python-docx: the CTA .docx, which is a required deliverable at first delivery.
+if python3 -c "import docx" 2>/dev/null; then ok "python-docx"
+else bad "python-docx  ->  pip3 install --user python-docx   (tools/deliver/make_cta_doc.py)"; fi
+
 echo
 echo "Node / HyperFrames"
 if command -v node >/dev/null 2>&1; then
@@ -60,7 +70,8 @@ fi
 echo
 echo "Repo assets"
 R="$(cd "$(dirname "$0")/.." && pwd)"
-for d in library/fonts library/sfx/house library/sfx/saas library/vendor .claude/skills; do
+for d in library/fonts library/sfx/house library/sfx/saas library/vendor .claude/skills \
+         tools/gates tools/deliver tools/review reference-builds reference-cuts; do
   n=$(find "$R/$d" -type f 2>/dev/null | wc -l | tr -d ' ')
   if [ "$n" -gt 0 ]; then ok "$d ($n files)"; else bad "$d is empty"; fi
 done

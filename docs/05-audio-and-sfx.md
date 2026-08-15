@@ -127,6 +127,54 @@ Watch declared durations: a 1.00s file with a longer `data-duration` is silently
 sustained tick under a 2.6s count has to be **chained**, not declared long. `validate` catches
 short SFX in long slots. ffprobe every new SFX once.
 
+### "Still there" converges by component subtraction, not by another cue purge
+
+When a sound complaint survives a fix, stop editing cues and scan the **whole mix by component**.
+Transient-onset scan the delivered mix, subtract every onset that matches the VO's own consonants,
+and what remains names the offender.
+
+demi2's "typing sfx" ran four rounds this way. Round 3's offender was the **music**: the chosen bed
+carried a metronomic **0.465s** percussion tick through the whole back half, with no SFX cue
+involved at all, identified because its clicks fell on a strict **129 BPM** grid while the innocent
+ones matched the VO's consonants 1:1. The replacement was picked by the same measurement, **30
+transients against 75**, and verified to have only 4 non-VO transients, none periodic. Round 4's
+offender was the click-attack reveal cues, 2ms attack.
+
+Classify by measured envelope, never by filename or intent: audible duration plus attack time
+(<= 0.13s and <= 50ms) splits a library objectively into tick against sustained, and it correctly
+predicted which cue sat at the timestamp he flagged.
+
+**And know when to stop measuring.** Round 5's five notes landed on the five surviving whoosh and
+impact cues, the ones every acoustic measure said were not clicks: he meant the whole category. See
+`docs/03-quality-bar.md`.
+
+### An audio-only change is a remux, not a re-render
+
+`assemble.sh` discards the chunk renders' own audio and muxes the separately-built bed and VO, so
+changing a volume, moving a cue or stripping the whole bed costs about **30 seconds with the
+picture untouched**. Establish this before pricing any audio note: the same edit against a
+picture-coupled bed means re-encoding 4K video to hear it, roughly six minutes a chunk.
+
+Two mechanics that bite inside the mix graph itself:
+
+- **`sidechaincompress` truncates its output at the key input's REAL data end** in this ffmpeg
+  build. `apad` on the key does not stop it, with either `whole_dur` or `pad_dur`, verified at
+  39.8s in isolation: main 37.8s plus key 39.8s still yielded **34.8s out**. An old comment in the
+  script claimed the pad fixed exactly this, and it no longer does. The ducked bed died at about
+  35s across two delivered versions and only the client's "why did the music end here" caught it,
+  because the design faded the music around there anyway. That mix is now computed in numpy
+  (envelope-follower duck, static bed gain, fades), where every branch is sample-verifiable.
+- **Bisect a filtergraph empirically before trusting any filter's documented behaviour at a
+  boundary.** Probe the graph in halves rather than reasoning about which filter should be
+  authoritative.
+- **Probe a delivered clip's audio before designing a handover to it.** One client outro's track
+  was digital silence at −240 dBFS.
+- **A client's own supplied clip keeps its own audio.** It goes into the bed at its picture window
+  at unity with the music fading out underneath. A zero-SFX instruction is about *added* cues, not
+  about the client's asset.
+
+See `docs/07-troubleshooting.md` for the zero-input `apad` hang.
+
 ### Build the bed beside the render, never out of it
 
 `tools/sfx/build_bed.py` lays the same cue dict the compositions use onto one continuous timeline
@@ -153,3 +201,36 @@ prints the bed's mean and peak.
 - Phase-cancellation subtraction does **not** work to verify a bed: the AAC re-encode destroys
   phase alignment. Compare per-window RMS instead.
 - A 20ms envelope lag at r ≈ 0.975 is AAC priming, under one frame at 30fps. Do not chase it.
+
+### Re-verify every audio fix with a fresh transcription
+
+Waveform math is not proof a fix worked. On vid58's short a clipped word was fixed with an L-cut
+tail sized by silence detection alone and declared fixed on the measurement. The owner came back
+with "run the whisper model once again, there are a few words being cut": a fresh transcription
+found the fix had stolen 124ms of the **next** beat's first word at a different join, because the
+tail-length scan found no silence there and ran to its cap. A stolen word fragment still measures
+as "signal present", so no envelope check can see it.
+
+- **A dropped leading word in the re-transcription is the signal, and a pre-roll is the fix.**
+  vid62's short re-transcribed as "On that specific outcome" and "The question is" where the cut
+  says "And on..." and "So the question is...". Both were beat in-points landing exactly on
+  whisper's word onset. Against 10ms RMS windows the signal for "So" rises about 20ms **before**
+  whisper's mark: whisper's onsets run late on soft function words, so cutting on the onset shaves
+  the attack. Fixed by pulling each in-point back into measured silence, 0.12s and 0.14s, both
+  still clear of the previous word's end.
+- Every in-point lands on a word onset with clear space in front of it and is pulled back into
+  that gap by a measured pre-roll. This is not optional and skipping it is invisible until
+  something re-reads the audio.
+- A targeted-span re-transcription against a clean-master control is fast and sufficient. Do it
+  before reporting the fix, not after being asked a second time.
+
+### "The audio cuts weird here" is usually a script fault
+
+Transcribe ±1.6s of the join in isolation before touching an encode. Both of vid62-short's audio
+notes were clean at signal level: one cut his sentence mid-list, the other opened a beat on a
+dangling "And" bridging topics 68s apart. The fixes were editorial, and they traded against each
+other (+3.7s and −2.8s).
+
+**And `afade=t=in:st=X` silences everything BEFORE X.** Meant as 45ms on one beat's head, applied
+to the assembled VO it muted 46 of 61 seconds. The assembler's own loudness print caught it, LRA
+4.4 to 25.6 LU. Absolute-time filters belong on the segment, not on the assembly.

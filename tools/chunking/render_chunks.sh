@@ -4,15 +4,15 @@
 #   ./render_chunks.sh c3 c4 c5
 #
 # The CLI resolves -o relative to the CWD, not to the DIR argument, so
-# `npx hyperframes render c5` from hf46/ writes hf46/renders/c5_*.mp4 — which
+# `npx hyperframes render c5` from hf46/ writes hf46/renders/c5_*.mp4, which
 # assemble.sh (globbing c5/renders/*.mp4) will never see, and which silently
 # leaves the previous render in place as the "latest". Always cd in first.
 #
 # 4K + three.js on 8 GB pins the renderer to one worker in screenshot mode, and a
-# late frame can take >60s to capture (a memory/GC hump — c3 hit it at 851/888 six
+# late frame can take >60s to capture (a memory/GC hump, c3 hit it at 851/888 six
 # times in one day). The CLI's default 60s no-progress watchdog reads that as a hang
 # and kills a HEALTHY render; retrying just burns 4 minutes per attempt to die at
-# the same frame. HF_DE_STALL_MS raises the watchdog so the slow frame can finish —
+# the same frame. HF_DE_STALL_MS raises the watchdog so the slow frame can finish,
 # c3 rendered in 4m flat on the first try with it set.
 export HF_DE_STALL_MS=${HF_DE_STALL_MS:-420000}
 set -uo pipefail

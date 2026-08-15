@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""THE single source of truth for the vid46 vertical short — v2.
+"""THE single source of truth for the vid46 vertical short, v2.
 
 v1 was rejected. The main fault (see vid46-short-v2-brief.md §1.2) was that 9 of its
 12 beats were sentence FRAGMENTS: the cut was made on word onsets inside sentences, so
@@ -147,7 +147,7 @@ BEATS = [
 CHUNKS = [("s1", 0, 4), ("s2", 5, 9)]
 
 # ---------------------------------------------------------------------------
-# THE FACE BAND — one placement, three blocks. Source ranges are CONTINUOUS: a
+# THE FACE BAND, one placement, three blocks. Source ranges are CONTINUOUS: a
 # face block never contains an audio splice, so the picture can never jump-cut
 # inside one. (This is why b1 runs to 3.30 rather than to 2.92: dropping his
 # natural 0.38s pause would have put a 0.3s jump in the middle of the hook.)

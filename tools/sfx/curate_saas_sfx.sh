@@ -1,12 +1,12 @@
 #!/bin/bash
-# vid46 — fold the owner's "saas sfx" pack into the curated pool (2026-07-30).
+# vid46, fold the owner's "saas sfx" pack into the curated pool (2026-07-30).
 #
 # 17 new files, supplied mid-round. They arrive at peaks between -2.3 and -19.8 dBFS,
 # so they get exactly the treatment the rest of the pool got: leading silence trimmed
 # (a late transient reads as a missed hit) and normalised, so one `data-volume` number
 # means the same loudness for every file in the film.
 #
-# Names are assigned from MEASURED character, not from the source filenames — half of
+# Names are assigned from MEASURED character, not from the source filenames, half of
 # them were just "sfx 4.mp3". Band energy and envelope shape were measured per file:
 #   low-dominant + fast decay -> impact      rising envelope -> riser
 #   high-dominant + fast decay -> click      flat + long     -> sustained texture

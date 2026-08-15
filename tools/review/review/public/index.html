@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Reel Review</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="title"><a href="/" id="backLink" style="text-decoration:none;color:var(--faint)">◂</a>
+      <span id="name">…</span><span class="sub mono" id="meta"></span></div>
+    <div class="vpills" id="vpills"></div>
+    <div class="spacer"></div>
+    <button class="btn ghost" id="btnCompare">Compare</button>
+    <button class="btn ghost" id="btnHelp">?</button>
+    <button class="btn primary" id="btnUpdate">Send to editor</button>
+  </header>
+
+  <div id="stage">
+    <div id="viewport">
+      <div id="frame">
+        <video id="vidA" playsinline preload="auto"></video>
+        <video id="vidB" playsinline preload="auto" muted></video>
+        <div id="cmpLabels"><span class="l"></span><span class="r"></span></div>
+        <div id="cmpHandle"></div>
+        <canvas id="ghost"></canvas>
+        <div id="pins"></div>
+        <canvas id="draw"></canvas>
+      </div>
+    </div>
+
+    <div id="transport">
+      <button class="tbtn" id="bPrev" title="previous frame (←)">◀|</button>
+      <button class="tbtn" id="bPlay" title="play / pause (space)">▶</button>
+      <button class="tbtn" id="bNext" title="next frame (→)">|▶</button>
+      <button class="tbtn mono" id="bSpeed" title="playback speed (&lt; / &gt;)">1×</button>
+      <div id="tc" class="mono">0:00.00 / 0:00.00 · f0</div>
+      <div class="spacer"></div>
+      <span style="color:var(--faint);font-size:11px">markup</span>
+      <button class="tool" data-tool="pointer" title="1 · click the frame to play">▶◂</button>
+      <button class="tool" data-tool="pin">pin</button>
+      <button class="tool" data-tool="box">box</button>
+      <button class="tool" data-tool="arrow">arrow</button>
+      <button class="tool" data-tool="pen">pen</button>
+      <button class="tool" id="bUndo">undo</button>
+      <span id="swatches" style="display:flex;gap:5px;margin-left:6px"></span>
+      <div class="spacer"></div>
+      <button class="btn" id="bComment">Comment <kbd>C</kbd></button>
+      <button class="btn" id="bGlobal">Whole video <kbd>G</kbd></button>
+    </div>
+
+    <div id="timeline">
+      <div id="track">
+        <div id="played"></div>
+        <div id="marks"></div>
+        <div id="playhead"></div>
+      </div>
+      <div id="ruler"></div>
+      <div id="globalLane"></div>
+    </div>
+  </div>
+
+  <div id="side">
+    <div id="sideHead">
+      <div class="seg" id="filter">
+        <button data-f="open" class="on">Open</button>
+        <button data-f="all">All</button>
+        <button data-f="global">Whole video</button>
+      </div>
+      <div class="spacer" style="flex:1"></div>
+      <span class="mono" id="count" style="color:var(--faint);font-size:11px"></span>
+    </div>
+    <div id="list"></div>
+
+    <div id="composer" class="hidden">
+      <div id="cmpMeta"></div>
+      <textarea id="cmpText" placeholder="What's off?"></textarea>
+      <div id="cmpActions">
+        <label class="chk"><input type="checkbox" id="cmpGlobal"> applies to whole video</label>
+        <div class="spacer" style="flex:1"></div>
+        <button class="btn ghost" id="cmpCancel">Cancel</button>
+        <button class="btn primary" id="cmpSave">Save <kbd>⌘⏎</kbd></button>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="toast"></div>
+<script src="/app.js"></script>
+</body>
+</html>

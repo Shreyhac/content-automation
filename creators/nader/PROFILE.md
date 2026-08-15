@@ -8,8 +8,8 @@ of every factual error.
 |---|---|
 | Primary format | 16:9 YouTube long-form, 3 to 4 minutes, 3840x2160 at 30fps |
 | Secondary | 9:16 vertical cutdowns derived from the long-form, about 45s |
-| Shipped | vid39 (9:16 short), vid44 (16:9 long-form), vid46 (16:9 sponsored long-form plus a 9:16 short) |
-| In flight | vid56, Incogni vs DeleteMe, 16:9 sponsored long-form, 243.6s |
+| Shipped | vid39 (9:16 short), vid44 (16:9 long-form), then five sponsored Incogni long-forms with a 9:16 cutdown each: vid46, vid56, vid58, vid59, vid62 |
+| Latest | vid62 (Incogni ep5, 16:9 long-form) and vid62 short (60.89s vertical, v2, 2026-08-12) |
 | Studio | Seated at a desk, tight to medium close-up, a wall-mounted screen behind him |
 
 ---
@@ -120,6 +120,16 @@ a primary source, attributed on screen. A competitor's figures are attributed to
 and never rendered in the alert colour. A verdict carries the VO's own qualifier. The caption
 pack must flag paid promotion.
 
+### 10. A short leads with substance, not with price
+
+His note after vid58: lead with what the sponsor DOES, coverage, re-requests and verification, the
+exposure scanner, the automation. **Price is one beat near the end, never the spine of the cut.**
+vid62's short was written to this and it decides what gets left out as much as what goes in: the
+four-competitor price comparison was dropped from a 56s cut because the competitors' prices need
+their caveats to be fair, which is 90s of the long-form, and naming them without the caveats is
+exactly the pricing-led cut he had already rejected. Only the discount code survives as a price,
+at beat 8 of 9.
+
 ---
 
 ## Delivery
@@ -149,6 +159,23 @@ each. They can land minutes after a share and they are easy to miss while a cutd
 which is exactly how two of them went unanswered on vid46. **Run the inbox before starting, and
 write a `status` and a `reply` back for every client note you address**. He sees the reply, and a
 note left open reads as ignored.
+
+**"The audio cuts weird here" is usually a script fault, not an encode fault.** Transcribe plus or
+minus 1.6s around the join in isolation BEFORE touching ffmpeg. Both of vid62 short's audio notes
+were clean at signal level: one join cut his sentence mid-list, the other opened a beat on a
+dangling "And" bridging two topics 68 seconds apart. Both fixes were editorial, re-cutting the
+in-point and the out-point, and they traded against each other (+3.7s and -2.8s on runtime). Only
+after the script reads as a finished sentence is a fade or a tail worth measuring.
+
+**Verify a reported defect against the MASTER before accepting it as his.** The failure that
+produced this rule is another creator's (vid61 round 2, "the A-roll repeatedly says 'pit lips, pit
+lips'"), and it belongs here because he reviews his own footage the same way: there was no repeat.
+He had delivered the phrase as separate stabs and the cut had removed the PAUSES between them until
+the fragments read as a stammer. A client hears the delivered file, never the master, so a defect
+they describe as theirs can be one the edit manufactured. Correlate the suspect span in the master
+with 10ms energy envelopes and run two controls, two genuinely different phrases and the same audio
+offset by about 30ms, before planning any fix. Corollary: the pauses inside a halting delivery are
+load-bearing. Cut the stranded fragments, not the air between them.
 
 **He also reverses decisions, and that is the expensive kind.** He chose to keep a duplicated
 take, then wanted the repeated line cut, which invalidated the chunk map, every T0, every caption

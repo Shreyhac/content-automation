@@ -8,14 +8,14 @@ use as many as possible ... reduce the volume of ALL the SFX a bit, it's too lou
 ... the Riser SFX is very weird. Same with the thud."
 
 Round 1 measured 236 placements over what looked like 17 files, but boom.mp3 and
-cboom.mp3 were byte-identical and so were riser.mp3 and riser2.mp3 — so it was 15
+cboom.mp3 were byte-identical and so were riser.mp3 and riser2.mp3, so it was 15
 distinct sounds, and boom alone carried 48 hits. Top four distinct sounds were 55%
 of every transient in the film. His "two or three" was a fair description.
 
 So this file is the single source of truth for the bed, and it ENFORCES the budget
 rather than trusting the author:
 
-  * thud / riser / riser2 are not in the pool at all — he named them
+  * thud / riser / riser2 are not in the pool at all, he named them
   * no single file may exceed CAP_SHARE of all placements
   * median volume must land at/below MEDIAN_MAX, ceiling at CEIL_MAX
   * sustained beds (>1.5s) capped at BED_MAX
@@ -33,7 +33,7 @@ BED_MAX    = 0.055
 # c1  0.00-28.70   hook · one search · head-to-head · the question · collect+sell
 # ---------------------------------------------------------------------------
 C1 = [
-    # hook — the redaction stack. Bars are paper-slides, locks are UI ticks.
+    # hook, the redaction stack. Bars are paper-slides, locks are UI ticks.
     (0.16, "slide1", 0.078, 0.55),
     (0.22, "stick1", 0.06, 0.30),
     (0.86, "slide2", 0.078, 0.50),
@@ -56,7 +56,7 @@ C1 = [
     (7.62, "simp2",  0.072, 0.60),
     # 9.30-12.18 used to be five silent seconds on a still lockup; the picture now
     # accents "data removal" and closes the marks on "head to head", so the bed has
-    # to follow. Kept quiet — this is emphasis under a continuous line, not a cut.
+    # to follow. Kept quiet, this is emphasis under a continuous line, not a cut.
     (9.30, "slide2", 0.06, 0.45),   # Incogni's descriptor underlines
     (10.96, "wsh4",   0.054, 0.55),   # the two marks close on the VS
     (11.98, "simp3",  0.072, 0.70),   # they meet
@@ -302,7 +302,7 @@ def check(chunk, cues):
             errs.append(f"{f} at {t}s is a {d}s bed at {v} (cap {BED_MAX})")
     for t, f, v, d in cues:
         if f in ("thud", "riser", "riser2", "boom", "cboom"):
-            errs.append(f"{f} is retired — the owner named it")
+            errs.append(f"{f} is retired, the owner named it")
     print(f"{chunk}: {n} placements · {len(share)} distinct · "
           f"median {med:.3f} · ceiling {ceil:.3f}")
     print("   top: " + ", ".join(f"{f}x{c}" for f, c in share.most_common(5)))

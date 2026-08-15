@@ -12,7 +12,7 @@ This take is NOT: Nader reads from two different note positions.
 Mode B sits right on vid44's 0.30 threshold and passed as "safe" until the crops were
 read. Both signals are required; either one firing means he is reading.
 
-ROUND 2 — a blink discriminator was built, measured, and deliberately LEFT OFF.
+ROUND 2, a blink discriminator was built, measured, and deliberately LEFT OFF.
 
 MIN_RUN=2 is documented as "blinks survive by the >=2-frame minimum". That is only
 true for a favourable sampling phase. Re-extracting the 5fps stills through the
@@ -33,20 +33,20 @@ lifts face-safe coverage from 41.1% to 62.8%.
 
 IT IS OFF, because reading the crops it produced showed it is not safe yet. At
 t=114.0 and t=117.0 he is genuinely glancing down at notes, and BOTH signals read
-clean camera there (eye .34, aspect 1.03-1.08) — so those frames are only excluded
+clean camera there (eye .34, aspect 1.03-1.08), so those frames are only excluded
 today as a side effect of the padding around neighbouring blink runs. Rejecting the
 blinks removes that padding and puts real down-looks on screen, which breaks the
 client's one hard rule.
 
 The signal that does separate them is browEyeGap, which the detector already emits:
 across 113.4-114.6 (down) it sits at .072-.081, against .087-.140 at camera. That is
-a promising third signal but it is unvalidated across the whole take, and pitch —
-which would settle it directly — is NA on all 1117 frames from this Vision revision.
+a promising third signal but it is unvalidated across the whole take, and pitch,
+which would settle it directly, is NA on all 1117 frames from this Vision revision.
 
 So round 2 ships the rule the owner already accepted in round 1. It errs toward
 hiding him, which is the correct direction to err: an extra second of graphics is a
-soft cost, showing him reading is a hard failure. Its one artifact — the 11.7-13.7
-hole in the hook — lands inside the head-to-head lockup, where the face is hidden
+soft cost, showing him reading is a hard failure. Its one artifact, the 11.7-13.7
+hole in the hook, lands inside the head-to-head lockup, where the face is hidden
 anyway, so it costs nothing.
 """
 import csv, json
@@ -56,7 +56,7 @@ EYE_T      = 0.30    # below => eyes down
 ASPECT_T   = 0.905   # below => head pitched down (plateau p95 .893 | camera p05 .920)
 MIN_RUN    = 2       # >=2 frames (0.4s) => a candidate, not noise
 MIN_SUSTAIN= 4       # >=4 frames (0.8s) => sustained on its own, no blink lasts this
-BLINK_REJECT = False # see the module docstring — measured, not trusted yet
+BLINK_REJECT = False # see the module docstring, measured, not trusted yet
 PAD        = 0.9
 MIN_WIN    = 1.6
 
@@ -113,7 +113,7 @@ if DUR - cur >= MIN_WIN: safe.append([round(cur, 2), round(DUR, 2)])
 # Frames the detector scores as camera but which reading the stills proves are not.
 # Both are inside W08 and both are eyes-down glances at notes with the head level and
 # the lids still wide, so eye-openness (.34) and contour aspect (1.03-1.08) are both
-# clean — see the docstring. Round 1 shipped these same frames (its W06 117.30-123.10
+# clean, see the docstring. Round 1 shipped these same frames (its W06 117.30-123.10
 # maps here through the splice) and they were not flagged, but a verified down-look has
 # no business sitting inside a safe window on a client whose one hard rule this is.
 MANUAL_EXCLUDE = [(113.6, 114.8), (116.8, 117.6)]

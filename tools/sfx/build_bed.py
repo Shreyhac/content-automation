@@ -8,7 +8,7 @@ a new SFX pack mid-round, that coupling would have cost a full 45-minute re-rend
 for a change that touches no pixel.
 
 The bed is now built here instead, from the same CUES dict sfx.py injects into the
-chunks, so the two cannot disagree — and SFX iteration costs seconds.
+chunks, so the two cannot disagree, and SFX iteration costs seconds.
 
 Cue times in sfx.py are LOCAL to a chunk; absolute time is chunks.json's t0 plus the
 local time, which is exactly the mapping the injected <audio data-start> uses.

@@ -79,6 +79,43 @@ Recurring traps this audit exists to catch:
 
 ---
 
+## Measure the window the placement plays over, not the take
+
+A sparse sample of a talking head measures the pose he **holds**, not the pose he moves into.
+vid60's chin was measured at 11 points over 29 seconds, worst case y1080, and the full-bleed
+lower plate was placed at y1190 off that number. It rendered with the plate cutting across his
+neck **in the CTA**, because he leans toward the lens over the last three seconds and his chin
+there is at y1145. Re-measuring the CTA window alone against a 20px ruler gave chin y1145 and
+collar y1280, and the plate moved to y1300.
+
+- Measure per placement window, and always re-measure **the close**, where he leans in to make
+  the ask. A whole-take percentile is a description of the take, not a constraint on a beat.
+  vid59's whole-take chin p97 said "no full-bleed close"; b7's own 34 samples said chin y1648,
+  canvas y1465, worst frame y1474, and the close shipped full-bleed.
+- **Solve the crop over the spans he is visible in, not over the beat.** Five of vid62-short's
+  nine beats showed him for only part of their runtime: a beat-wide median is a median over
+  frames nobody sees.
+- **A geometry heuristic that returns a number is not one that returns the right number.** A
+  skin-mask plus width-collapse solver returned "chin y424 to y492" because it locked onto his
+  glasses, which break the skin run. Sanity-check against one hand-read frame before believing
+  174 of them.
+
+## Centre on the median head position, not the midpoint of the extremes
+
+Extremes-centring maximises the smaller margin, which is the right answer to "will his face leave
+the rect" and the wrong answer to "does this look centred". One 0.4s lean dragged a vid62-short
+card 55px and he sat off-centre for the whole beat. His note was "this is not centered aligned".
+
+**If median centring then breaches the face margin, the beat cannot be a CARD: it plays as a
+BAND.** Related: a residual is a proxy. One beat failed on `RESID 138 > 130`, an inherited
+threshold; measured directly, his contour swept 508 canvas px against a 560px card, 26px either
+side, and at the left extreme his jaw sat at x252 against a card edge at x260. Not centrable at
+any offset. Raising the threshold would have shipped the defect; measuring the thing the residual
+stands in for turned the beat into a BAND, which also read better because CARD to BAND to CLOSE
+escalates into the CTA instead of stepping down into it.
+
+---
+
 ## 16:9 long-form
 
 The Instagram zones do not apply, but the discipline does:

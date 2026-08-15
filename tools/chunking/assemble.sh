@@ -1,12 +1,12 @@
 #!/bin/bash
-# vid46 final assembly — Incogni x Nader, 8 chunks, 6702 frames @ 3840x2160/30.
+# vid46 final assembly, Incogni x Nader, 8 chunks, 6702 frames @ 3840x2160/30.
 #
 # ROUND 2: the re-cut dropped the two duplicated takes (91.30-95.46 and
 # 124.88-136.58 in the original master), so the film is 493 frames shorter than
 # round 1 and every boundary moved. See recut.sh and recut/chunks.json.
 #
 # Video: the 8 chunk renders concatenate with -c copy (identical encoder settings,
-#        every chunk starts on a keyframe) — zero generational loss.
+#        every chunk starts on a keyframe), zero generational loss.
 # Audio: rebuilt, never concatenated. The chunk renders carry ONLY the SFX bed;
 #        the voice comes from one continuous cleaned master, so none of the 7
 #        joins can produce an AAC priming gap or a click on the VO.
@@ -35,7 +35,7 @@ done
 echo "  total: $TOTAL frames (planned $EXPECT)"
 # The chunk boundaries are the contract with the VO master. vid44 shipped +4.1s
 # of drift because nobody asserted this, and -shortest then cut the end card off.
-[ "$TOTAL" -eq "$EXPECT" ] || { echo "  !! FRAME TOTAL MISMATCH — refusing to assemble"; exit 1; }
+[ "$TOTAL" -eq "$EXPECT" ] || { echo "  !! FRAME TOTAL MISMATCH, refusing to assemble"; exit 1; }
 
 echo "--- 2. concat video (stream copy) ---"
 ffmpeg -y -f concat -safe 0 -i "$WORK/list.txt" -c:v copy -an "$WORK/video.mp4" -loglevel error
@@ -53,7 +53,7 @@ python3 build_bed.py "$WORK/sfx.wav"
 BEDSECS=$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$WORK/sfx.wav")
 WANT=$(awk -v d="$EXPECT" 'BEGIN{printf "%.3f", d/30}')
 awk -v a="$BEDSECS" -v b="$WANT" 'BEGIN{exit (a-b<0.002 && b-a<0.002) ? 0 : 1}' \
-  || { echo "  !! bed is ${BEDSECS}s, picture is ${WANT}s — refusing to assemble"; exit 1; }
+  || { echo "  !! bed is ${BEDSECS}s, picture is ${WANT}s, refusing to assemble"; exit 1; }
 echo -n "  sfx bed: $(ffprobe -v error -show_entries format=duration -of csv=p=0 "$WORK/sfx.wav")s  "
 ffmpeg -i "$WORK/sfx.wav" -af volumedetect -f null - 2>&1 | grep -E "mean_volume|max_volume" | tr '\n' ' '
 echo

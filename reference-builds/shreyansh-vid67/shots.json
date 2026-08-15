@@ -1,0 +1,345 @@
+[
+ {
+  "i": 0,
+  "kind": "lift",
+  "id": "b01_tree",
+  "ref": [
+   0.033,
+   2.3
+  ],
+  "his": [
+   0.0,
+   2.2
+  ],
+  "slot": 2.2,
+  "cropY": 0,
+  "note": "the claude-code agent tree",
+  "src": null
+ },
+ {
+  "i": 1,
+  "kind": "full",
+  "id": null,
+  "ref": [
+   2.3,
+   3.6
+  ],
+  "his": [
+   2.2,
+   3.24
+  ],
+  "slot": 1.04,
+  "cropY": 0,
+  "note": "his face, as the reference plays it",
+  "src": null
+ },
+ {
+  "i": 2,
+  "kind": "lift",
+  "id": "b02_github",
+  "ref": [
+   3.6,
+   6.567
+  ],
+  "his": [
+   3.24,
+   5.22
+  ],
+  "slot": 1.98,
+  "cropY": 300,
+  "note": "the launch-your-agent repo",
+  "src": null
+ },
+ {
+  "i": 3,
+  "kind": "lift",
+  "id": "b03_arch",
+  "ref": [
+   6.567,
+   9.333
+  ],
+  "his": [
+   5.22,
+   7.869
+  ],
+  "slot": 2.649,
+  "cropY": 240,
+  "note": "the managed-agent diagram",
+  "src": null
+ },
+ {
+  "i": 4,
+  "kind": "mock",
+  "id": "m1_claude",
+  "ref": [
+   9.333,
+   11.933
+  ],
+  "his": [
+   7.869,
+   9.72
+  ],
+  "slot": 1.851,
+  "cropY": 0,
+  "note": "reference shows the Claude app titled 'Dr Cintas'",
+  "src": null
+ },
+ {
+  "i": 5,
+  "kind": "lift",
+  "id": "b04_usage",
+  "ref": [
+   11.933,
+   12.733
+  ],
+  "his": [
+   9.72,
+   10.62
+  ],
+  "slot": 0.9,
+  "cropY": 0,
+  "note": "usage dashboard",
+  "src": null
+ },
+ {
+  "i": 6,
+  "kind": "lift",
+  "id": "b05_clone",
+  "ref": [
+   12.733,
+   13.633
+  ],
+  "his": [
+   10.62,
+   11.54
+  ],
+  "slot": 0.92,
+  "cropY": 300,
+  "note": "git clone launch-your-agent",
+  "src": null
+ },
+ {
+  "i": 7,
+  "kind": "mock",
+  "id": "m2_env",
+  "ref": [
+   13.633,
+   15.967
+  ],
+  "his": [
+   11.54,
+   13.84
+  ],
+  "slot": 2.3,
+  "cropY": 0,
+  "note": "reference shows a live ANTHROPIC_API_KEY",
+  "src": null
+ },
+ {
+  "i": 8,
+  "kind": "lift",
+  "id": "b06_skills",
+  "ref": [
+   15.967,
+   17.233
+  ],
+  "his": [
+   13.84,
+   14.72
+  ],
+  "slot": 0.88,
+  "cropY": 0,
+  "note": "the skills list",
+  "src": [
+   16.45,
+   17.15
+  ]
+ },
+ {
+  "i": 9,
+  "kind": "lift",
+  "id": "b07_dash",
+  "ref": [
+   17.233,
+   18.233
+  ],
+  "his": [
+   14.72,
+   15.36
+  ],
+  "slot": 0.64,
+  "cropY": 100,
+  "note": "dashboard",
+  "src": null
+ },
+ {
+  "i": 10,
+  "kind": "lift",
+  "id": "b08_dash2",
+  "ref": [
+   18.233,
+   19.4
+  ],
+  "his": [
+   15.36,
+   16.34
+  ],
+  "slot": 0.98,
+  "cropY": 100,
+  "note": "dashboard + rubric tooltip",
+  "src": null
+ },
+ {
+  "i": 11,
+  "kind": "full",
+  "id": null,
+  "ref": [
+   19.4,
+   20.1
+  ],
+  "his": [
+   16.34,
+   17.0
+  ],
+  "slot": 0.66,
+  "cropY": 0,
+  "note": "his face \u2014 the segment the first cut missed",
+  "src": null
+ },
+ {
+  "i": 12,
+  "kind": "lift",
+  "id": "b09_type",
+  "ref": [
+   20.1,
+   23.667
+  ],
+  "his": [
+   17.0,
+   20.1
+  ],
+  "slot": 3.1,
+  "cropY": 300,
+  "note": "typing the agent's job",
+  "src": null
+ },
+ {
+  "i": 13,
+  "kind": "lift",
+  "id": "b10_type2",
+  "ref": [
+   23.667,
+   24.9
+  ],
+  "his": [
+   20.1,
+   21.18
+  ],
+  "slot": 1.08,
+  "cropY": 300,
+  "note": "the prompt completed",
+  "src": null
+ },
+ {
+  "i": 14,
+  "kind": "lift",
+  "id": "b11_reply",
+  "ref": [
+   24.9,
+   27.2
+  ],
+  "his": [
+   21.18,
+   22.98
+  ],
+  "slot": 1.8,
+  "cropY": 300,
+  "note": "Claude scopes the agent",
+  "src": null
+ },
+ {
+  "i": 15,
+  "kind": "mock",
+  "id": "m3_launch",
+  "ref": [
+   27.2,
+   28.267
+  ],
+  "his": [
+   22.98,
+   24.119
+  ],
+  "slot": 1.139,
+  "cropY": 0,
+  "note": "reference shows 'agent creation failed'",
+  "src": null
+ },
+ {
+  "i": 16,
+  "kind": "mock",
+  "id": "m4_spec",
+  "ref": [
+   28.267,
+   30.8
+  ],
+  "his": [
+   24.119,
+   26.22
+  ],
+  "slot": 2.101,
+  "cropY": 0,
+  "note": "reference shows PLANNED . NOT LAUNCHED",
+  "src": null
+ },
+ {
+  "i": 17,
+  "kind": "mock",
+  "id": "m5_meeting",
+  "ref": [
+   30.8,
+   32.067
+  ],
+  "his": [
+   26.22,
+   27.58
+  ],
+  "slot": 1.36,
+  "cropY": 0,
+  "note": "reference shows a third party's meeting notes",
+  "src": null
+ },
+ {
+  "i": 18,
+  "kind": "mock",
+  "id": "m6_inbox",
+  "ref": [
+   32.067,
+   36.6
+  ],
+  "his": [
+   27.58,
+   31.82
+  ],
+  "slot": 4.24,
+  "cropY": 0,
+  "note": "reference shows a real person's inbox",
+  "src": null
+ },
+ {
+  "i": 19,
+  "kind": "full",
+  "id": null,
+  "ref": [
+   36.6,
+   39.46
+  ],
+  "his": [
+   31.82,
+   35.233
+  ],
+  "slot": 3.413,
+  "cropY": 0,
+  "note": "his face + the CTA",
+  "src": null
+ }
+]

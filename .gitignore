@@ -60,3 +60,11 @@ package-lock.json
 ._*
 .Spotlight-V100
 .Trashes
+
+# ---- reel review (tools/review/) -----------------------------------------
+# The tooling is tracked. Its state is not: notes, markup frames and the keys.
+tools/review/review/data/
+tools/review/share/config.json
+tools/review/share/.dev.vars
+tools/review/share/.wrangler/
+!tools/review/share/config.example.json

@@ -38,7 +38,7 @@ for k in range(1, N):
     near = [c for c in cands if abs(c[0] - ideal) <= SEARCH]
     if not near:
         print(f"!! no candidate within {SEARCH}s of {ideal:.2f}s"); sys.exit(1)
-    # prefer the widest gap, then the closest to ideal — a wide gap is a real
+    # prefer the widest gap, then the closest to ideal, a wide gap is a real
     # sentence break, which is where a cut wants to be
     best = max(near, key=lambda c: (round(c[1], 2), -abs(c[0] - ideal)))
     f = int(round(best[0] * FPS))
