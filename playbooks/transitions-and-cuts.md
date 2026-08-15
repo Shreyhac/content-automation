@@ -143,9 +143,9 @@ the scene swap made the change happen in the clear.
 ## Direction
 
 **A wipe's direction is a gaze decision.** Eating a face band from the **top** takes the subject's
-eyes out of frame first, which lets a conceal start 0.18s before his gaze drops to his notes
-without ever showing a downcast frame. Bottom-up would have kept his eyes visible longest and
-shown exactly the frames the gaze map exists to avoid.
+eyes out of frame first, which lets a conceal start 0.18s before the presenter's gaze drops to
+their notes without ever showing a downcast frame. Bottom-up would have kept those eyes visible
+longest and shown exactly the frames the gaze map exists to avoid.
 
 Otherwise: alternate direction between cuts for rhythm.
 

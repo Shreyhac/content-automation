@@ -109,7 +109,7 @@ it:** a green run and a gate that silently did nothing produce identical output.
 | `make_cta_doc.py` | The .docx behind "comment X and I'll send you Y". Content is a JSON, the house format is in the tool. |
 | `cta.example.json` | The real vid67 payload as the worked example. |
 
-**The CTA doc is a required deliverable at FIRST delivery**, not when he asks. It is also
+**The CTA doc is a required deliverable at FIRST delivery**, not when the creator asks. It is also
 where the reel's overstatements get corrected: one film's VO said "without ever touching
 the terminal" and the repo's own Quickstart is three terminal commands. `deliver/README.md`
 has the rule and the schema.
@@ -167,7 +167,7 @@ Doctrine is in `playbooks/generative-assets.md`.
 ## `qa/benchmark.py` the quality bar, measured
 
 ```bash
-python3 tools/qa/benchmark.py out/vid68-final.mp4 --creator shreyansh --master /path/to/aroll.mp4
+python3 tools/qa/benchmark.py out/vid68-final.mp4 --creator card-reel --master /path/to/aroll.mp4
 ```
 
 Thirteen metrics from `benchmarks.json`, each carrying the film and the reaction that set it.

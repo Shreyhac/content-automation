@@ -224,6 +224,10 @@
     $('go').addEventListener('click', startJob);
   }
 
+  function bindPipe() {
+    $('fallgo').addEventListener('click', useSample);
+  }
+
   /* -------------------------------------------------------------- PIPELINE */
 
   var FALLBACK_STAGES = [
@@ -238,84 +242,225 @@
     { key: 'bitrate', label: 'Verifying delivery bitrate against the master', ms: 2200 }
   ];
 
-  function paintStages(stages, index, state) {
+  /* Client-side ceiling. A stuck server must never hang the demo. */
+  var POLL_CEILING_MS = 60000;
+  var SAMPLE_URL = '/api/artefact';
+
+  function setMode(mode) {
+    var real = mode === 'real';
+    var txt = real
+      ? 'Real edit: this ran on the file you uploaded.'
+      : 'Sample reel: a bundled cut, not your upload.';
+    ['modetag', 'revmode', 'donemode'].forEach(function (id) {
+      var n = $(id);
+      if (!n) return;
+      n.textContent = txt;
+      n.hidden = false;
+    });
+    app.mode = mode || 'demo';
+  }
+
+  function stageKeys(stages) {
+    return stages.map(function (s) { return s.key || s.label || ''; }).join('|');
+  }
+
+  /* Server-driven. Per stage `state` wins when the server sends one; otherwise we
+     fall back to the running index, which is what the local simulation gives us. */
+  function paintStages(stages, index, jobState) {
+    stages = stages || [];
     var ol = $('stages');
-    if (ol.childElementCount !== stages.length) {
+    if (ol.getAttribute('data-keys') !== stageKeys(stages)) {
       ol.innerHTML = '';
       stages.forEach(function (s) {
         var li = document.createElement('li');
         li.className = 'stg';
-        li.innerHTML = '<span class="dot"></span><span class="lab"></span><span class="t"></span>';
-        li.querySelector('.lab').textContent = s.label;
+        li.innerHTML = '<span class="dot"></span><span class="lab">' +
+          '<span class="labt"></span><span class="nte" hidden></span></span><span class="t"></span>';
+        li.querySelector('.labt').textContent = s.label || s.key || '';
         ol.appendChild(li);
       });
+      ol.setAttribute('data-keys', stageKeys(stages));
     }
-    var done = state === 'done';
+
+    var finished = jobState === 'done';
+    var settled = 0;
     Array.prototype.forEach.call(ol.children, function (li, i) {
-      var isDone = done || i < index;
-      var isRun = !done && i === index;
-      li.className = 'stg' + (isDone ? ' done' : (isRun ? ' run' : ''));
+      var s = stages[i] || {};
+      var st = s.state;
+      if (!st) st = finished || i < index ? 'done' : (i === index ? 'running' : 'pending');
+      if (finished && (st === 'pending' || st === 'running')) st = 'done';
+
+      var cls = 'stg';
+      if (st === 'done') cls += ' done';
+      else if (st === 'running') cls += ' run';
+      else if (st === 'failed') cls += ' fail';
+      else if (st === 'skipped') cls += ' skip';
+      li.className = cls;
+
       var t = li.querySelector('.t');
-      if (isDone) t.textContent = ((stages[i].ms || 0) / 1000).toFixed(1) + 's';
-      else if (isRun) t.textContent = 'running';
+      if (st === 'done') t.textContent = s.ms ? (s.ms / 1000).toFixed(1) + 's' : 'done';
+      else if (st === 'running') t.textContent = 'running';
+      else if (st === 'failed') t.textContent = 'failed';
+      else if (st === 'skipped') t.textContent = 'skipped';
       else t.textContent = 'queued';
+
+      /* The note carries the measured detail. It is the proof the edit is real. */
+      var nte = li.querySelector('.nte');
+      var note = s.note || s.detail || '';
+      if (note) { nte.textContent = note; nte.hidden = false; }
+      else { nte.textContent = ''; nte.hidden = true; }
+
+      if (st === 'done' || st === 'skipped' || st === 'failed') settled++;
     });
+
     var total = stages.length || 1;
-    var pct = done ? 100 : Math.round((index / total) * 100);
-    $('barfill').style.width = pct + '%';
+    $('barfill').style.width = (finished ? 100 : Math.round((settled / total) * 100)) + '%';
+  }
+
+  function showFallback(on) {
+    var row = $('fallrow');
+    if (row) row.hidden = !on;
+  }
+
+  function stopPoll() {
+    if (app.poll) { clearInterval(app.poll); app.poll = null; }
+  }
+
+  /* Real bytes, real progress. XHR because fetch cannot report upload progress. */
+  function uploadSource(jobId, file) {
+    return new Promise(function (resolve, reject) {
+      var x = new XMLHttpRequest();
+      x.open('POST', '/api/jobs/' + encodeURIComponent(jobId) + '/source', true);
+      /* Headers must be ASCII, so an accented filename cannot throw here. */
+      x.setRequestHeader('x-filename', String(file.name || 'upload.mp4').replace(/[^\x20-\x7e]/g, '_'));
+      x.setRequestHeader('Content-Type', file.type || 'application/octet-stream');
+      $('uprow').hidden = false;
+      $('upfill').style.width = '0%';
+      $('uplab').textContent = 'Uploading ' + (file.size / 1048576).toFixed(1) + ' MB';
+      if (x.upload) {
+        x.upload.onprogress = function (e) {
+          if (!e.lengthComputable) { $('upfill').style.width = '100%'; return; }
+          var pct = Math.round((e.loaded / e.total) * 100);
+          $('upfill').style.width = pct + '%';
+          $('uplab').textContent = 'Uploading your file, ' + pct + '%';
+        };
+      }
+      x.onload = function () {
+        if (x.status >= 200 && x.status < 300) {
+          $('upfill').style.width = '100%';
+          $('uplab').textContent = 'Upload complete, ' + (file.size / 1048576).toFixed(1) + ' MB sent';
+          var d = null;
+          try { d = JSON.parse(x.responseText); } catch (e) { d = null; }
+          resolve(d || { ok: true });
+        } else {
+          reject(new Error('upload returned ' + x.status));
+        }
+      };
+      x.onerror = function () { reject(new Error('upload connection failed')); };
+      x.onabort = function () { reject(new Error('upload aborted')); };
+      x.send(file);
+    });
   }
 
   function startJob() {
     if (!app.file) { show($('uperr'), 'Pick a video first.'); return; }
     show($('piperr'), '');
+    showFallback(false);
     goto(2);
     $('stages').innerHTML = '';
+    $('stages').removeAttribute('data-keys');
     $('barfill').style.width = '0%';
+    $('uprow').hidden = true;
     app.started = Date.now();
 
-    if (app.offline) { simulate(FALLBACK_STAGES); return; }
+    if (app.offline) { setMode('demo'); simulate(FALLBACK_STAGES); return; }
 
     api('POST', '/api/jobs', { filename: app.file.name, sizeBytes: app.file.size })
       .then(function (j) {
         app.job = j;
-        paintStages(j.stages || FALLBACK_STAGES, 0, 'running');
-        pollJob();
+        setMode(j.mode || 'demo');
+        var stages = j.stages && j.stages.length ? j.stages : FALLBACK_STAGES;
+        $('pipesub').textContent = stages.length + ' passes on your file. Roughly fifteen to sixty seconds.';
+        paintStages(stages, 0, 'running');
+
+        return uploadSource(j.id, app.file).then(function () {
+          pollJob();
+        }, function (e) {
+          /* In demo mode the server may not want the bytes at all: keep going. */
+          if ((j.mode || 'demo') === 'demo') { $('uprow').hidden = true; pollJob(); return; }
+          failJob('The upload failed (' + e.message + ').');
+        });
       })
       .catch(function (e) {
         show($('piperr'), 'Could not reach the job service (' + e.message + '). Running the pipeline locally instead.');
         app.offline = true;
+        setMode('demo');
         simulate(FALLBACK_STAGES);
       });
   }
 
+  function failJob(msg) {
+    stopPoll();
+    show($('piperr'), msg + ' Nothing is lost, you can carry on with the bundled sample.');
+    showFallback(true);
+  }
+
   function pollJob() {
     var fails = 0;
-    if (app.poll) clearInterval(app.poll);
+    var t0 = Date.now();
+    stopPoll();
     app.poll = setInterval(function () {
+      if (Date.now() - t0 > POLL_CEILING_MS) {
+        failJob('The job has been running for over 60 seconds without finishing.');
+        return;
+      }
       api('GET', '/api/jobs/' + encodeURIComponent(app.job.id))
         .then(function (j) {
           fails = 0;
+          if (!$('fallrow').hidden) return;
           show($('piperr'), '');
+          if (j.mode && j.mode !== app.mode) setMode(j.mode);
           var stages = j.stages && j.stages.length ? j.stages : (app.job.stages || FALLBACK_STAGES);
+          app.job.stages = stages;
           paintStages(stages, j.stageIndex || 0, j.state);
+
+          if (j.state === 'failed') {
+            failJob(j.error || 'The edit failed on the server.');
+            return;
+          }
           if (j.state === 'done') {
-            clearInterval(app.poll); app.poll = null;
-            app.job.videoUrl = j.videoUrl || app.job.videoUrl;
+            stopPoll();
+            app.job.videoUrl = j.videoUrl || app.job.videoUrl || null;
             app.job.poster = j.poster;
+            if (j.notes && j.notes.length) app.notes = j.notes;
             openReview();
           }
         })
         .catch(function (e) {
           fails++;
           show($('piperr'), 'Lost the job service, retrying (' + fails + '/6). ' + e.message);
-          if (fails >= 6) {
-            clearInterval(app.poll); app.poll = null;
-            app.offline = true;
-            show($('piperr'), 'Job service did not come back. Finishing the run locally.');
-            simulate(FALLBACK_STAGES);
-          }
+          if (fails >= 6) failJob('The job service did not come back.');
         });
-    }, 500);
+    }, 700);
+  }
+
+  /* The demo must never dead-end: fall back to the bundled sample reel. */
+  function useSample() {
+    stopPoll();
+    showFallback(false);
+    show($('piperr'), '');
+    app.offline = true;
+    app.notes = [];
+    app.job = { id: (app.job && app.job.id) || 'local-' + Date.now().toString(36), videoUrl: SAMPLE_URL };
+    setMode('demo');
+    $('uprow').hidden = true;
+    $('stages').innerHTML = '';
+    $('stages').removeAttribute('data-keys');
+    $('pipesub').textContent = 'Running the bundled sample through the same review flow.';
+    /* Quick: the viewer already waited once. */
+    simulate(FALLBACK_STAGES.map(function (s) {
+      return { key: s.key, label: s.label, ms: Math.round(s.ms / 8) };
+    }));
   }
 
   function simulate(stages) {
@@ -348,6 +493,8 @@
   function openReview() {
     goto(3);
     vid = $('vid');
+    app.triedLocalSrc = false;
+    /* The server names the file, always. Never hardcode an artefact path here. */
     var src = (app.job && app.job.videoUrl) || '';
     if (!src && app.file) src = URL.createObjectURL(app.file);
     if (!src) {
@@ -422,6 +569,14 @@
     vid.addEventListener('play', function () { $('play').textContent = 'Pause'; });
     vid.addEventListener('pause', function () { $('play').textContent = 'Play'; });
     vid.addEventListener('error', function () {
+      /* One recovery step, then say so plainly rather than show a black rectangle. */
+      if (!app.triedLocalSrc && app.file) {
+        app.triedLocalSrc = true;
+        show($('viderr'), 'The rendered file would not load, showing your original upload instead.');
+        vid.setAttribute('src', URL.createObjectURL(app.file));
+        vid.load();
+        return;
+      }
       show($('viderr'), 'The rendered file would not load from ' + (vid.currentSrc || 'the job URL') + '. The notes tools still work.');
     });
     window.addEventListener('resize', sizeCanvas);
@@ -644,7 +799,7 @@
 
   function boot() {
     document.documentElement.classList.add('js');
-    bindAuth(); bindUpload(); bindReview(); bindDone();
+    bindAuth(); bindUpload(); bindPipe(); bindReview(); bindDone();
     var s = localStorage.getItem('rf.session');
     if (s) {
       app.session = s;

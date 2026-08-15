@@ -14,7 +14,7 @@ the palette, the face treatment, the type stack, the SFX volumes and the layout 
 A brief has arrived from one creator's account carrying another creator's footage. The footage
 wins, every time. Getting this wrong wastes the whole build.
 
-Then read `creators/<creator>/PROFILE.md` and `GRAMMAR.md` before anything else.
+Then read `templates/<creator>/PROFILE.md` and `GRAMMAR.md` before anything else.
 
 ---
 
@@ -35,8 +35,8 @@ visual), design language, asset checklist.
 
 **When the owner points at a prior video by name, open the file and take numbers off it.**
 "vid39's face card" reads as "a portrait bottom-centre"; the file says x216 to x864, y1020 to
-y1880, and its `bandOpen()` tweens clip-path and scale together over 0.34s. The move is what he
-is reacting to, and you only find that by measuring.
+y1880, and its `bandOpen()` tweens clip-path and scale together over 0.34s. The move is what the
+owner is reacting to, and you only find that by measuring.
 
 If there is no reference, build from the brief using the creator's `GRAMMAR.md`.
 
@@ -91,7 +91,7 @@ Then:
   seconds. Run an RMS envelope over the cut audio to find the real onsets and land each stress as
   its own beat: a transcriber optimises for text, not for where the emphasis actually falls. Not
   every gap in a halting delivery is dead air to cut: the gap is worth keeping when it sits
-  *between* stressed words (his emphasis) and worth removing when it sits *inside* a stumble.
+  *between* stressed words (the creator's emphasis) and worth removing when it sits *inside* a stumble.
 - **If the creator delivers a pre-cut, graded, mixed take, ship it untouched.** Transcode only.
   Do not loudnorm, denoise or regrade someone's own mix.
 - Check for a **mirrored** front-camera take: readable text in frame decides it, per take, not
@@ -100,13 +100,13 @@ Then:
   only: `-r 30 -g 15 -keyint_min 15`, libx264 crf 17, and no `scale` filter at all if the master
   is already the right aspect. These compositions render at 2160x3840 (a 1080x1920 `#stage`
   scaled 2x), so a 1080x1920 asset is upscaled back to 4K and the delivered file is a 4K container
-  carrying 1080p of his face. Measured on vid60: the composition rasterises **84% sharper** from a
+  carrying 1080p of the creator's face. Measured on vid60: the composition rasterises **84% sharper** from a
   2160x3840 asset than from a 1080x1920 one, 95% of the master's detail against about 52%. vid55
   and vid57 both shipped with that loss. If a composition genuinely outputs 1080x1920 (client
   shorts), 1080 is correct. **Match the asset to the OUTPUT, not to a habit.** An oversized master
   does drive render memory pressure, so pay for it with worker count and `HF_DE_STALL_MS`, not by
   throwing away resolution. See `docs/03-quality-bar.md` for the delivery contract this serves.
-- **Never grade his A-roll.** No LUT, no curves, no `eq`, no loudnorm on a delivered mix. The
+- **Never grade the creator's A-roll.** No LUT, no curves, no `eq`, no loudnorm on a delivered mix. The
   renderer already shifts colour 3 to 7% on its own, so a grade on top is a shift nobody can
   account for. Grades were caught and removed on vid49, vid54 and vid55.
 - **Measure the head with Vision** (`tools/vision/crown.swift`, `facebox.swift`) and solve the
@@ -135,7 +135,7 @@ what actually plays. Every number it printed looked plausible.
 
 "Use the B-roll from that reference" does not mean the clip you cut out is the clip you saw. On
 vid66 the reference composited Apple's product footage into the **top half** over its own
-creator's talking head, with his word-captions on the seam. Scene detection gave correct shot
+creator's talking head, with that creator's word-captions on the seam. Scene detection gave correct shot
 boundaries, the extracted clips were at the right timestamps, and every contact sheet looked
 right, because a 6-across tile at 270px cannot resolve a second face and a centre-weighted
 `object-fit:cover` crop lands exactly on the seam. It reached a finished 4K render.
@@ -234,5 +234,5 @@ See `docs/06-delivery.md` in full. The short version:
 - Ship the MP4, the SRT and a paste-ready caption pack. **No hashtags**, current Instagram
   practice: the caption body is the ranking surface.
 - If the script says "comment X and I'll send you Y", the payload `.docx` ships with the first
-  delivery, not when he asks (`tools/deliver/make_cta_doc.py`).
-- Update `creators/<creator>/HISTORY.md` and promote reusable lessons into `playbooks/`.
+  delivery, not when the owner asks (`tools/deliver/make_cta_doc.py`).
+- Update `templates/<creator>/HISTORY.md` and promote reusable lessons into `playbooks/`.

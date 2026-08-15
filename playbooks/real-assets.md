@@ -47,7 +47,7 @@ plan.**
 - **Resolve a named person's identity through an account you have already verified, not through
   the domain that matches their name.** A script named "Emil Kowalski"; `emilkowalski.com` belongs
   to a different person entirely (a Polish marketing founder, photo on the page). The actual
-  design engineer is at `emilkowal.ski`, found via the GitHub API's `blog` field on his verified
+  design engineer is at `emilkowal.ski`, found via the GitHub API's `blog` field on their verified
   account. Screenshotting the obvious domain would have put a stranger's face on screen as the
   subject.
 
@@ -170,7 +170,7 @@ in a source whose scroll **ends at 12.4**.
 
 The client's notes were "need better animations, look so plain here" and, film-wide, "need to add
 the actual screen recordings more in the video, as of now they are very less compared to what i
-expected". **He was counting the ones that move**, and the answer was zero.
+expected". **The client was counting the ones that move**, and the answer was zero.
 
 **Survey the source first, then pick the timestamp.** Sample at 5fps, diff consecutive frames, list
 the windows where motion stays above threshold, choose `ss` from that list, and only then check the
@@ -207,7 +207,7 @@ Product Photoshoot", "the photo I already had".
 
 **When a note flags an in-app screen as wrong, ask whether the app itself changed before treating
 it as a styling fix.** If the owner has a logged-in browser session, drive the live app. Fresh
-screenshots from him work equally well. Verify before fixing.
+screenshots from the owner work equally well. Verify before fixing.
 
 **Scan every screenshot the owner sends before it touches a render.** A photo-picker screenshot
 supplied for compositing included a visible camera roll carrying a Gmail address, a payment and

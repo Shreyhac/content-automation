@@ -1,0 +1,1592 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1080, height=1920" />
+<title>ElevenLabs Vocals — your actual voice (vid42 · card-reel)</title>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<!-- three.js VENDORED LOCALLY (UMD, not ESM): a second CDN request killed the vid35
+     render, and a module script defers past synchronous __timelines registration. -->
+<script src="assets/three.min.js"></script>
+<style>
+  @font-face{font-family:'Clash';font-style:normal;font-weight:600;font-display:block;
+    src:url(assets/fonts/clash-600.woff2) format('woff2');}
+  @font-face{font-family:'Clash';font-style:normal;font-weight:700;font-display:block;
+    src:url(assets/fonts/clash-700.woff2) format('woff2');}
+  @font-face{font-family:'Satoshi';font-style:normal;font-weight:500;font-display:block;
+    src:url(assets/fonts/satoshi-500.woff2) format('woff2');}
+  @font-face{font-family:'Satoshi';font-style:normal;font-weight:700;font-display:block;
+    src:url(assets/fonts/satoshi-700.woff2) format('woff2');}
+  @font-face{font-family:'Satoshi';font-style:normal;font-weight:900;font-display:block;
+    src:url(assets/fonts/satoshi-900.woff2) format('woff2');}
+  @font-face{font-family:'Geist Mono';font-style:normal;font-weight:400 700;font-display:block;
+    src:url(assets/fonts/geist-mono.woff2) format('woff2');}
+  @font-face{font-family:'Instrument Serif';font-style:italic;font-weight:400;font-display:block;
+    src:url(assets/fonts/instrument-serif-italic-400-it.woff2) format('woff2');}
+
+  :root{
+    --void:#04070A; --panel:#0A1013; --panel2:#0F181B; --panel3:#141F22;
+    --text:#F2FBF8; --mute:#A7BCB6; --dim:#86A099;
+    --mint:#8CF5DF; --mint2:#BFFFF1; --teal:#2EC9AF; --mintInk:#04211B;
+    --violet:#7C4DFF; --hot:#FF4D9D;
+    --line:rgba(255,255,255,.09); --line2:rgba(255,255,255,.17);
+    --lineM:rgba(140,245,223,.32); --lineV:rgba(124,77,255,.46);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{width:1080px;height:1920px;overflow:hidden;background:#000;}
+  #stage{position:relative;width:1080px;height:1920px;background:var(--void);
+    font-family:'Satoshi',system-ui,sans-serif;}
+  .tnum{font-variant-numeric:tabular-nums;}
+
+  /* ---------- ambient ground ---------- */
+  #amb{position:absolute;left:0;top:0;width:1080px;height:1920px;z-index:2;overflow:hidden;}
+  #ambV{position:absolute;left:-300px;top:-420px;width:1500px;height:1500px;
+    background:radial-gradient(46% 46% at 50% 50%, rgba(124,77,255,.17) 0%, rgba(124,77,255,.06) 45%, rgba(0,0,0,0) 72%);}
+  #ambM{position:absolute;left:-160px;top:920px;width:1500px;height:1300px;
+    background:radial-gradient(48% 48% at 50% 50%, rgba(46,201,175,.10) 0%, rgba(46,201,175,.03) 46%, rgba(0,0,0,0) 74%);}
+  #ambV2{position:absolute;left:520px;top:520px;width:900px;height:900px;
+    background:radial-gradient(50% 50% at 50% 50%, rgba(124,77,255,.09) 0%, rgba(124,77,255,0) 70%);}
+  #warp{position:absolute;left:0;top:0;width:1080px;height:1920px;opacity:.62;}
+
+  /* ================= FACE — vid39 floating-card format =================
+     Card top 960, NOT hf39's 1020: this head is ~975px at native scale vs that
+     client's ~600px, so 1020 sliced his hair off. At 960 the crown lands y987 and
+     the chin y1540 (measured) — whole head in, clear of the y1600 IG band.
+     Every clip-path state carries 4 values + `round` or GSAP mispairs them. */
+  #faceScene{position:absolute;left:0;top:0;width:1080px;height:1920px;z-index:16;
+    clip-path:inset(0.1px 0.2px 0.3px 0.4px round 0.5px);will-change:clip-path;}
+  #faceGround{position:absolute;left:0;top:0;width:1080px;height:1920px;background:var(--void);}
+  #faceVid{position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover;
+    transform-origin:50% 0%;}
+  /* NO full-width bottom slab — the owner called that "very weird". Just a soft
+     bottom vignette for caption legibility; each intro chip carries its own ground. */
+  #faceGrade{position:absolute;left:0;top:1180px;width:1080px;height:740px;z-index:17;
+    background:radial-gradient(96% 100% at 50% 100%, rgba(4,7,10,.74) 0%,
+      rgba(4,7,10,.34) 52%, rgba(4,7,10,0) 88%);}
+  #faceVig{position:absolute;left:0;top:0;width:1080px;height:1920px;z-index:17;
+    background:radial-gradient(76% 58% at 50% 38%, rgba(0,0,0,0) 42%, rgba(4,7,10,.44) 100%);}
+  #faceCardFx{position:absolute;left:214px;top:958px;width:652px;height:924px;z-index:18;
+    border-radius:34px;border:2px solid rgba(140,245,223,.34);opacity:0;
+    box-shadow:0 34px 90px rgba(0,0,0,.55);}
+
+  /* ---------- stock b-roll ground (Pexels, graded; see vid42/stock/SOURCES.md) ----
+     Sits above the ambient wash and BELOW every designed panel, so the machine
+     graphics stay crisp while the scene reads as "someone recording vocals". */
+  .bgv{position:absolute;left:0;top:0;width:1080px;height:1920px;z-index:4;
+    object-fit:cover;filter:blur(7px) brightness(.44) saturate(.9);opacity:.52;
+    will-change:transform;}
+  /* the library plate is shot against a white wall — it needs its own exposure or
+     it washes out the eyebrow and chips sitting on top of it. */
+  #bgLib{filter:blur(8px) brightness(.26) saturate(.8);opacity:.42;}
+
+  /* ---------- WebGL voiceprint (three.js), inside its DOM bezels ---------- */
+  #glWrap{position:absolute;left:0;top:0;width:1080px;height:1920px;z-index:19;}
+  #gl{position:absolute;left:0;top:0;width:1080px;height:1920px;}
+
+  /* ---------- camera rig ---------- */
+  .scene{position:absolute;left:0;top:0;width:1080px;height:1920px;z-index:10;overflow:hidden;}
+  .rig{position:absolute;left:0;top:0;width:1080px;height:1920px;
+    transform-origin:50% 44%;will-change:transform,filter;}
+  .eyebrow{position:absolute;font-family:'Geist Mono',ui-monospace,monospace;font-size:22px;
+    font-weight:500;letter-spacing:6px;color:var(--dim);text-transform:uppercase;}
+  .bloom{position:absolute;border-radius:50%;opacity:0;
+    background:radial-gradient(50% 50% at 50% 50%, rgba(140,245,223,.34) 0%, rgba(140,245,223,.10) 46%, rgba(140,245,223,0) 72%);}
+  .bloomV{background:radial-gradient(50% 50% at 50% 50%, rgba(124,77,255,.44) 0%, rgba(124,77,255,.12) 46%, rgba(124,77,255,0) 72%);}
+
+  /* ================= S0 · FACE INTRO (0 → 1.42) =================
+     1.4s only, per the owner. No slab: corner brackets, a scan sweep and one
+     self-grounded chip. */
+  #hkBrk{position:absolute;left:0;top:0;width:1080px;height:1920px;z-index:22;}
+  #hkScan{position:absolute;left:0;top:0;width:1080px;height:5px;z-index:22;
+    background:linear-gradient(90deg,rgba(140,245,223,0),rgba(191,255,241,.9),rgba(140,245,223,0));
+    box-shadow:0 0 46px 12px rgba(140,245,223,.36);}
+  #hkChip{position:absolute;left:80px;top:1136px;height:82px;z-index:22;border-radius:41px;
+    background:rgba(4,7,10,.90);border:1px solid var(--lineM);display:flex;align-items:center;
+    gap:16px;padding:0 32px;}
+  #hkChipDot{width:16px;height:16px;border-radius:50%;background:var(--mint);flex:none;}
+  #hkChipTx{font-family:'Geist Mono',ui-monospace,monospace;font-size:25px;letter-spacing:5px;
+    color:var(--mint);text-transform:uppercase;white-space:nowrap;}
+
+  /* ================= S1 · X POST (1.42 → 3.28) — rebuilt as native UI =====
+     Screenshots of posts read as "vague" on this channel. Real data from status
+     2079960975524913317, rebuilt at reel type sizes. */
+  #xEye{left:120px;top:330px;}
+  #xCard{position:absolute;left:120px;top:380px;width:840px;border-radius:26px;
+    background:#000;border:1px solid #2F3336;box-shadow:0 30px 92px rgba(0,0,0,.62);
+    padding:28px 30px 22px;font-family:'Satoshi',sans-serif;}
+  .xhead{display:flex;align-items:center;gap:18px;}
+  .xav{width:78px;height:78px;border-radius:18px;background:#F3F1EC;overflow:hidden;flex:none;}
+  .xav img{display:block;width:78px;height:78px;}
+  .xnameCol{flex:1;min-width:0;}
+  .xnameRow{display:flex;align-items:center;gap:9px;}
+  .xname{font-size:34px;font-weight:900;color:#E7E9EA;letter-spacing:-.01em;}
+  .xbadge{width:30px;height:30px;flex:none;}
+  .xhandle{font-size:26px;font-weight:500;color:#8B9197;margin-top:3px;}
+  .xdots{color:#8B9197;font-size:34px;font-weight:700;letter-spacing:2px;align-self:flex-start;}
+  .xtext{margin-top:18px;font-size:31px;line-height:42px;font-weight:500;color:#E7E9EA;}
+  .xtext + .xtext{margin-top:12px;}
+  #xMedia{position:relative;margin-top:18px;width:780px;height:366px;border-radius:18px;
+    overflow:hidden;background:#040709;border:1px solid #2F3336;}
+  #xMediaGlow{position:absolute;left:120px;top:-170px;width:540px;height:540px;border-radius:50%;
+    background:radial-gradient(50% 50% at 50% 50%, rgba(46,201,175,.20) 0%, rgba(46,201,175,0) 70%);}
+  #xGrid{position:absolute;left:0;top:0;width:780px;height:366px;opacity:.6;}
+  #xPill{position:absolute;left:180px;top:126px;width:420px;height:114px;border-radius:57px;
+    background:rgba(16,22,23,.94);border:1px solid rgba(255,255,255,.14);
+    display:flex;align-items:center;gap:20px;padding:0 26px;}
+  #xOrb{width:78px;height:78px;border-radius:50%;flex:none;
+    background:radial-gradient(circle at 34% 28%, #BFFFF1 0%, #2EC9AF 52%, #0E6B58 100%);}
+  #xPillName{font-size:32px;font-weight:700;color:#FFFFFF;line-height:36px;}
+  #xPillSub{font-size:23px;font-weight:500;color:#A6B8B3;line-height:27px;margin-top:2px;}
+  #xDur{position:absolute;left:20px;bottom:16px;background:rgba(0,0,0,.78);color:#fff;
+    font-family:'Geist Mono',ui-monospace,monospace;font-size:21px;padding:6px 14px;
+    border-radius:7px;}
+  .xmeta{margin-top:18px;font-size:25px;color:#8B9197;}
+  .xmeta b{color:#E7E9EA;font-weight:700;}
+  .xdivide{margin-top:16px;height:1px;background:#2F3336;}
+  .xrow{margin-top:12px;display:flex;align-items:center;justify-content:space-between;
+    padding:0 6px;}
+  .xact{display:flex;align-items:center;gap:10px;color:#8B9197;font-size:25px;}
+  .xact svg{width:34px;height:34px;fill:#8B9197;}
+  #xLab{position:absolute;left:0;top:1318px;width:1080px;text-align:center;
+    font-family:'Geist Mono',ui-monospace,monospace;font-size:23px;letter-spacing:5px;
+    color:var(--dim);text-transform:uppercase;}
+
+  /* ================= S2 · VOCALS + INTAKE (3.28 → 6.60, CARD) ============ */
+  #s2Eye{left:80px;top:190px;}
+  #vocMark{position:absolute;left:78px;top:220px;font-family:'Clash',sans-serif;
+    font-weight:700;font-size:132px;line-height:136px;letter-spacing:-.04em;color:var(--mint);}
+  #vocSub{position:absolute;left:84px;top:376px;font-family:'Geist Mono',ui-monospace,monospace;
+    font-size:22px;letter-spacing:5px;color:var(--mute);text-transform:uppercase;}
+  #plate{position:absolute;left:80px;top:424px;width:920px;height:260px;border-radius:26px;
+    background:var(--panel);border:1px solid var(--line2);}
+  #plateLip{position:absolute;left:80px;top:424px;width:920px;height:6px;border-radius:6px;
+    background:linear-gradient(90deg,rgba(140,245,223,0),rgba(140,245,223,.55),rgba(140,245,223,0));}
+  .tk{position:absolute;top:460px;width:252px;height:166px;border-radius:20px;
+    background:var(--panel2);border:1px solid var(--line2);overflow:hidden;}
+  #tk1{left:114px;} #tk2{left:414px;} #tk3{left:714px;}
+  .tkBars{position:absolute;left:22px;top:30px;width:208px;height:72px;display:flex;
+    align-items:center;gap:6px;}
+  .tkBars b{display:block;width:8px;border-radius:4px;background:var(--teal);opacity:.9;}
+  .tkName{position:absolute;left:22px;top:120px;font-family:'Geist Mono',ui-monospace,monospace;
+    font-size:18px;color:var(--mute);}
+  #plateLab{position:absolute;left:112px;top:646px;font-family:'Geist Mono',ui-monospace,monospace;
+    font-size:20px;letter-spacing:3px;color:var(--dim);text-transform:uppercase;}
+  #plateCount{position:absolute;left:0;top:642px;width:968px;text-align:right;
+    font-family:'Geist Mono',ui-monospace,monospace;font-size:22px;letter-spacing:3px;
+    color:var(--mint);}
+  #v2Chip{position:absolute;left:300px;top:706px;width:480px;height:80px;border-radius:40px;
+    background:rgba(10,16,19,.96);border:1px solid var(--lineM);display:flex;align-items:center;
+    justify-content:center;gap:14px;}
+  #v2Dot{width:18px;height:18px;border-radius:50%;background:var(--mint);}
+  #v2Tx{font-family:'Geist Mono',ui-monospace,monospace;font-size:26px;letter-spacing:5px;
+    color:var(--mint);text-transform:uppercase;}
+  #v2Bloom{left:400px;top:618px;width:280px;height:280px;}
+
+  /* ================= S3 · ANALYZER (6.60 → 8.82, full) ================== */
+  #s3Eye{left:80px;top:236px;}
+  #anaPanel{position:absolute;left:80px;top:292px;width:920px;height:640px;border-radius:30px;
+    background:var(--panel);border:1px solid var(--line2);overflow:hidden;}
+  #anaHead{position:absolute;left:0;top:0;width:920px;height:74px;
+    border-bottom:1px solid var(--line);}
+  #anaTitle{position:absolute;left:30px;top:24px;font-family:'Geist Mono',ui-monospace,monospace;
+    font-size:22px;letter-spacing:4px;color:var(--mute);text-transform:uppercase;}
+  #anaState{position:absolute;left:0;top:24px;width:890px;text-align:right;
+    font-family:'Geist Mono',ui-monospace,monospace;font-size:22px;letter-spacing:3px;
+    color:var(--mint);}
+  #anaScan{position:absolute;left:0;top:74px;width:4px;height:566px;background:var(--mint);
+    box-shadow:0 0 42px 12px rgba(140,245,223,.42);}
+  .col{position:absolute;top:126px;width:250px;height:430px;border-radius:20px;
+    background:var(--panel2);border:1px solid var(--line);overflow:hidden;}
+  #col1{left:34px;} #col2{left:335px;} #col3{left:636px;}
+  .colFill{position:absolute;left:0;bottom:0;width:250px;height:430px;
+    background:linear-gradient(0deg, rgba(140,245,223,.55) 0%, rgba(140,245,223,.14) 100%);
+    transform-origin:50% 100%;}
+  .colVal{position:absolute;left:0;top:22px;width:250px;text-align:center;
+    font-family:'Geist Mono',ui-monospace,monospace;font-size:44px;letter-spacing:1px;
+    color:var(--text);}
+  .colLab{position:absolute;top:576px;width:250px;text-align:center;
+    font-family:'Geist Mono',ui-monospace,monospace;font-size:21px;letter-spacing:4px;
+    color:var(--dim);text-transform:uppercase;}
+  #lab1{left:114px;} #lab2{left:415px;} #lab3{left:716px;}
+  #outRing{position:absolute;left:390px;top:1010px;width:300px;height:300px;border-radius:50%;
+    border:3px solid rgba(140,245,223,.58);}
+  #outTicks{position:absolute;left:390px;top:1010px;width:300px;height:300px;}
+  #outLab{position:absolute;left:0;top:1352px;width:1080px;text-align:center;
+    font-family:'Geist Mono',ui-monospace,monospace;font-size:24px;letter-spacing:6px;
+    color:var(--mint);text-transform:uppercase;}
+  #outBloom{left:340px;top:960px;width:400px;height:400px;}
+
+  /* ================= S4 · THE PRESS (8.82 → 10.88, CARD) ================ */
+  #s4Eye{left:80px;top:190px;}
+  #press{position:absolute;left:0;top:236px;width:300px;height:250px;}
+  #pressBody{position:absolute;left:30px;top:0;width:240px;height:180px;border-radius:22px;
+    background:var(--panel3);border:1px solid var(--lineM);}
+  #pressSig{position:absolute;left:98px;top:48px;width:104px;height:104px;border-radius:50%;
+    background:radial-gradient(circle at 34% 28%, #E6FFF9 0%, #8CF5DF 46%, #17796A 100%);}
+  #pressStem{position:absolute;left:132px;top:180px;width:36px;height:70px;background:var(--panel3);
+    border-left:1px solid var(--lineM);border-right:1px solid var(--lineM);}
+  .sg{position:absolute;top:520px;width:228px;height:290px;border-radius:24px;
+    background:var(--panel);border:1px solid var(--line2);overflow:hidden;}
+  #sg1{left:36px;} #sg2{left:296px;} #sg3{left:556px;} #sg4{left:816px;}
+  .sgArt{position:absolute;left:22px;top:22px;width:184px;height:146px;border-radius:14px;
+    background:linear-gradient(140deg,#16262A 0%,#0D1719 100%);border:1px solid var(--line);
+    overflow:hidden;}
+  .sgWave{position:absolute;left:18px;top:50px;width:148px;height:46px;display:flex;
+    align-items:center;gap:5px;}
+  .sgWave b{display:block;width:8px;border-radius:4px;background:var(--teal);opacity:.75;}
+  .sgName{position:absolute;left:22px;top:186px;font-family:'Geist Mono',ui-monospace,monospace;
+    font-size:19px;letter-spacing:1px;color:var(--dim);}
+  .sgBadge{position:absolute;left:150px;top:218px;width:56px;height:56px;border-radius:50%;
+    background:radial-gradient(circle at 34% 28%, #E6FFF9 0%, #8CF5DF 46%, #17796A 100%);}
+  #pressBloom{left:0px;top:376px;width:300px;height:300px;}
+
+  /* ================= S5 · ONE-SHOT (10.88 → 14.50, full) ================= */
+  #s5Eye{left:80px;top:262px;}
+  #lane{position:absolute;left:60px;top:330px;width:960px;height:330px;border-radius:26px;
+    background:var(--panel);border:1px solid var(--line2);overflow:hidden;}
+  #laneGrid{position:absolute;left:0;top:0;width:960px;height:330px;opacity:.5;}
+  #osBars{position:absolute;left:38px;top:52px;width:884px;height:226px;display:flex;
+    align-items:center;gap:8px;}
+  #osBars b{display:block;width:13px;border-radius:7px;background:var(--mint);
+    transform-origin:50% 50%;}
+  #osBars b.seed{background:var(--mint2);}
+  #laneHead{position:absolute;left:38px;top:36px;width:5px;height:258px;background:var(--mint2);
+    box-shadow:0 0 34px 10px rgba(191,255,241,.5);}
+  #lyricRow{position:absolute;left:60px;top:716px;width:960px;height:130px;border-radius:22px;
+    background:var(--panel2);border:1px solid var(--line);display:flex;align-items:center;
+    padding:0 32px;gap:24px;}
+  #lyricLab{font-family:'Geist Mono',ui-monospace,monospace;font-size:21px;letter-spacing:3px;
+    color:var(--dim);text-transform:uppercase;}
+  #lyricVal{flex:1;font-family:'Instrument Serif',serif;font-style:italic;font-size:52px;
+    color:var(--text);}
+  #lyricChip{padding:12px 26px;border-radius:999px;border:1px solid var(--lineM);
+    font-family:'Geist Mono',ui-monospace,monospace;font-size:20px;letter-spacing:3px;
+    color:var(--mint);text-transform:uppercase;}
+  #durLab{position:absolute;left:66px;top:912px;font-family:'Geist Mono',ui-monospace,monospace;
+    font-size:22px;letter-spacing:4px;color:var(--dim);text-transform:uppercase;}
+  #durVal{position:absolute;left:60px;top:944px;width:960px;font-family:'Clash',sans-serif;
+    font-weight:700;font-size:172px;line-height:172px;letter-spacing:-.03em;color:var(--mint);
+    font-variant-numeric:tabular-nums;}
+  #durUnit{position:absolute;left:600px;top:1020px;font-family:'Instrument Serif',serif;
+    font-style:italic;font-size:76px;color:var(--mute);}
+  #osBloom{left:280px;top:250px;width:520px;height:520px;}
+
+  /* ================= S6 · LIBRARY (14.50 → 17.20, full) ================ */
+  #s6Eye{left:80px;top:210px;}
+  #cloneChip{position:absolute;left:80px;top:262px;width:436px;height:96px;border-radius:20px;
+    background:var(--panel);border:1px solid var(--line2);display:flex;align-items:center;
+    padding:0 26px;gap:16px;}
+  #cloneOrb{width:48px;height:48px;border-radius:50%;flex:none;
+    background:radial-gradient(circle at 34% 28%, #E6FFF9 0%, #8CF5DF 46%, #17796A 100%);}
+  #cloneTx{font-family:'Geist Mono',ui-monospace,monospace;font-size:21px;letter-spacing:2px;
+    color:var(--mute);text-transform:uppercase;}
+  #cloneStrike{position:absolute;left:96px;top:308px;width:404px;height:4px;border-radius:2px;
+    background:var(--hot);transform-origin:0 50%;}
+  #orTx{position:absolute;left:540px;top:288px;font-family:'Instrument Serif',serif;
+    font-style:italic;font-size:46px;color:var(--dim);}
+  #pickChip{position:absolute;left:626px;top:262px;width:374px;height:96px;border-radius:20px;
+    background:rgba(10,16,19,.96);border:1px solid var(--lineM);display:flex;align-items:center;
+    justify-content:center;}
+  #pickTx{font-family:'Geist Mono',ui-monospace,monospace;font-size:21px;letter-spacing:3px;
+    color:var(--mint);text-transform:uppercase;}
+  #chips{position:absolute;left:80px;top:400px;width:920px;display:flex;gap:14px;flex-wrap:nowrap;}
+  .gchip{border:1px solid var(--line2);color:var(--mute);font-size:24px;font-weight:500;
+    padding:12px 24px;border-radius:999px;white-space:nowrap;}
+  .vc{position:absolute;width:440px;height:170px;border-radius:22px;background:var(--panel);
+    border:1px solid var(--line);display:flex;align-items:center;gap:22px;padding:0 26px;}
+  .vcOrb{width:84px;height:84px;border-radius:50%;flex:none;}
+  .vcName{font-family:'Satoshi',sans-serif;font-weight:700;font-size:42px;color:var(--text);
+    letter-spacing:-.01em;}
+  .vcDesc{font-family:'Satoshi',sans-serif;font-weight:500;font-size:24px;color:var(--dim);
+    margin-top:6px;}
+  #vc1{left:80px;top:520px;} #vc2{left:560px;top:520px;}
+  #vc3{left:80px;top:710px;} #vc4{left:560px;top:710px;}
+  #vc5{left:80px;top:900px;} #vc6{left:560px;top:900px;}
+  #vcAurora{position:absolute;left:80px;top:1096px;width:920px;height:180px;border-radius:24px;
+    background:var(--panel2);border:1px solid var(--line2);display:flex;align-items:center;
+    gap:26px;padding:0 32px;}
+  #auOrb{width:100px;height:100px;border-radius:50%;flex:none;
+    background:radial-gradient(circle at 32% 26%, #DFFFF7 0%, #6FE9D2 40%, #14705F 100%);}
+  #auName{font-family:'Satoshi',sans-serif;font-weight:900;font-size:52px;color:var(--text);
+    letter-spacing:-.01em;}
+  #auDesc{font-family:'Instrument Serif',serif;font-style:italic;font-size:36px;color:var(--mint);
+    margin-top:4px;}
+  #auTag{margin-left:auto;font-family:'Geist Mono',ui-monospace,monospace;font-size:20px;
+    letter-spacing:3px;color:var(--mint);text-transform:uppercase;}
+  #selRing{position:absolute;left:74px;top:514px;width:452px;height:182px;border-radius:24px;
+    border:3px solid var(--mint);}
+  #auBloom{left:340px;top:1046px;width:400px;height:280px;}
+
+  /* ================= S7 · STYLES (17.20 → 18.48, CARD) ================= */
+  #s7Eye{position:absolute;left:0;top:300px;width:1080px;text-align:center;
+    font-family:'Geist Mono',ui-monospace,monospace;font-size:24px;letter-spacing:8px;
+    color:var(--dim);text-transform:uppercase;}
+  #stylesT{position:absolute;left:0;top:350px;width:1080px;text-align:center;
+    font-family:'Clash',sans-serif;font-weight:700;font-size:196px;line-height:196px;
+    letter-spacing:-.05em;color:var(--text);}
+  #stylesBloom{left:270px;top:306px;width:540px;height:540px;}
+  #stTiles{position:absolute;left:186px;top:600px;width:708px;display:flex;gap:22px;}
+  .stT{width:158px;height:158px;border-radius:20px;border:1px solid var(--line2);}
+  #stT1{background:radial-gradient(120% 120% at 24% 18%, #C6FF4D 0%, #4FD08A 46%, #0B3C36 100%);}
+  #stT2{background:radial-gradient(120% 120% at 24% 18%, #FF6FB3 0%, #A03BD8 48%, #2A0F4A 100%);}
+  #stT3{background:radial-gradient(120% 120% at 24% 18%, #8CF5DF 0%, #2EC9AF 46%, #07322C 100%);}
+  #stT4{background:radial-gradient(120% 120% at 24% 18%, #FFB347 0%, #E5533B 48%, #3E1206 100%);}
+
+  /* ================= S8 · FINGERPRINT (18.48 → 24.60, full) ============ */
+  #s8Eye{left:80px;top:206px;}
+  #upRoute{position:absolute;left:80px;top:250px;width:440px;height:330px;border-radius:24px;
+    background:var(--panel);border:1px solid var(--line2);}
+  #preRoute{position:absolute;left:560px;top:250px;width:440px;height:330px;border-radius:24px;
+    background:var(--panel);border:1px solid var(--line2);}
+  .rtLab{position:absolute;width:440px;text-align:center;
+    font-family:'Geist Mono',ui-monospace,monospace;font-size:20px;letter-spacing:3px;
+    color:var(--dim);text-transform:uppercase;}
+  #rtLab1{left:80px;top:272px;} #rtLab2{left:560px;top:272px;}
+  .miniTk{position:absolute;top:318px;width:150px;height:96px;border-radius:14px;
+    background:var(--panel2);border:1px solid var(--line);}
+  .miniBars{position:absolute;left:16px;top:30px;width:118px;height:36px;display:flex;
+    align-items:center;gap:5px;}
+  .miniBars b{display:block;width:7px;border-radius:4px;background:var(--teal);}
+  #mt1{left:124px;} #mt2{left:300px;}
+  #dial{position:absolute;left:190px;top:430px;width:220px;height:120px;}
+  #dialLab{position:absolute;left:80px;top:548px;width:440px;text-align:center;
+    font-family:'Geist Mono',ui-monospace,monospace;font-size:19px;letter-spacing:3px;
+    color:var(--mint);text-transform:uppercase;}
+  .preT{position:absolute;top:330px;width:118px;height:118px;border-radius:18px;
+    border:1px solid var(--line2);}
+  #pr1{left:598px;background:radial-gradient(120% 120% at 24% 18%, #C6FF4D 0%, #4FD08A 46%, #0B3C36 100%);}
+  #pr2{left:736px;background:radial-gradient(120% 120% at 24% 18%, #FF6FB3 0%, #A03BD8 48%, #2A0F4A 100%);}
+  #pr3{left:874px;background:radial-gradient(120% 120% at 24% 18%, #FFB347 0%, #E5533B 48%, #3E1206 100%);}
+  #preLab{position:absolute;left:560px;top:490px;width:440px;text-align:center;
+    font-family:'Geist Mono',ui-monospace,monospace;font-size:19px;letter-spacing:3px;
+    color:var(--mute);text-transform:uppercase;}
+  #conn{position:absolute;left:0;top:580px;width:1080px;height:130px;}
+  #puck{position:absolute;left:436px;top:700px;width:208px;height:208px;border-radius:50%;
+    background:rgba(15,24,27,.35);border:2px solid var(--mint);}
+  #puckTicks{position:absolute;left:436px;top:700px;width:208px;height:208px;}
+  #puckLab{position:absolute;left:290px;top:926px;width:500px;text-align:center;
+    font-family:'Geist Mono',ui-monospace,monospace;font-size:21px;letter-spacing:4px;
+    color:var(--mint);text-transform:uppercase;}
+  #puckBloom{left:396px;top:660px;width:288px;height:288px;}
+  #trkBar{position:absolute;left:60px;top:990px;width:960px;height:184px;border-radius:22px;
+    background:var(--panel);border:1px solid var(--line2);overflow:hidden;}
+  #trkInner{position:absolute;left:0;top:0;width:960px;height:184px;}
+  .seg{position:absolute;top:0;width:192px;height:184px;border-right:1px solid rgba(255,255,255,.07);}
+  .segBars{position:absolute;left:18px;top:44px;width:156px;height:96px;display:flex;
+    align-items:center;gap:5px;}
+  .segBars b{display:block;width:8px;border-radius:4px;background:var(--teal);}
+  .segMark{position:absolute;left:78px;top:136px;width:36px;height:36px;border-radius:50%;
+    border:2px solid var(--mint);}
+  #ruleWrap{position:absolute;left:60px;top:1206px;width:960px;height:70px;}
+  #ruleLine{position:absolute;left:0;top:16px;width:960px;height:3px;background:var(--mint);
+    transform-origin:0 50%;}
+  #ruleLab{position:absolute;left:0;top:30px;width:960px;text-align:center;
+    font-family:'Geist Mono',ui-monospace,monospace;font-size:21px;letter-spacing:5px;
+    color:var(--mint);text-transform:uppercase;}
+
+  /* ================= S9 · COMPLIANCE GATE (24.60 → 28.20, full) ======== */
+  #s9Eye{left:80px;top:236px;}
+  .up{position:absolute;top:300px;width:228px;height:170px;border-radius:20px;
+    background:var(--panel2);border:1px solid var(--line2);}
+  #up1{left:36px;} #up2{left:296px;} #up3{left:556px;} #up4{left:816px;}
+  .upBars{position:absolute;left:24px;top:34px;width:180px;height:56px;display:flex;
+    align-items:center;gap:6px;}
+  .upBars b{display:block;width:8px;border-radius:4px;background:var(--teal);}
+  .upName{position:absolute;left:24px;top:116px;font-family:'Geist Mono',ui-monospace,monospace;
+    font-size:20px;letter-spacing:1px;color:var(--mute);}
+  #flow{position:absolute;left:0;top:474px;width:1080px;height:110px;}
+  #gateLab{position:absolute;left:0;top:544px;width:1080px;text-align:center;
+    font-family:'Geist Mono',ui-monospace,monospace;font-size:22px;letter-spacing:5px;
+    color:var(--dim);text-transform:uppercase;}
+  #gate{position:absolute;left:60px;top:590px;width:960px;height:200px;border-radius:22px;
+    border:2px solid var(--lineV);background:rgba(16,12,34,.55);overflow:hidden;}
+  #gateMesh{position:absolute;left:0;top:0;width:956px;height:196px;}
+  #gateBeam{position:absolute;left:0;top:0;width:8px;height:196px;background:var(--violet);
+    box-shadow:0 0 52px 16px rgba(124,77,255,.55);}
+  #shutT{position:absolute;left:62px;top:592px;width:956px;height:100px;
+    background:rgba(24,16,46,.97);border-bottom:3px solid var(--hot);transform-origin:50% 0%;}
+  #shutB{position:absolute;left:62px;top:692px;width:956px;height:96px;
+    background:rgba(24,16,46,.97);border-top:3px solid var(--hot);transform-origin:50% 100%;}
+  .vd{position:absolute;top:832px;width:228px;height:96px;border-radius:16px;
+    background:var(--panel);border:1px solid var(--lineM);display:flex;align-items:center;
+    justify-content:center;gap:12px;}
+  #vd1{left:36px;} #vd2{left:296px;} #vd3{left:556px;} #vd4{left:816px;}
+  .vd.held{border-color:rgba(255,77,157,.5);}
+  .vdDot{width:14px;height:14px;border-radius:50%;background:var(--mint);}
+  .vd.held .vdDot{background:var(--hot);}
+  .vdTx{font-family:'Geist Mono',ui-monospace,monospace;font-size:21px;letter-spacing:3px;
+    color:var(--mint);text-transform:uppercase;}
+  .vd.held .vdTx{color:var(--hot);}
+  #coreBox{position:absolute;left:290px;top:990px;width:500px;height:230px;border-radius:24px;
+    background:var(--panel2);border:1px solid var(--lineM);display:flex;align-items:center;
+    gap:28px;padding:0 40px;}
+  #coreOrb{width:120px;height:120px;border-radius:50%;flex:none;
+    background:radial-gradient(circle at 34% 28%, #E6FFF9 0%, #8CF5DF 46%, #17796A 100%);}
+  #coreName{font-family:'Satoshi',sans-serif;font-weight:900;font-size:52px;color:var(--text);}
+  #coreSub{font-family:'Geist Mono',ui-monospace,monospace;font-size:20px;letter-spacing:3px;
+    color:var(--mint);text-transform:uppercase;margin-top:8px;}
+  #gateBloom{left:390px;top:540px;width:300px;height:300px;}
+
+  /* ================= S10 · PROOF · BROWSER (28.20 → 32.58, full) ======== */
+  #s10Eye{left:80px;top:216px;}
+  #bwin{position:absolute;left:90px;top:266px;width:900px;border-radius:20px;background:#0D1113;
+    border:1px solid #2F3336;box-shadow:0 32px 96px rgba(0,0,0,.62);overflow:hidden;}
+  #bbar{height:70px;display:flex;align-items:center;padding:0 24px;gap:11px;
+    background:#161B1E;border-bottom:1px solid #22282B;}
+  .bdot{width:16px;height:16px;border-radius:50%;flex:none;}
+  .bdot.r{background:#FF5F57;} .bdot.y{background:#FEBC2E;} .bdot.g{background:#28C840;}
+  #burl{margin:0 auto;display:flex;align-items:center;gap:11px;background:#0A0E10;
+    border:1px solid #22282B;border-radius:11px;height:44px;padding:0 24px;
+    font-family:'Geist Mono',ui-monospace,monospace;font-size:23px;color:#C6D6D1;}
+  #burl svg{width:17px;height:17px;fill:#86A099;flex:none;}
+  #bspace{width:46px;flex:none;}
+  #bbody{position:relative;height:820px;overflow:hidden;background:#05080A;}
+  #bwHome{position:absolute;left:-10px;top:0;display:block;width:1100px;}
+  #bwCreative{position:absolute;left:-40px;top:150px;display:block;width:1160px;}
+  #bCaret{position:absolute;left:0;top:0;width:3px;height:30px;background:var(--mint);}
+  #liveChip{position:absolute;left:340px;top:1220px;width:400px;height:80px;border-radius:40px;
+    background:rgba(10,16,19,.96);border:1px solid var(--lineM);display:flex;align-items:center;
+    justify-content:center;gap:14px;}
+  #liveDot{width:16px;height:16px;border-radius:50%;background:var(--mint);}
+  #liveTx{font-family:'Geist Mono',ui-monospace,monospace;font-size:23px;letter-spacing:5px;
+    color:var(--mint);text-transform:uppercase;}
+
+  /* ================= S11 · CTA (32.58 → 35.10, CARD) =================== */
+  #ctaFollow{position:absolute;left:290px;top:200px;width:500px;height:78px;border-radius:39px;
+    background:rgba(10,16,19,.94);border:1px solid var(--line2);display:flex;align-items:center;
+    justify-content:center;gap:12px;}
+  #ctaFollowTx{font-family:'Geist Mono',ui-monospace,monospace;font-size:21px;letter-spacing:3px;
+    color:var(--mute);text-transform:uppercase;}
+  #ctaPill{position:absolute;left:70px;top:330px;width:940px;height:210px;border-radius:44px;
+    background:var(--mint);display:flex;align-items:center;justify-content:center;}
+  #ctaTx{font-family:'Clash',sans-serif;font-weight:700;font-size:80px;letter-spacing:-.03em;
+    color:var(--mintInk);line-height:84px;white-space:nowrap;}
+  #ctaTx .ch{display:inline-block;}
+  #ctaMark{position:absolute;left:0;top:590px;width:1080px;text-align:center;
+    font-family:'Geist Mono',ui-monospace,monospace;font-size:23px;letter-spacing:7px;
+    color:var(--dim);text-transform:uppercase;}
+  #ctaBloom{left:240px;top:280px;width:600px;height:400px;}
+
+  /* ===== captions ===== */
+  .cap{position:absolute;left:60px;width:960px;text-align:center;z-index:40;
+    font-family:'Satoshi',sans-serif;font-weight:900;font-size:50px;
+    letter-spacing:-.02em;color:#fff;line-height:60px;
+    text-shadow:0 2px 10px rgba(0,0,0,.62), 0 0 3px rgba(0,0,0,.45);
+    top:1452px;}
+  .cap .va{color:var(--mint);}
+  .cap .vs{font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;
+    font-size:58px;color:var(--mint);}
+  .cap.hi{top:858px;}   /* card beats — above the y960 card */
+
+  /* ===== flash + wipes ===== */
+  #flash{position:absolute;left:0;top:0;width:1080px;height:1920px;z-index:60;
+    background:#DFFFF6;opacity:0;}
+  .wipe{position:absolute;left:0;top:0;width:1080px;height:1920px;z-index:70;overflow:hidden;}
+  .wp{position:absolute;left:-520px;top:-200px;width:2120px;height:2320px;}
+  .wpV{background:var(--violet);opacity:.92;}
+  .wpD{background:var(--void);}
+</style>
+</head>
+<body>
+<div id="stage" data-composition-id="root" data-width="1080" data-height="1920"
+     data-start="0" data-duration="35.10">
+
+  <div id="amb" class="clip" data-start="0" data-duration="35.10" data-track-index="0"
+       data-layout-ignore>
+    <div id="ambV"></div><div id="ambM"></div><div id="ambV2"></div>
+    <canvas id="warp" width="540" height="960"></canvas>
+  </div>
+
+  <!-- ============ FACE — one element, two states (vid39 format) ============ -->
+  <div id="faceScene" data-layout-ignore>
+    <div id="faceGround"></div>
+    <video id="faceVid" class="clip" data-start="0" data-duration="35.10" data-media-start="0"
+           data-track-index="1" src="assets/aroll.mp4" muted playsinline></video>
+  </div>
+  <div id="faceVig" data-layout-ignore></div>
+  <div id="faceGrade" data-layout-ignore></div>
+  <div id="faceCardFx" data-layout-ignore></div>
+
+  <video id="bgAna" class="bgv clip" data-start="6.60" data-duration="2.22" data-media-start="0"
+         data-track-index="68" src="assets/broll/stock-ana.mp4" muted playsinline
+         data-layout-ignore></video>
+  <video id="bgOne" class="bgv clip" data-start="10.88" data-duration="3.62" data-media-start="0"
+         data-track-index="69" src="assets/broll/stock-oneshot.mp4" muted playsinline
+         data-layout-ignore></video>
+  <video id="bgLib" class="bgv clip" data-start="14.50" data-duration="2.70" data-media-start="0"
+         data-track-index="70" src="assets/broll/stock-library.mp4" muted playsinline
+         data-layout-ignore></video>
+  <video id="bgGate" class="bgv clip" data-start="24.60" data-duration="3.60" data-media-start="0"
+         data-track-index="71" src="assets/broll/stock-gate.mp4" muted playsinline
+         data-layout-ignore></video>
+
+  <div id="glWrap" class="clip" data-start="8.20" data-duration="16.40" data-track-index="2"
+       data-layout-ignore>
+    <canvas id="gl" width="1080" height="1920"></canvas>
+  </div>
+
+  <!-- ============ S0 · FACE INTRO (0 → 1.42) ============ -->
+  <div id="s0" class="clip" data-start="0" data-duration="1.42" data-track-index="3"
+       data-layout-allow-overflow>
+    <svg id="hkBrk" viewBox="0 0 1080 1920" data-layout-ignore>
+      <g fill="none" stroke="rgba(140,245,223,.75)" stroke-width="5" stroke-linecap="square">
+        <path id="brkTL" d="M64 240 V172 H132"/>
+        <path id="brkTR" d="M948 172 H1016 V240"/>
+        <path id="brkBL" d="M64 1300 V1368 H132"/>
+        <path id="brkBR" d="M948 1368 H1016 V1300"/>
+      </g>
+    </svg>
+    <div id="hkScan" data-layout-ignore></div>
+    <div id="hkChip"><div id="hkChipDot"></div><div id="hkChipTx">ElevenLabs &middot; Jul 22</div></div>
+  </div>
+
+  <!-- ============ S1 · X POST (1.42 → 3.28) ============ -->
+  <div class="scene clip" id="s1" data-start="1.42" data-duration="1.86" data-track-index="4">
+    <div class="rig" data-layout-allow-overflow id="rig1">
+      <div class="eyebrow" id="xEye">The announcement &middot; x.com</div>
+      <div id="xCard" data-layout-allow-occlusion>
+        <div class="xhead">
+          <div class="xav"><img src="assets/el-avatar.png" alt=""></div>
+          <div class="xnameCol">
+            <div class="xnameRow"><span class="xname">ElevenLabs</span>
+              <svg class="xbadge" viewBox="0 0 22 22"><path fill="#D9A511" d="M11 0l2.4 2.1 3.1-.6 1 3 3 1-.6 3.1L22 11l-2.1 2.4.6 3.1-3 1-1 3-3.1-.6L11 22l-2.4-2.1-3.1.6-1-3-3-1 .6-3.1L0 11l2.1-2.4L1.5 5.5l3-1 1-3 3.1.6z"/><path fill="#000" d="M9.6 14.9L6.2 11.5l1.4-1.4 2 2 4.8-4.8 1.4 1.4z"/></svg>
+            </div>
+            <div class="xhandle">@ElevenLabs</div>
+          </div>
+          <div class="xdots">&middot;&middot;&middot;</div>
+        </div>
+        <div class="xtext" id="xT1">Introducing Vocals on ElevenMusic.</div>
+        <div class="xtext" id="xT2">Generate original songs in your own voice or with a voice from our Vocal Library.</div>
+        <div id="xMedia">
+          <div id="xMediaGlow"></div>
+          <svg id="xGrid" viewBox="0 0 780 366">
+            <g fill="none" stroke="rgba(46,201,175,.14)" stroke-width="1">
+              <path d="M0 61 Q390 20 780 61"/><path d="M0 122 Q390 94 780 122"/>
+              <path d="M0 183 Q390 171 780 183"/><path d="M0 244 Q390 266 780 244"/>
+              <path d="M0 305 Q390 342 780 305"/>
+              <path d="M108 0 Q86 183 108 366"/><path d="M258 0 Q245 183 258 366"/>
+              <path d="M390 0 Q390 183 390 366"/><path d="M522 0 Q535 183 522 366"/>
+              <path d="M672 0 Q694 183 672 366"/>
+            </g>
+          </svg>
+          <div id="xPill">
+            <div id="xOrb"></div>
+            <div><div id="xPillName">Aurora</div><div id="xPillSub">Ethereal pop soprano</div></div>
+          </div>
+          <div id="xDur">0:34</div>
+        </div>
+        <div class="xmeta">4:05 PM &middot; Jul 22, 2026 &middot; <b id="xViews" class="tnum">67.8K</b> Views</div>
+        <div class="xdivide"></div>
+        <div class="xrow">
+          <div class="xact"><svg viewBox="0 0 24 24"><path d="M1.75 12C1.75 6.34 6.34 1.75 12 1.75S22.25 6.34 22.25 12 17.66 22.25 12 22.25c-1.62 0-3.16-.38-4.52-1.05l-4.3 1.03 1.16-4.04A10.2 10.2 0 0 1 1.75 12zM12 3.75A8.25 8.25 0 0 0 3.75 12c0 1.6.45 3.08 1.24 4.34l.23.37-.68 2.36 2.5-.6.34.18A8.25 8.25 0 1 0 12 3.75z"/></svg><span>25</span></div>
+          <div class="xact"><svg viewBox="0 0 24 24"><path d="M4.75 3.79l4.6 4.6-1.42 1.42-2.18-2.19V16a1 1 0 0 0 1 1h6v2h-6a3 3 0 0 1-3-3V7.62L1.57 9.81.15 8.39l4.6-4.6zm14.5 16.42l-4.6-4.6 1.42-1.42 2.18 2.19V8a1 1 0 0 0-1-1h-6V5h6a3 3 0 0 1 3 3v8.38l2.18-2.19 1.42 1.42-4.6 4.6z"/></svg><span>71</span></div>
+          <div class="xact" id="xActLike"><svg viewBox="0 0 24 24"><path d="M16.7 3.25c-1.86 0-3.55.98-4.7 2.53-1.15-1.55-2.84-2.53-4.7-2.53C4.06 3.25 1.75 5.7 1.75 9c0 5.37 5.83 9.03 9.55 11.4l.7.44.7-.44c3.72-2.37 9.55-6.03 9.55-11.4 0-3.3-2.31-5.75-5.55-5.75z"/></svg><span id="xLikeN" class="tnum">660</span></div>
+          <div class="xact"><svg viewBox="0 0 24 24"><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2h11A2.5 2.5 0 0 1 20 4.5v17.4l-8-5.14-8 5.14V4.5zM6.5 4a.5.5 0 0 0-.5.5v13.74l6-3.86 6 3.86V4.5a.5.5 0 0 0-.5-.5h-11z"/></svg><span>415</span></div>
+        </div>
+      </div>
+      <div id="xLab">The post that started it</div>
+    </div>
+  </div>
+
+  <!-- ============ S2 · VOCALS + INTAKE (3.28 → 6.60, CARD) ============ -->
+  <div class="scene clip" id="s2" data-start="3.28" data-duration="3.32" data-track-index="5">
+    <div class="rig" data-layout-allow-overflow id="rig2">
+      <div class="eyebrow" id="s2Eye">The feature</div>
+      <div id="vocMark">VOCALS</div>
+      <div id="vocSub">Upload a few of your own tracks</div>
+      <div id="plate"></div>
+      <div id="plateLip" data-layout-ignore></div>
+      <div id="plateLab">Intake &middot; your samples</div>
+      <div id="plateCount" class="tnum">0 / 3</div>
+      <div class="tk" id="tk1"><div class="tkBars" data-bars="14"></div><div class="tkName">take_01.wav</div></div>
+      <div class="tk" id="tk2"><div class="tkBars" data-bars="14"></div><div class="tkName">take_02.wav</div></div>
+      <div class="tk" id="tk3"><div class="tkBars" data-bars="14"></div><div class="tkName">take_03.wav</div></div>
+      <div class="bloom" id="v2Bloom" data-layout-ignore></div>
+      <div id="v2Chip"><div id="v2Dot"></div><div id="v2Tx">Music v2</div></div>
+    </div>
+  </div>
+
+  <!-- ============ S3 · ANALYZER (6.60 → 8.82) ============ -->
+  <div class="scene clip" id="s3" data-start="6.60" data-duration="2.22" data-track-index="6">
+    <div class="rig" data-layout-allow-overflow id="rig3">
+      <div class="eyebrow" id="s3Eye">Music v2 &middot; fine-tuning</div>
+      <div id="anaPanel">
+        <div id="anaHead"></div>
+        <div id="anaTitle">Voice analysis</div>
+        <div id="anaState">Learning</div>
+        <div id="anaScan" data-layout-ignore></div>
+        <div class="col" id="col1"><div class="colFill" id="fill1"></div><div class="colVal tnum" id="val1">0%</div></div>
+        <div class="col" id="col2"><div class="colFill" id="fill2"></div><div class="colVal tnum" id="val2">0%</div></div>
+        <div class="col" id="col3"><div class="colFill" id="fill3"></div><div class="colVal tnum" id="val3">0%</div></div>
+        <div class="colLab" id="lab1">Tone</div>
+        <div class="colLab" id="lab2">Texture</div>
+        <div class="colLab" id="lab3">Style</div>
+      </div>
+      <div class="bloom" id="outBloom" data-layout-ignore></div>
+      <svg id="outTicks" viewBox="0 0 300 300" data-layout-ignore>
+        <g stroke="rgba(140,245,223,.45)" stroke-width="2" stroke-linecap="round">
+          <path d="M150 4 V22"/><path d="M150 278 V296"/><path d="M4 150 H22"/><path d="M278 150 H296"/>
+        </g>
+      </svg>
+      <div id="outRing" data-layout-ignore></div>
+      <div id="outLab">Voiceprint ready</div>
+    </div>
+  </div>
+
+  <!-- ============ S4 · THE PRESS (8.82 → 10.88, CARD) ============ -->
+  <div class="scene clip" id="s4" data-start="8.82" data-duration="2.06" data-track-index="7">
+    <div class="rig" data-layout-allow-overflow id="rig4">
+      <div class="eyebrow" id="s4Eye">Every generation after that</div>
+      <div class="bloom" id="pressBloom" data-layout-ignore></div>
+      <div id="press">
+        <div id="pressBody"></div>
+        <div id="pressSig"></div>
+        <div id="pressStem"></div>
+      </div>
+      <div class="sg" id="sg1"><div class="sgArt"><div class="sgWave" data-bars="9"></div></div><div class="sgName">song_01</div><div class="sgBadge"></div></div>
+      <div class="sg" id="sg2"><div class="sgArt"><div class="sgWave" data-bars="9"></div></div><div class="sgName">song_02</div><div class="sgBadge"></div></div>
+      <div class="sg" id="sg3"><div class="sgArt"><div class="sgWave" data-bars="9"></div></div><div class="sgName">song_03</div><div class="sgBadge"></div></div>
+      <div class="sg" id="sg4"><div class="sgArt"><div class="sgWave" data-bars="9"></div></div><div class="sgName">song_04</div><div class="sgBadge"></div></div>
+    </div>
+  </div>
+
+  <!-- ============ S5 · ONE-SHOT (10.88 → 14.50) ============ -->
+  <div class="scene clip" id="s5" data-start="10.88" data-duration="3.62" data-track-index="8">
+    <div class="rig" data-layout-allow-overflow id="rig5">
+      <div class="eyebrow" id="s5Eye">One recording is enough</div>
+      <div class="bloom" id="osBloom" data-layout-ignore></div>
+      <div id="lane">
+        <svg id="laneGrid" viewBox="0 0 960 330" data-layout-ignore>
+          <g stroke="rgba(255,255,255,.055)" stroke-width="1">
+            <path d="M0 82 H960"/><path d="M0 165 H960"/><path d="M0 248 H960"/>
+          </g>
+        </svg>
+        <div id="osBars"></div>
+        <div id="laneHead" data-layout-ignore></div>
+      </div>
+      <div id="lyricRow">
+        <div id="lyricLab">Lyrics</div>
+        <div id="lyricVal">&ldquo;the same words&rdquo;</div>
+        <div id="lyricChip">Unchanged</div>
+      </div>
+      <div id="durLab">Time to generate</div>
+      <div id="durVal" class="tnum">00:00</div>
+      <div id="durUnit">minutes</div>
+    </div>
+  </div>
+
+  <!-- ============ S6 · LIBRARY (14.50 → 17.20) ============ -->
+  <div class="scene clip" id="s6" data-start="14.50" data-duration="2.70" data-track-index="9">
+    <div class="rig" data-layout-allow-overflow id="rig6">
+      <div class="eyebrow" id="s6Eye">Singing Vocals &middot; library</div>
+      <div id="cloneChip"><div id="cloneOrb"></div><div id="cloneTx">Clone your voice</div></div>
+      <div id="cloneStrike" data-layout-ignore></div>
+      <div id="orTx">or</div>
+      <div id="pickChip"><div id="pickTx">Pick a voice</div></div>
+      <div id="chips">
+        <div class="gchip">Pop</div><div class="gchip">Soul &amp; R&amp;B</div>
+        <div class="gchip">Rap &amp; Hip-Hop</div><div class="gchip">Rock</div>
+        <div class="gchip">Jazz</div>
+      </div>
+      <div class="vc" id="vc1"><div class="vcOrb" style="background:radial-gradient(circle at 32% 26%,#FFD9A8 0%,#E8734A 46%,#5A1B12 100%)"></div><div><div class="vcName">Lucas</div><div class="vcDesc">Breathy, high-pitched</div></div></div>
+      <div class="vc" id="vc2"><div class="vcOrb" style="background:radial-gradient(circle at 32% 26%,#FFC9E0 0%,#E8554F 48%,#4A1030 100%)"></div><div><div class="vcName">Sofia</div><div class="vcDesc">Calm, soft, energetic</div></div></div>
+      <div class="vc" id="vc3"><div class="vcOrb" style="background:radial-gradient(circle at 32% 26%,#EAFFFB 0%,#9FD8CE 46%,#2A4A46 100%)"></div><div><div class="vcName">Ethan</div><div class="vcDesc">Intense, breathy, soft</div></div></div>
+      <div class="vc" id="vc4"><div class="vcOrb" style="background:radial-gradient(circle at 32% 26%,#FFE6A8 0%,#D9713B 48%,#4A2010 100%)"></div><div><div class="vcName">Olivia</div><div class="vcDesc">Dramatic, calm</div></div></div>
+      <div class="vc" id="vc5"><div class="vcOrb" style="background:radial-gradient(circle at 32% 26%,#FFB3C8 0%,#C7304A 48%,#40080F 100%)"></div><div><div class="vcName">Mia</div><div class="vcDesc">High-pitched, intense</div></div></div>
+      <div class="vc" id="vc6"><div class="vcOrb" style="background:radial-gradient(circle at 32% 26%,#C9D8FF 0%,#5A6FD8 48%,#141A44 100%)"></div><div><div class="vcName">Noah</div><div class="vcDesc">Energetic, calm</div></div></div>
+      <div class="bloom" id="auBloom" data-layout-ignore></div>
+      <div id="selRing" data-layout-ignore></div>
+      <div id="vcAurora">
+        <div id="auOrb"></div>
+        <div><div id="auName">Aurora</div><div id="auDesc">Ethereal pop soprano</div></div>
+        <div id="auTag">Selected</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ S7 · STYLES (17.20 → 18.48, CARD) ============ -->
+  <div class="scene clip" id="s7" data-start="17.20" data-duration="1.28" data-track-index="10">
+    <div class="rig" data-layout-allow-overflow id="rig7">
+      <div class="bloom bloomV" id="stylesBloom" data-layout-ignore></div>
+      <div id="s7Eye">Also shipping</div>
+      <div id="stylesT">STYLES</div>
+      <div id="stTiles">
+        <div class="stT" id="stT1"></div><div class="stT" id="stT2"></div>
+        <div class="stT" id="stT3"></div><div class="stT" id="stT4"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ S8 · FINGERPRINT (18.48 → 24.60) ============ -->
+  <div class="scene clip" id="s8" data-start="18.48" data-duration="6.12" data-track-index="11">
+    <div class="rig" data-layout-allow-overflow id="rig8">
+      <div class="eyebrow" id="s8Eye">Styles &middot; two ways in</div>
+      <div id="upRoute"></div>
+      <div class="rtLab" id="rtLab1">Upload tracks</div>
+      <div class="miniTk" id="mt1"><div class="miniBars" data-bars="12"></div></div>
+      <div class="miniTk" id="mt2"><div class="miniBars" data-bars="12"></div></div>
+      <svg id="dial" viewBox="0 0 220 120" data-layout-ignore>
+        <path d="M18 108 A92 92 0 0 1 202 108" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="8" stroke-linecap="round"/>
+        <g id="dialNeedle"><line x1="110" y1="108" x2="110" y2="34" stroke="#BFFFF1" stroke-width="6" stroke-linecap="round"/></g>
+        <circle cx="110" cy="108" r="11" fill="#0F181B" stroke="#8CF5DF" stroke-width="3"/>
+      </svg>
+      <div id="dialLab">Fine-tuned to your sound</div>
+      <div id="preRoute"></div>
+      <div class="rtLab" id="rtLab2">Pre-built style</div>
+      <div class="preT" id="pr1"></div><div class="preT" id="pr2"></div><div class="preT" id="pr3"></div>
+      <div id="preLab">Grab one and go</div>
+      <svg id="conn" viewBox="0 0 1080 130" data-layout-ignore>
+        <path d="M300 0 C300 70 540 60 540 130" fill="none" stroke="rgba(140,245,223,.30)"
+              stroke-width="3" stroke-dasharray="10 12"/>
+        <path d="M780 0 C780 70 540 60 540 130" fill="none" stroke="rgba(140,245,223,.30)"
+              stroke-width="3" stroke-dasharray="10 12"/>
+        <circle id="pkL" cx="300" cy="0" r="9" fill="#8CF5DF"/>
+        <circle id="pkR" cx="780" cy="0" r="9" fill="#8CF5DF"/>
+      </svg>
+      <div class="bloom" id="puckBloom" data-layout-ignore></div>
+      <div id="puck"></div>
+      <svg id="puckTicks" viewBox="0 0 208 208" data-layout-ignore>
+        <g stroke="rgba(140,245,223,.55)" stroke-width="2" stroke-linecap="round">
+          <path d="M104 4 V20"/><path d="M104 188 V204"/><path d="M4 104 H20"/><path d="M188 104 H204"/>
+        </g>
+      </svg>
+      <div id="puckLab">One style fingerprint</div>
+      <div id="trkBar">
+        <div id="trkInner">
+          <div class="seg" id="sgm1"><div class="segBars" data-bars="14"></div><div class="segMark"></div></div>
+          <div class="seg" id="sgm2"><div class="segBars" data-bars="14"></div><div class="segMark"></div></div>
+          <div class="seg" id="sgm3"><div class="segBars" data-bars="14"></div><div class="segMark"></div></div>
+          <div class="seg" id="sgm4"><div class="segBars" data-bars="14"></div><div class="segMark"></div></div>
+          <div class="seg" id="sgm5"><div class="segBars" data-bars="14"></div><div class="segMark"></div></div>
+        </div>
+      </div>
+      <div id="ruleWrap" data-layout-allow-overflow>
+        <div id="ruleLine" data-layout-ignore></div>
+        <div id="ruleLab">Same sound, start to end</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ S9 · COMPLIANCE GATE (24.60 → 28.20) ============ -->
+  <div class="scene clip" id="s9" data-start="24.60" data-duration="3.60" data-track-index="12">
+    <div class="rig" data-layout-allow-overflow id="rig9">
+      <div class="eyebrow" id="s9Eye">Before anything trains</div>
+      <div class="up" id="up1"><div class="upBars" data-bars="14"></div><div class="upName">up_01.wav</div></div>
+      <div class="up" id="up2"><div class="upBars" data-bars="14"></div><div class="upName">up_02.wav</div></div>
+      <div class="up" id="up3"><div class="upBars" data-bars="14"></div><div class="upName">up_03.wav</div></div>
+      <div class="up" id="up4"><div class="upBars" data-bars="14"></div><div class="upName">up_04.wav</div></div>
+      <svg id="flow" viewBox="0 0 1080 110" data-layout-ignore>
+        <g stroke="rgba(140,245,223,.34)" stroke-width="3" stroke-dasharray="9 11" fill="none">
+          <path d="M150 0 V110"/><path d="M410 0 V110"/>
+          <path d="M670 0 V110"/><path d="M930 0 V110"/>
+        </g>
+      </svg>
+      <div class="bloom bloomV" id="gateBloom" data-layout-ignore></div>
+      <div id="gateLab">Copyright screen</div>
+      <div id="gate">
+        <svg id="gateMesh" viewBox="0 0 956 196" data-layout-ignore>
+          <g stroke="rgba(124,77,255,.30)" stroke-width="2">
+            <path d="M60 0 V196"/><path d="M160 0 V196"/><path d="M260 0 V196"/>
+            <path d="M360 0 V196"/><path d="M460 0 V196"/><path d="M560 0 V196"/>
+            <path d="M660 0 V196"/><path d="M760 0 V196"/><path d="M860 0 V196"/>
+          </g>
+          <g stroke="rgba(124,77,255,.18)" stroke-width="2">
+            <path d="M0 65 H956"/><path d="M0 131 H956"/>
+          </g>
+        </svg>
+        <div id="gateBeam" data-layout-ignore></div>
+      </div>
+      <div id="shutT" data-layout-ignore></div>
+      <div id="shutB" data-layout-ignore></div>
+      <div class="vd" id="vd1"><div class="vdDot"></div><div class="vdTx">Cleared</div></div>
+      <div class="vd" id="vd2"><div class="vdDot"></div><div class="vdTx">Cleared</div></div>
+      <div class="vd" id="vd3"><div class="vdDot"></div><div class="vdTx">Cleared</div></div>
+      <div class="vd held" id="vd4"><div class="vdDot"></div><div class="vdTx">Held</div></div>
+      <div id="coreBox">
+        <div id="coreOrb"></div>
+        <div><div id="coreName">Music v2</div><div id="coreSub">Training input</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ S10 · PROOF · BROWSER (28.20 → 32.58) ============ -->
+  <div class="scene clip" id="s10" data-start="28.20" data-duration="4.38" data-track-index="13">
+    <div class="rig" data-layout-allow-overflow id="rig10">
+      <div class="eyebrow" id="s10Eye">Live now</div>
+      <div id="bwin">
+        <div id="bbar">
+          <div class="bdot r"></div><div class="bdot y"></div><div class="bdot g"></div>
+          <div id="burl">
+            <svg viewBox="0 0 24 24"><path d="M12 1a5 5 0 0 0-5 5v3H5v13h14V9h-2V6a5 5 0 0 0-5-5zm0 2a3 3 0 0 1 3 3v3H9V6a3 3 0 0 1 3-3z"/></svg>
+            <span id="burlTx"></span><span id="bCaret" data-layout-ignore></span>
+          </div>
+          <div id="bspace"></div>
+        </div>
+        <div id="bbody">
+          <img id="bwHome" src="assets/emusic-home.png" alt="">
+          <img id="bwCreative" src="assets/creative.png" alt="">
+        </div>
+      </div>
+      <div id="liveChip"><div id="liveDot"></div><div id="liveTx">Shipping now</div></div>
+    </div>
+  </div>
+
+  <!-- ============ S11 · CTA (32.58 → 35.10, CARD) ============ -->
+  <div class="scene clip" id="s11" data-start="32.58" data-duration="2.52" data-track-index="14">
+    <div class="rig" data-layout-allow-overflow id="rig11">
+      <div class="bloom" id="ctaBloom" data-layout-ignore></div>
+      <div id="ctaFollow"><div id="ctaFollowTx">Follow @yourhandle</div></div>
+      <div id="ctaPill"><div id="ctaTx">COMMENT &ldquo;VOCAL&rdquo;</div></div>
+      <div id="ctaMark">Vocals &middot; ElevenMusic</div>
+    </div>
+  </div>
+
+  <audio id="voice" data-start="0" data-duration="35.10" data-track-index="15"
+         src="assets/vo.m4a" data-volume="1"></audio>
+
+  <!-- ===== captions ===== -->
+  <div class="cap clip" id="cap01" data-start="0.00"  data-duration="1.12" data-track-index="16">ElevenLabs just gave</div>
+  <div class="cap clip" id="cap02" data-start="1.12"  data-duration="0.77" data-track-index="16">AI music</div>
+  <div class="cap clip" id="cap03" data-start="1.90"  data-duration="1.20" data-track-index="16">your <span class="va">actual voice</span></div>
+  <div class="cap hi clip" id="cap04" data-start="3.40"  data-duration="0.54" data-track-index="16">It&rsquo;s called <span class="vs">Vocals</span></div>
+  <div class="cap hi clip" id="cap05" data-start="4.24"  data-duration="0.52" data-track-index="16">Upload a few</div>
+  <div class="cap hi clip" id="cap06" data-start="4.76"  data-duration="1.06" data-track-index="16">of your own <span class="va">tracks</span></div>
+  <div class="cap hi clip" id="cap07" data-start="5.82"  data-duration="0.74" data-track-index="16">and <span class="va">Music v2</span></div>
+  <div class="cap clip" id="cap08" data-start="6.66"  data-duration="0.92" data-track-index="16">learns your <span class="va">tone</span>,</div>
+  <div class="cap clip" id="cap09" data-start="7.86"  data-duration="0.76" data-track-index="16"><span class="va">texture</span> and <span class="va">style</span></div>
+  <div class="cap hi clip" id="cap10" data-start="8.82"  data-duration="0.71" data-track-index="16">Every song you generate</div>
+  <div class="cap hi clip" id="cap11" data-start="9.54"  data-duration="1.24" data-track-index="16">after that carries <span class="va">your voice</span></div>
+  <div class="cap clip" id="cap12" data-start="10.88" data-duration="1.02" data-track-index="16">Only have one recording?</div>
+  <div class="cap clip" id="cap13" data-start="12.14" data-duration="0.44" data-track-index="16"><span class="va">One shot.</span></div>
+  <div class="cap clip" id="cap14" data-start="12.80" data-duration="0.40" data-track-index="16">Same lyrics,</div>
+  <div class="cap clip" id="cap15" data-start="13.44" data-duration="0.88" data-track-index="16">your voice <span class="va">in minutes</span></div>
+  <div class="cap clip" id="cap16" data-start="14.50" data-duration="0.94" data-track-index="16">Or skip cloning entirely</div>
+  <div class="cap clip" id="cap17" data-start="15.44" data-duration="0.60" data-track-index="16">and pick a voice</div>
+  <div class="cap clip" id="cap18" data-start="16.04" data-duration="1.04" data-track-index="16">from their <span class="va">library</span> instead</div>
+  <div class="cap hi clip" id="cap19" data-start="17.20" data-duration="0.90" data-track-index="16">They also ship <span class="vs">Styles</span></div>
+  <div class="cap clip" id="cap20" data-start="18.48" data-duration="0.70" data-track-index="16">Upload tracks to</div>
+  <div class="cap clip" id="cap21" data-start="19.18" data-duration="0.88" data-track-index="16"><span class="va">fine-tune the sound</span></div>
+  <div class="cap clip" id="cap22" data-start="20.06" data-duration="1.12" data-track-index="16">or grab a pre-built style</div>
+  <div class="cap clip" id="cap23" data-start="21.18" data-duration="1.14" data-track-index="16">and every full track</div>
+  <div class="cap clip" id="cap24" data-start="22.32" data-duration="1.22" data-track-index="16">holds the <span class="va">same sound</span></div>
+  <div class="cap clip" id="cap25" data-start="23.54" data-duration="0.86" data-track-index="16">the whole way through</div>
+  <div class="cap clip" id="cap26" data-start="24.60" data-duration="1.02" data-track-index="16">Every upload gets</div>
+  <div class="cap clip" id="cap27" data-start="25.62" data-duration="0.93" data-track-index="16"><span class="va">screened</span> for</div>
+  <div class="cap clip" id="cap28" data-start="26.56" data-duration="1.54" data-track-index="16"><span class="va">copyright compliance</span> first</div>
+  <div class="cap clip" id="cap29" data-start="28.10" data-duration="1.25" data-track-index="16">It&rsquo;s live now on</div>
+  <div class="cap clip" id="cap30" data-start="29.36" data-duration="1.08" data-track-index="16"><span class="va">ElevenLabs</span> and</div>
+  <div class="cap clip" id="cap31" data-start="30.44" data-duration="1.22" data-track-index="16">inside <span class="va">Finetunes</span> on</div>
+  <div class="cap clip" id="cap32" data-start="31.66" data-duration="0.86" data-track-index="16"><span class="va">ElevenCreative</span></div>
+  <div class="cap hi clip" id="cap33" data-start="32.58" data-duration="0.70" data-track-index="16">Follow me and</div>
+  <div class="cap hi clip" id="cap34" data-start="33.28" data-duration="0.56" data-track-index="16">comment <span class="va">&ldquo;vocal&rdquo;</span></div>
+  <div class="cap hi clip" id="cap35" data-start="33.84" data-duration="1.06" data-track-index="16">and I&rsquo;ll drop you the link</div>
+
+  <div id="flash" class="clip" data-start="0" data-duration="35.10" data-track-index="17"
+       data-layout-ignore></div>
+
+  <div class="wipe clip" id="w1" data-start="3.10"  data-duration="0.36" data-track-index="18"
+       data-layout-ignore><div class="wp wpV"></div><div class="wp wpD"></div></div>
+  <div class="wipe clip" id="w2" data-start="14.24" data-duration="0.36" data-track-index="19"
+       data-layout-ignore><div class="wp wpV"></div><div class="wp wpD"></div></div>
+  <div class="wipe clip" id="w3" data-start="18.10" data-duration="0.42" data-track-index="20"
+       data-layout-ignore><div class="wp wpV"></div><div class="wp wpD"></div></div>
+  <div class="wipe clip" id="w4" data-start="24.28" data-duration="0.40" data-track-index="21"
+       data-layout-ignore><div class="wp wpV"></div><div class="wp wpD"></div></div>
+
+  <!-- ===== SFX bed ===== -->
+  <audio id="sfx01" data-start="0.04"  data-duration="0.90" data-track-index="23" src="assets/sfx/thud.mp3"       data-volume="0.26"></audio>
+  <audio id="sfx02" data-start="0.20"  data-duration="1.40" data-track-index="24" src="assets/sfx/riser.mp3"      data-volume="0.17"></audio>
+  <audio id="sfx03" data-start="0.60"  data-duration="0.70" data-track-index="25" src="assets/sfx/select.mp3"     data-volume="0.16"></audio>
+  <audio id="sfx04" data-start="1.40"  data-duration="1.20" data-track-index="26" src="assets/sfx/whoosh.mp3"     data-volume="0.26"></audio>
+  <audio id="sfx05" data-start="1.44"  data-duration="1.40" data-track-index="27" src="assets/sfx/cboom.mp3"      data-volume="0.24"></audio>
+  <audio id="sfx06" data-start="2.14"  data-duration="0.70" data-track-index="28" src="assets/sfx/pop.mp3"        data-volume="0.16"></audio>
+  <audio id="sfx07" data-start="2.58"  data-duration="0.90" data-track-index="29" src="assets/sfx/counter.mp3"    data-volume="0.16"></audio>
+  <audio id="sfx08" data-start="3.10"  data-duration="1.20" data-track-index="30" src="assets/sfx/whoosh.mp3"     data-volume="0.24"></audio>
+  <audio id="sfx09" data-start="3.42"  data-duration="0.90" data-track-index="31" src="assets/sfx/select.mp3"     data-volume="0.20"></audio>
+  <audio id="sfx10" data-start="4.42"  data-duration="0.70" data-track-index="32" src="assets/sfx/click.mp3"      data-volume="0.16"></audio>
+  <audio id="sfx11" data-start="5.06"  data-duration="0.70" data-track-index="33" src="assets/sfx/click.mp3"      data-volume="0.16"></audio>
+  <audio id="sfx12" data-start="5.42"  data-duration="0.70" data-track-index="34" src="assets/sfx/click.mp3"      data-volume="0.17"></audio>
+  <audio id="sfx13" data-start="6.26"  data-duration="0.90" data-track-index="35" src="assets/sfx/select.mp3"     data-volume="0.19"></audio>
+  <audio id="sfx14" data-start="6.58"  data-duration="1.20" data-track-index="36" src="assets/sfx/chrome.mp3"     data-volume="0.16"></audio>
+  <audio id="sfx15" data-start="6.86"  data-duration="1.40" data-track-index="37" src="assets/sfx/dataload.mp3"   data-volume="0.18"></audio>
+  <audio id="sfx16" data-start="8.30"  data-duration="0.90" data-track-index="38" src="assets/sfx/meter.mp3"      data-volume="0.18"></audio>
+  <audio id="sfx17" data-start="8.80"  data-duration="1.40" data-track-index="39" src="assets/sfx/cboom.mp3"      data-volume="0.24"></audio>
+  <audio id="sfx18" data-start="9.28"  data-duration="0.70" data-track-index="40" src="assets/sfx/thud.mp3"       data-volume="0.20"></audio>
+  <audio id="sfx19" data-start="9.68"  data-duration="0.70" data-track-index="41" src="assets/sfx/thud.mp3"       data-volume="0.20"></audio>
+  <audio id="sfx20" data-start="10.06" data-duration="0.70" data-track-index="42" src="assets/sfx/thud.mp3"       data-volume="0.20"></audio>
+  <audio id="sfx21" data-start="10.44" data-duration="0.70" data-track-index="43" src="assets/sfx/thud.mp3"       data-volume="0.22"></audio>
+  <audio id="sfx22" data-start="10.84" data-duration="1.20" data-track-index="44" src="assets/sfx/whoosh.mp3"     data-volume="0.24"></audio>
+  <audio id="sfx23" data-start="12.26" data-duration="1.40" data-track-index="45" src="assets/sfx/boom.mp3"       data-volume="0.28"></audio>
+  <audio id="sfx24" data-start="12.96" data-duration="0.70" data-track-index="46" src="assets/sfx/select.mp3"     data-volume="0.16"></audio>
+  <audio id="sfx25" data-start="14.02" data-duration="0.90" data-track-index="47" src="assets/sfx/counter.mp3"    data-volume="0.18"></audio>
+  <audio id="sfx26" data-start="14.24" data-duration="1.20" data-track-index="48" src="assets/sfx/whoosh.mp3"     data-volume="0.22"></audio>
+  <audio id="sfx27" data-start="15.42" data-duration="1.20" data-track-index="49" src="assets/sfx/dataload.mp3"   data-volume="0.17"></audio>
+  <audio id="sfx28" data-start="16.56" data-duration="0.90" data-track-index="50" src="assets/sfx/select.mp3"     data-volume="0.20"></audio>
+  <audio id="sfx29" data-start="17.18" data-duration="1.40" data-track-index="51" src="assets/sfx/deepimpact.mp3" data-volume="0.24"></audio>
+  <audio id="sfx30" data-start="18.10" data-duration="1.20" data-track-index="52" src="assets/sfx/whoosh.mp3"     data-volume="0.22"></audio>
+  <audio id="sfx31" data-start="19.40" data-duration="0.90" data-track-index="53" src="assets/sfx/meter.mp3"      data-volume="0.16"></audio>
+  <audio id="sfx32" data-start="20.40" data-duration="0.70" data-track-index="54" src="assets/sfx/pop.mp3"        data-volume="0.16"></audio>
+  <audio id="sfx33" data-start="21.14" data-duration="1.40" data-track-index="55" src="assets/sfx/cboom.mp3"      data-volume="0.24"></audio>
+  <audio id="sfx34" data-start="21.66" data-duration="1.60" data-track-index="56" src="assets/sfx/riser2.mp3"     data-volume="0.14"></audio>
+  <audio id="sfx35" data-start="23.86" data-duration="0.90" data-track-index="57" src="assets/sfx/shine.mp3"      data-volume="0.18"></audio>
+  <audio id="sfx36" data-start="24.28" data-duration="1.20" data-track-index="58" src="assets/sfx/whoosh.mp3"     data-volume="0.22"></audio>
+  <audio id="sfx37" data-start="25.58" data-duration="1.40" data-track-index="59" src="assets/sfx/dataload.mp3"   data-volume="0.18"></audio>
+  <audio id="sfx38" data-start="26.32" data-duration="0.70" data-track-index="60" src="assets/sfx/click.mp3"      data-volume="0.16"></audio>
+  <audio id="sfx39" data-start="27.20" data-duration="0.70" data-track-index="61" src="assets/sfx/click.mp3"      data-volume="0.16"></audio>
+  <audio id="sfx40" data-start="27.84" data-duration="1.20" data-track-index="62" src="assets/sfx/deepimpact.mp3" data-volume="0.26"></audio>
+  <audio id="sfx41" data-start="28.12" data-duration="1.20" data-track-index="63" src="assets/sfx/whoosh.mp3"     data-volume="0.20"></audio>
+  <audio id="sfx42" data-start="28.58" data-duration="1.40" data-track-index="64" src="assets/sfx/chrome.mp3"     data-volume="0.16"></audio>
+  <audio id="sfx43" data-start="31.56" data-duration="0.90" data-track-index="65" src="assets/sfx/select.mp3"     data-volume="0.18"></audio>
+  <audio id="sfx44" data-start="32.56" data-duration="1.60" data-track-index="66" src="assets/sfx/shine.mp3"      data-volume="0.20"></audio>
+  <audio id="sfx45" data-start="33.44" data-duration="0.90" data-track-index="67" src="assets/sfx/pop.mp3"        data-volume="0.17"></audio>
+</div>
+
+<script>
+window.__timelines = window.__timelines || {};
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+
+/* ================= WebGL voiceprint (three.js) =================
+   Driven by the TIMELINE's own onUpdate — it fires after that tick's tweens have
+   applied, so it sidesteps tween-ordering entirely. paint() is a pure function of
+   tl.time(), so a non-linear seek to any frame is exact.
+   Windows: the analyzer's output bezel (8.30–8.80) and the style fingerprint
+   inside its puck bezel (20.94–24.36). */
+const GL = (function(){
+  const N = 4600;
+  const canvas = document.getElementById('gl');
+  let renderer, scene, cam, pts, colAttr, posAttr;
+  const SPHERE = new Float32Array(N*3), CLOUD = new Float32Array(N*3);
+  const rnd = mulberry32(20260722);
+  const GA = Math.PI * (3 - Math.sqrt(5));
+  for(let i=0;i<N;i++){
+    const y = 1 - (i/(N-1))*2, rr = Math.sqrt(Math.max(0,1-y*y)), th = GA*i;
+    const wob = 1 + 0.20*Math.sin(th*7.0) * (0.35 + 0.65*rr)
+                  + 0.10*Math.sin(y*13.0 + th*2.0);
+    const R = 0.58 * wob;
+    SPHERE[i*3]   = Math.cos(th)*rr*R;
+    SPHERE[i*3+1] = y*R;
+    SPHERE[i*3+2] = Math.sin(th)*rr*R;
+    CLOUD[i*3]   = (rnd()*2-1)*3.6;
+    CLOUD[i*3+1] = (rnd()*2-1)*2.6;
+    CLOUD[i*3+2] = (rnd()*2-1)*2.4;
+  }
+  try{
+    renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+    renderer.setPixelRatio(1);
+    renderer.setSize(1080,1920,false);
+    renderer.setClearColor(0x000000, 0);
+  }catch(e){ return {ok:false, render:function(){}}; }
+  scene = new THREE.Scene();
+  cam = new THREE.PerspectiveCamera(42, 1080/1920, 0.1, 100);
+  cam.position.z = 6;
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(N*3), 3));
+  geo.setAttribute('color',    new THREE.BufferAttribute(new Float32Array(N*3), 3));
+  posAttr = geo.getAttribute('position'); colAttr = geo.getAttribute('color');
+  pts = new THREE.Points(geo, new THREE.PointsMaterial({
+    size:0.012, vertexColors:true, transparent:true, opacity:0.95,
+    sizeAttenuation:true, depthWrite:false, blending:THREE.AdditiveBlending}));
+  scene.add(pts);
+  /* fov 42, cam z 6 → visible height 4.606u over 1920px → 1px = 0.0024u */
+  const PX = 4.606/1920;
+  const sm = function(x){ return x<=0?0 : x>=1?1 : x*x*(3-2*x); };
+  function paint(t){
+    const inPuck = t >= 20.60;
+    const w = inPuck ? sm((t-20.94)/0.42) : sm((t-8.28)/0.40);
+    const p = posAttr.array, c = colAttr.array;
+    const br = 1 + 0.016*Math.sin(t*2.1);
+    for(let i=0;i<N;i++){
+      const k=i*3;
+      const sx=SPHERE[k]*br, sy=SPHERE[k+1]*br, sz=SPHERE[k+2]*br;
+      p[k]   = CLOUD[k]  +(sx-CLOUD[k])*w;
+      p[k+1] = CLOUD[k+1]+(sy-CLOUD[k+1])*w;
+      p[k+2] = CLOUD[k+2]+(sz-CLOUD[k+2])*w;
+      const g = 0.32 + 0.64*w, b = 0.31 + 0.56*w, r = 0.26 + 0.29*w;
+      c[k]=r; c[k+1]=g; c[k+2]=b;
+    }
+    posAttr.needsUpdate = true; colAttr.needsUpdate = true;
+    if(inPuck){
+      /* inside the #puck bezel: centre (540, 804), radius ~80px */
+      pts.scale.setScalar(0.255);
+      pts.position.set(0, (960-804)*PX, 0);
+      pts.rotation.set(0.14, 0.4 + (t-20.60)*0.55, 0);
+      pts.material.size = 0.012;
+    }else{
+      /* inside the #outRing bezel: centre (540, 1160), radius ~112px */
+      pts.scale.setScalar(0.36);
+      pts.position.set(0, (960-1160)*PX, 0);
+      pts.rotation.set(0.12, 0.5 + (t-8.28)*0.85, 0);
+      pts.material.size = 0.013;
+    }
+    renderer.render(scene, cam);
+  }
+  paint(8.20);
+  return {ok:true, render:paint};
+})();
+
+const tl = gsap.timeline({ paused: true, onUpdate: function(){ GL.render(tl.time()); } });
+
+/* ---------------- static build ---------------- */
+(function build(){
+  const c=document.getElementById('warp'), x=c.getContext('2d'), r=mulberry32(4212);
+  x.strokeStyle='rgba(140,245,223,0.052)'; x.lineWidth=0.7;
+  for(let row=0; row<15; row++){
+    const y0=30+row*66;
+    x.beginPath();
+    for(let px=0; px<=540; px+=6){
+      const bend=Math.sin((px/540)*Math.PI)*(19+(row%3)*8)*Math.sin(row*1.63);
+      const y=y0+bend;
+      if(px===0) x.moveTo(px,y); else x.lineTo(px,y);
+    }
+    x.stroke();
+  }
+  x.strokeStyle='rgba(124,77,255,0.055)';
+  for(let col=0; col<11; col++){
+    const x0=16+col*52;
+    x.beginPath();
+    for(let py=0; py<=960; py+=8){
+      const bend=Math.sin((py/960)*Math.PI)*(15+(col%4)*6)*Math.sin(col*2.05);
+      const xx=x0+bend;
+      if(py===0) x.moveTo(xx,py); else x.lineTo(xx,py);
+    }
+    x.stroke();
+  }
+  for(let i=0;i<150;i++){
+    const px=r()*540, py=r()*960, a=0.04+r()*0.17, s=r()<0.85?0.6:1.0;
+    x.fillStyle='rgba(255,255,255,'+a.toFixed(3)+')';
+    x.beginPath(); x.arc(px,py,s,0,6.2832); x.fill();
+  }
+  document.querySelectorAll('[data-bars]').forEach(function(el,idx){
+    const n=parseInt(el.getAttribute('data-bars'),10);
+    const br=mulberry32(1500+idx*97);
+    const box=el.clientHeight||60;
+    for(let i=0;i<n;i++){
+      const b=document.createElement('b');
+      b.style.height=Math.max(6,Math.round((0.22+br()*0.78)*box))+'px';
+      el.appendChild(b);
+    }
+  });
+  const lane=document.getElementById('osBars'), lrr=mulberry32(6161);
+  for(let i=0;i<34;i++){
+    const b=document.createElement('b');
+    b.style.height=Math.max(14,Math.round((0.16+lrr()*0.84)*226))+'px';
+    if(i<3) b.className='seed';
+    lane.appendChild(b);
+  }
+  const segPattern=[]; const sr=mulberry32(7373);
+  for(let i=0;i<14;i++) segPattern.push(Math.max(8,Math.round((0.18+sr()*0.82)*96)));
+  for(let s=1;s<=5;s++){
+    const holder=document.querySelector('#sgm'+s+' .segBars');
+    holder.innerHTML='';
+    segPattern.forEach(function(h){ const b=document.createElement('b'); b.style.height=h+'px'; holder.appendChild(b); });
+    document.getElementById('sgm'+s).style.left=((s-1)*192)+'px';
+  }
+  ['ctaTx'].forEach(function(id){
+    const el=document.getElementById(id);
+    const wrap=function(node){
+      [].slice.call(node.childNodes).forEach(function(n){
+        if(n.nodeType===3){
+          const frag=document.createDocumentFragment();
+          [].slice.call(n.textContent).forEach(function(chr){
+            if(chr===' '){ frag.appendChild(document.createTextNode(' ')); return; }
+            const s=document.createElement('span'); s.className='ch'; s.textContent=chr;
+            frag.appendChild(s);
+          });
+          n.replaceWith(frag);
+        } else if(n.nodeType===1 && !n.classList.contains('ch') && n.tagName!=='BR') wrap(n);
+      });
+    };
+    wrap(el);
+  });
+})();
+
+/* ---------------- helpers ---------------- */
+function rig(sel, t0, t1, crash){
+  gsap.set(sel,{scale:1.05, filter:'blur(6px)', transformOrigin:'50% 44%'});
+  tl.to(sel,{scale:1, filter:'blur(0px)', duration:0.30, ease:'power3.out'}, t0+0.02);
+  tl.to(sel,{scale:1.032, duration:(t1-t0)-0.50, ease:'none'}, t0+0.34);
+  if(crash!==false){
+    tl.to(sel,{scale:1.07, filter:'blur(4px)', duration:0.16, ease:'power2.in'}, t1-0.16);
+  }
+}
+function hide(list, t){ list.forEach(function(s){ tl.set(s,{opacity:0}, t); }); }
+function ghost(list, t, o){ list.forEach(function(s){ tl.set(s,{opacity:o||0.13}, t); }); }
+function resolve(sel, t, vars, dur){
+  tl.to(sel, Object.assign({opacity:1,duration:dur||0.34,ease:'power3.out'}, vars||{}), t);
+}
+function pop(sel, t, from, ease){
+  tl.fromTo(sel,{scale:from||0.62,opacity:0},
+    {scale:1,opacity:1,duration:0.38,ease:ease||'back.out(2.2)',
+     transformOrigin:'50% 50%',immediateRender:false}, t);
+}
+function riseIn(sel, t, dy, dur){
+  tl.fromTo(sel,{y:dy||44,opacity:0},
+    {y:0,opacity:1,duration:dur||0.44,ease:'power3.out',immediateRender:false}, t);
+}
+function wipeIn(sel, t, dur){
+  tl.fromTo(sel,{clipPath:'inset(0% 100% 0% 0%)',opacity:1},
+    {clipPath:'inset(0% 0% 0% 0%)',duration:dur||0.46,ease:'expo.out',immediateRender:false}, t);
+}
+function bloom(sel, t, toScale, peak){
+  gsap.set(sel,{opacity:0,scale:0.30,transformOrigin:'50% 50%'});
+  tl.set(sel,{opacity:peak||0.9,scale:0.30}, t);
+  tl.to(sel,{scale:toScale,opacity:0,duration:0.44,ease:'power2.out'}, t);
+  tl.set(sel,{opacity:0}, t+0.46);
+}
+function count(sel, from, to, t, dur, fmt, ease){
+  const el=document.querySelector(sel), o={v:from};
+  el.textContent=fmt(from);
+  tl.to(o,{v:to,duration:dur,ease:ease||'power2.out',
+    onUpdate:function(){ el.textContent=fmt(o.v); }}, t);
+}
+function typeTx(sel, text, t, dur){
+  const el=document.querySelector(sel), o={i:0};
+  el.textContent='';
+  tl.to(o,{i:text.length,duration:dur,ease:'none',
+    onUpdate:function(){ el.textContent=text.slice(0,Math.round(o.i)); }}, t);
+}
+function charsIn(container, t, stagger, dur){
+  const chs=container+' .ch';
+  gsap.set(chs,{yPercent:118,opacity:0});
+  tl.to(chs,{yPercent:0,opacity:1,duration:dur||0.44,ease:'expo.out',
+    stagger:stagger||0.024}, t);
+}
+
+/* ---- stock b-roll: a slow counter-drift per clip so it never sits still ---- */
+[['#bgAna',6.60,2.22,1.0,1.06,-14],
+ ['#bgOne',10.88,3.62,1.06,1.0,16],
+ ['#bgLib',14.50,2.70,1.0,1.05,-12],
+ ['#bgGate',24.60,3.60,1.05,1.0,14]].forEach(function(a){
+  tl.fromTo(a[0],{scale:a[3],x:0},{scale:a[4],x:a[5],duration:a[2],ease:'none',
+    transformOrigin:'50% 45%',immediateRender:false}, a[1]);
+});
+
+/* ---- WebGL visibility windows ---- */
+gsap.set('#glWrap',{opacity:0});
+tl.to('#glWrap',{opacity:1,duration:0.22,ease:'power2.out'}, 8.28);
+tl.to('#glWrap',{opacity:0,duration:0.14,ease:'power2.in'}, 8.70);
+tl.set('#glWrap',{opacity:0}, 8.82);
+tl.to('#glWrap',{opacity:1,duration:0.26,ease:'power2.out'}, 20.94);
+tl.to('#glWrap',{opacity:0,duration:0.20,ease:'power2.in'}, 24.36);
+tl.set('#glWrap',{opacity:0}, 24.60);
+
+/* ---------------- flash cuts ---------------- */
+gsap.set('#flash',{opacity:0});
+[[1.42,0.26],[6.60,0.20],[8.82,0.22],[10.88,0.22],[17.18,0.22],[28.14,0.20],[32.58,0.18]]
+ .forEach(function(a){
+  tl.set('#flash',{opacity:a[1]}, a[0]);
+  tl.to('#flash',{opacity:0,duration:0.09,ease:'power2.out'}, a[0]+0.033);
+});
+
+/* ---------------- skewed wipes (only where the VO leaves a gap) ---------------- */
+function wipe(id, t, dir, dur){
+  const v='#'+id+' .wpV', d='#'+id+' .wpD', from=dir*-2160, to=dir*2160;
+  const D=dur||0.28;
+  gsap.set(v,{x:from, skewX:-12*dir});
+  gsap.set(d,{x:from, skewX:-12*dir});
+  tl.fromTo(v,{x:from},{x:to,duration:D,ease:'power3.inOut',immediateRender:false}, t);
+  tl.fromTo(d,{x:from},{x:to,duration:D,ease:'power3.inOut',immediateRender:false}, t+0.055);
+}
+wipe('w1', 3.12,  1, 0.26);
+wipe('w2', 14.26,-1, 0.24);
+wipe('w3', 18.12, 1, 0.28);
+wipe('w4', 24.30,-1, 0.26);
+
+/* ================= FACE — full-bleed 1.42s → card on 4 beats ================= */
+const FULL = 'inset(0.1px 0.2px 0.3px 0.4px round 0.5px)';
+const CARD = 'inset(960px 216px 40px 216px round 32px)';
+const AWAY = 'inset(1920px 216px 40px 216px round 32px)';
+gsap.set('#faceScene',{clipPath:FULL});
+gsap.set('#faceVid',{y:0, scale:1, transformOrigin:'50% 0%'});
+gsap.set('#faceGrade',{opacity:1});
+gsap.set('#faceVig',{opacity:1});
+gsap.set('#faceCardFx',{opacity:0});
+/* a fast push across the 1.4s intro */
+tl.fromTo('#faceVid',{scale:1},{scale:1.05,duration:1.34,ease:'power1.in',
+  immediateRender:false}, 0.06);
+/* 1.42 — cut away under the flash, reset into the card pose */
+tl.set('#faceScene',{clipPath:AWAY}, 1.42);
+tl.set('#faceVid',{y:960, scale:0.6}, 1.42);
+tl.set(['#faceGrade','#faceVig'],{opacity:0}, 1.42);
+function cardIn(t){
+  tl.to('#faceScene',{clipPath:CARD,duration:0.36,ease:'power3.out',overwrite:'auto'}, t);
+  tl.to('#faceCardFx',{opacity:1,duration:0.24,ease:'power2.out',overwrite:'auto'}, t+0.12);
+}
+function cardOut(t){
+  tl.to('#faceScene',{clipPath:AWAY,duration:0.26,ease:'power3.in',overwrite:'auto'}, t);
+  tl.to('#faceCardFx',{opacity:0,duration:0.14,ease:'power1.in',overwrite:'auto'}, t+0.02);
+  tl.set('#faceCardFx',{opacity:0}, t+0.22);
+}
+cardIn(3.30);  cardOut(6.42);      /* S2 VOCALS + intake */
+cardIn(8.86);  cardOut(10.70);     /* S4 the press       */
+cardIn(17.22); cardOut(18.26);     /* S7 STYLES          */
+cardIn(32.62);                     /* S11 CTA — stays    */
+
+/* ================= S0 · FACE INTRO (0 → 1.42) ================= */
+/* frame 0 IS the Reels cover — brackets and chip are fully composed at t=0 and
+   only *settle*; nothing here is mid-entrance. */
+gsap.set('#hkScan',{opacity:0,y:150});
+gsap.set(['#hkChip','#brkTL','#brkTR','#brkBL','#brkBR'],{opacity:1});
+tl.fromTo(['#brkTL','#brkTR','#brkBL','#brkBR'],{scale:1.08},
+  {scale:1,duration:0.36,ease:'expo.out',stagger:0.03,
+   transformOrigin:'50% 50%',immediateRender:true}, 0.02);
+tl.fromTo('#hkChip',{x:-14},{x:0,duration:0.40,ease:'expo.out',
+  immediateRender:true}, 0.02);
+tl.fromTo('#hkChipTx',{letterSpacing:'11px'},{letterSpacing:'5px',duration:0.46,
+  ease:'expo.out',immediateRender:true}, 0.02);
+tl.set('#hkScan',{opacity:0.95,y:150}, 0.30);
+tl.to('#hkScan',{y:1420,duration:0.72,ease:'power1.inOut'}, 0.32);
+tl.to('#hkScan',{opacity:0,duration:0.12,ease:'none'}, 1.00);
+tl.set('#hkScan',{opacity:0}, 1.14);
+tl.to('#hkChipDot',{scale:1.5,duration:0.14,ease:'power2.out',
+  transformOrigin:'50% 50%'}, 0.86);
+tl.to('#hkChipDot',{scale:1,duration:0.22,ease:'power2.inOut',
+  transformOrigin:'50% 50%'}, 1.00);
+tl.to(['#brkTL','#brkTR','#brkBL','#brkBR'],{opacity:0,duration:0.12,ease:'power2.in'}, 1.24);
+tl.set(['#brkTL','#brkTR','#brkBL','#brkBR'],{opacity:0}, 1.40);
+
+/* ================= S1 · X POST (1.42 → 3.28) ================= */
+rig('#rig1', 1.42, 3.28);
+gsap.set('#xCard',{opacity:0,y:76,scale:0.92,transformOrigin:'50% 40%'});
+gsap.set(['#xCard .xhead','#xT1','#xT2','#xCard .xmeta','#xCard .xrow'],{opacity:0,y:16});
+gsap.set('#xMedia',{opacity:0,y:20,scale:0.975,transformOrigin:'50% 30%'});
+gsap.set('#xPill',{opacity:0,x:-50});
+hide(['#xLab'], 1.42);
+tl.fromTo('#xEye',{opacity:0,x:-24},{opacity:1,x:0,duration:0.26,ease:'power2.out',
+  immediateRender:false}, 1.46);
+tl.to('#xCard',{opacity:1,y:0,scale:1,duration:0.38,ease:'power4.out'}, 1.44);
+tl.fromTo('#xCard',{rotation:-1.4},{rotation:0,duration:0.46,ease:'power2.out',
+  transformOrigin:'50% 40%',immediateRender:false}, 1.44);
+tl.to('#xCard .xhead',{opacity:1,y:0,duration:0.26,ease:'power3.out'}, 1.54);
+tl.to('#xT1',{opacity:1,y:0,duration:0.26,ease:'power3.out'}, 1.62);
+tl.to('#xT2',{opacity:1,y:0,duration:0.26,ease:'power3.out'}, 1.70);
+tl.to('#xMedia',{opacity:1,y:0,scale:1,duration:0.34,ease:'power3.out'}, 1.80);
+tl.to('#xPill',{opacity:1,x:0,duration:0.42,ease:'back.out(1.7)'}, 1.98);
+tl.to('#xOrb',{scale:1.10,duration:0.44,ease:'sine.inOut',transformOrigin:'50% 50%'}, 2.06);
+tl.to('#xOrb',{scale:1,duration:0.44,ease:'sine.inOut'}, 2.50);
+tl.fromTo('#xMediaGlow',{opacity:0.6},{opacity:1,duration:0.56,ease:'sine.inOut',
+  immediateRender:false}, 2.06);
+tl.to('#xCard .xmeta',{opacity:1,y:0,duration:0.26,ease:'power3.out'}, 2.10);
+tl.to('#xCard .xrow',{opacity:1,y:0,duration:0.26,ease:'power3.out'}, 2.22);
+count('#xViews', 0, 67.8, 2.14, 0.52, function(v){return v.toFixed(1)+'K';});
+count('#xLikeN', 428, 660, 2.56, 0.48, function(v){return String(Math.round(v));});
+tl.to('#xActLike',{color:'#F91880',duration:0.12,ease:'power1.out'}, 2.56);
+tl.to('#xActLike svg',{fill:'#F91880',duration:0.12,ease:'power1.out'}, 2.56);
+tl.fromTo('#xActLike svg',{scale:1.5,transformOrigin:'50% 50%'},
+  {scale:1,duration:0.34,ease:'back.out(3)',immediateRender:false}, 2.56);
+resolve('#xLab', 2.34, {}, 0.26);
+
+/* ================= S2 · VOCALS + INTAKE (3.28 → 6.60, CARD) ================= */
+rig('#rig2', 3.28, 6.60);
+hide(['#tk1','#tk2','#tk3','#v2Chip'], 3.28);
+ghost(['#plate','#plateLip','#plateLab','#plateCount'], 3.28, 0.16);
+gsap.set('#plate',{scaleY:0.72});
+gsap.set('#plateLip',{scaleX:0.1});
+tl.fromTo('#s2Eye',{opacity:0,x:-24},{opacity:1,x:0,duration:0.32,ease:'power2.out',
+  immediateRender:false}, 3.32);
+tl.fromTo('#vocMark',{scale:1.5,opacity:0,filter:'blur(14px)'},
+  {scale:1,opacity:1,filter:'blur(0px)',duration:0.34,ease:'power4.out',
+   transformOrigin:'0% 50%',immediateRender:false}, 3.42);
+riseIn('#vocSub', 4.22, 26, 0.36);
+resolve('#plate', 4.20, {scaleY:1,transformOrigin:'50% 100%'}, 0.38);
+resolve('#plateLip', 4.24, {scaleX:1,transformOrigin:'50% 50%'}, 0.42);
+resolve('#plateLab', 4.30, {}, 0.30);
+resolve('#plateCount', 4.30, {}, 0.30);
+[['#tk1',4.42,-9,'1 / 3',4.76],['#tk2',5.06,4,'2 / 3',5.40],['#tk3',5.42,-4,'3 / 3',5.76]]
+ .forEach(function(a){
+  tl.fromTo(a[0],{x:820,y:-120,rotation:a[2]*3,opacity:0},
+    {x:0,y:0,rotation:a[2],opacity:1,duration:0.34,ease:'power3.out',
+     immediateRender:false}, a[1]);
+  tl.to(a[0],{y:8,duration:0.09,ease:'power2.out'}, a[1]+0.34);
+  tl.to(a[0],{y:0,duration:0.16,ease:'power2.inOut'}, a[1]+0.43);
+  tl.call(function(){document.getElementById('plateCount').textContent=a[3];}, null, a[4]);
+});
+bloom('#v2Bloom', 6.24, 3.0, 0.8);
+pop('#v2Chip', 6.26, 0.7, 'back.out(2.6)');
+tl.fromTo('#v2Dot',{scale:0.4},{scale:1,duration:0.36,ease:'back.out(3)',
+  transformOrigin:'50% 50%',immediateRender:false}, 6.30);
+
+/* ================= S3 · ANALYZER (6.60 → 8.82) ================= */
+rig('#rig3', 6.60, 8.82);
+hide(['#anaScan','#outRing','#outTicks','#outLab'], 6.60);
+gsap.set(['#fill1','#fill2','#fill3'],{scaleY:0});
+tl.fromTo('#s3Eye',{opacity:0,x:-24},{opacity:1,x:0,duration:0.32,ease:'power2.out',
+  immediateRender:false}, 6.64);
+tl.fromTo('#anaPanel',{scale:0.9,opacity:0},{scale:1,opacity:1,duration:0.40,ease:'expo.out',
+  transformOrigin:'50% 40%',immediateRender:false}, 6.62);
+tl.fromTo(['#col1','#col2','#col3'],{y:70,opacity:0},
+  {y:0,opacity:1,duration:0.40,ease:'power3.out',stagger:0.06,immediateRender:false}, 6.70);
+tl.fromTo(['#lab1','#lab2','#lab3'],{opacity:0},{opacity:1,duration:0.28,ease:'none',
+  stagger:0.06,immediateRender:false}, 6.78);
+tl.set('#anaScan',{opacity:1,x:0}, 6.86);
+tl.to('#anaScan',{x:920,duration:0.62,ease:'power1.inOut'}, 6.88);
+tl.to('#anaScan',{opacity:0,duration:0.10,ease:'none'}, 7.48);
+tl.set('#anaScan',{opacity:0}, 7.60);
+[['#fill1','#val1',7.30,0.94],['#fill2','#val2',7.86,0.91],['#fill3','#val3',8.30,0.97]]
+ .forEach(function(a){
+  tl.to(a[0],{scaleY:a[3],duration:0.40,ease:'power2.out'}, a[2]);
+  count(a[1], 0, Math.round(a[3]*100), a[2], 0.40, function(x){return Math.round(x)+'%';});
+});
+tl.to('#anaState',{color:'#BFFFF1',duration:0.2,ease:'none'}, 8.30);
+bloom('#outBloom', 8.26, 2.8, 0.85);
+pop('#outRing', 8.26, 0.6, 'back.out(2.4)');
+tl.fromTo('#outTicks',{opacity:0,rotation:-40},{opacity:1,rotation:0,duration:0.38,
+  ease:'power3.out',transformOrigin:'50% 50%',immediateRender:false}, 8.30);
+tl.fromTo('#outLab',{opacity:0,y:16},{opacity:1,y:0,duration:0.26,ease:'power2.out',
+  immediateRender:false}, 8.42);
+
+/* ================= S4 · THE PRESS (8.82 → 10.88, CARD) ================= */
+rig('#rig4', 8.82, 10.88);
+hide(['.sgBadge'], 8.82);
+gsap.set('#press',{x:0});
+tl.fromTo('#s4Eye',{opacity:0,x:-24},{opacity:1,x:0,duration:0.30,ease:'power2.out',
+  immediateRender:false}, 8.86);
+tl.fromTo(['#sg1','#sg2','#sg3','#sg4'],{y:90,opacity:0},
+  {y:0,opacity:1,duration:0.26,ease:'power3.out',stagger:0.035,immediateRender:false}, 8.84);
+tl.fromTo('#press',{y:-280,opacity:0},{y:0,opacity:1,duration:0.16,ease:'power3.out',
+  immediateRender:false}, 8.90);
+var stamps=[[9.30,150],[9.70,410],[10.08,670],[10.46,930]];
+stamps.forEach(function(a,i){
+  var t=a[0], cx=a[1];
+  if(i>0) tl.to('#press',{x:cx-150,duration:0.22,ease:'power2.inOut'}, t-0.24);
+  tl.to('#press',{y:58,duration:0.08,ease:'power3.in',overwrite:'auto'}, t);
+  tl.to('#press',{y:0,duration:0.20,ease:'power2.out',overwrite:'auto'}, t+0.09);
+  tl.to('#sg'+(i+1),{scaleY:0.955,duration:0.07,ease:'power2.out',
+    transformOrigin:'50% 100%'}, t+0.06);
+  tl.to('#sg'+(i+1),{scaleY:1,duration:0.20,ease:'back.out(2.4)',
+    transformOrigin:'50% 100%'}, t+0.13);
+  tl.fromTo('#sg'+(i+1)+' .sgBadge',{scale:2.1,opacity:0},
+    {scale:1,opacity:1,duration:0.26,ease:'back.out(2.6)',
+     transformOrigin:'50% 50%',immediateRender:false}, t+0.07);
+});
+bloom('#pressBloom', 10.46, 2.4, 0.7);
+
+/* ================= S5 · ONE-SHOT (10.88 → 14.50) ================= */
+rig('#rig5', 10.88, 14.50);
+ghost(['#lyricRow','#durLab','#durVal','#durUnit'], 10.88, 0.12);
+gsap.set('#osBars b:not(.seed)',{scaleY:0});
+gsap.set('#laneHead',{opacity:0});
+tl.fromTo('#s5Eye',{opacity:0,x:-24},{opacity:1,x:0,duration:0.32,ease:'power2.out',
+  immediateRender:false}, 10.92);
+tl.fromTo('#lane',{scaleX:0.86,opacity:0},{scaleX:1,opacity:1,duration:0.38,ease:'expo.out',
+  transformOrigin:'0% 50%',immediateRender:false}, 10.90);
+tl.fromTo('#osBars b.seed',{scaleY:0.1,opacity:0},
+  {scaleY:1,opacity:1,duration:0.28,ease:'back.out(2.6)',stagger:0.04,
+   transformOrigin:'50% 50%',immediateRender:false}, 11.38);
+tl.to('#osBars b.seed',{scaleY:1.16,duration:0.14,ease:'power2.out',
+  transformOrigin:'50% 50%',overwrite:'auto'}, 11.86);
+tl.to('#osBars b.seed',{scaleY:1,duration:0.24,ease:'power2.inOut',
+  transformOrigin:'50% 50%',overwrite:'auto'}, 12.04);
+bloom('#osBloom', 12.26, 2.4, 0.8);
+tl.set('#laneHead',{opacity:1,x:0}, 12.26);
+tl.to('#laneHead',{x:868,duration:0.56,ease:'power2.out'}, 12.28);
+tl.to('#laneHead',{opacity:0,duration:0.12,ease:'none'}, 12.80);
+tl.set('#laneHead',{opacity:0}, 12.94);
+tl.to('#osBars b:not(.seed)',{scaleY:1,duration:0.26,ease:'back.out(1.9)',
+  stagger:0.015,transformOrigin:'50% 50%'}, 12.30);
+resolve('#lyricRow', 12.94, {}, 0.36);
+tl.fromTo('#lyricChip',{scale:0.6},{scale:1,duration:0.30,
+  ease:'back.out(2.6)',transformOrigin:'50% 50%',immediateRender:false}, 13.18);
+resolve('#durLab', 13.62, {}, 0.26);
+resolve('#durVal', 13.66, {}, 0.30);
+resolve('#durUnit', 13.94, {}, 0.28);
+count('#durVal', 0, 108, 13.68, 0.62, function(v){
+  var s=Math.round(v); return '0'+Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
+});
+
+/* ================= S6 · LIBRARY (14.50 → 17.20) ================= */
+rig('#rig6', 14.50, 17.20);
+hide(['#selRing','#pickChip','#orTx','#vc1','#vc2','#vc3','#vc4','#vc5','#vc6',
+      '#chips .gchip'], 14.50);
+ghost(['#vcAurora'], 14.50, 0.12);
+gsap.set('#cloneStrike',{scaleX:0});
+tl.fromTo('#s6Eye',{opacity:0,x:-24},{opacity:1,x:0,duration:0.30,ease:'power2.out',
+  immediateRender:false}, 14.54);
+tl.fromTo('#cloneChip',{y:-40,opacity:0},{y:0,opacity:1,duration:0.34,ease:'power3.out',
+  immediateRender:false}, 14.54);
+tl.to('#cloneStrike',{scaleX:1,duration:0.28,ease:'power3.out',
+  transformOrigin:'0% 50%'}, 14.76);
+tl.to('#cloneTx',{color:'#5E6F6B',duration:0.3,ease:'none'}, 14.84);
+tl.to('#cloneOrb',{filter:'grayscale(1)',opacity:0.45,duration:0.34,ease:'none'}, 14.84);
+tl.fromTo('#orTx',{opacity:0,scale:0.7},{opacity:1,scale:1,duration:0.28,ease:'back.out(2.2)',
+  transformOrigin:'50% 50%',immediateRender:false}, 15.08);
+tl.fromTo('#chips .gchip',{y:26,opacity:0},{y:0,opacity:1,duration:0.30,ease:'power2.out',
+  stagger:0.045,immediateRender:false}, 15.14);
+tl.fromTo(['#vc1','#vc2','#vc3','#vc4','#vc5','#vc6'],{y:74,opacity:0},
+  {y:0,opacity:1,duration:0.38,ease:'power3.out',stagger:0.045,immediateRender:false}, 15.22);
+pop('#pickChip', 15.64, 0.72, 'back.out(2.4)');
+tl.set('#selRing',{opacity:1,x:0,y:0}, 15.68);
+tl.to('#selRing',{x:480,duration:0.22,ease:'power2.inOut'}, 15.72);
+tl.to('#selRing',{x:0,y:190,duration:0.22,ease:'power2.inOut'}, 15.96);
+tl.to('#selRing',{x:480,y:380,duration:0.24,ease:'power2.inOut'}, 16.20);
+tl.to('#selRing',{opacity:0,duration:0.12,ease:'none'}, 16.48);
+tl.set('#selRing',{opacity:0}, 16.62);
+bloom('#auBloom', 16.56, 2.6, 0.8);
+resolve('#vcAurora', 16.54, {}, 0.34);
+tl.to('#vcAurora',{borderColor:'rgba(140,245,223,.85)',duration:0.26,ease:'none'}, 16.58);
+tl.fromTo('#auTag',{opacity:0,x:26},{opacity:1,x:0,duration:0.28,ease:'power2.out',
+  immediateRender:false}, 16.76);
+
+/* ================= S7 · STYLES (17.20 → 18.48, CARD) ================= */
+rig('#rig7', 17.20, 18.48);
+hide(['#stTiles'], 17.20);
+tl.fromTo('#s7Eye',{opacity:0,y:20},{opacity:1,y:0,duration:0.28,ease:'power2.out',
+  immediateRender:false}, 17.24);
+bloom('#stylesBloom', 17.38, 2.4, 0.9);
+wipeIn('#stylesT', 17.42, 0.50);
+tl.fromTo('#stylesT',{scale:1.14},{scale:1,duration:0.56,ease:'expo.out',
+  transformOrigin:'50% 50%',immediateRender:false}, 17.42);
+tl.set('#stTiles',{opacity:1}, 17.68);
+tl.fromTo('.stT',{y:60,scale:0.7,opacity:0},{y:0,scale:1,opacity:1,duration:0.34,
+  ease:'back.out(2.0)',stagger:0.045,immediateRender:false}, 17.70);
+
+/* ================= S8 · FINGERPRINT (18.48 → 24.60) ================= */
+rig('#rig8', 18.48, 24.60);
+hide(['#dial','#dialLab','#pr1','#pr2','#pr3','#preLab','#conn','#puck','#puckTicks',
+      '#puckLab'], 18.48);
+ghost(['#preRoute','#trkBar'], 18.48, 0.22);
+ghost(['#rtLab2','#ruleWrap'], 18.48, 0.16);
+gsap.set('#dialNeedle',{rotation:-64, svgOrigin:'110 108'});
+gsap.set('#ruleLine',{scaleX:0});
+gsap.set('.segMark',{opacity:0,scale:0.4});
+gsap.set('#trkInner',{clipPath:'inset(0% 100% 0% 0%)'});
+gsap.set('#preRoute',{x:60});
+gsap.set('#trkBar',{scaleX:0.94});
+tl.fromTo('#s8Eye',{opacity:0,x:-24},{opacity:1,x:0,duration:0.30,ease:'power2.out',
+  immediateRender:false}, 18.52);
+tl.fromTo('#upRoute',{x:-70,opacity:0},{x:0,opacity:1,duration:0.36,ease:'power3.out',
+  immediateRender:false}, 18.52);
+tl.fromTo('#rtLab1',{opacity:0},{opacity:1,duration:0.26,ease:'none',
+  immediateRender:false}, 18.64);
+tl.fromTo(['#mt1','#mt2'],{y:50,opacity:0},{y:0,opacity:1,duration:0.32,ease:'power3.out',
+  stagger:0.07,immediateRender:false}, 18.72);
+tl.fromTo('#dial',{scale:0.7,opacity:0},{scale:1,opacity:1,duration:0.30,ease:'back.out(2.2)',
+  transformOrigin:'50% 90%',immediateRender:false}, 19.28);
+tl.to('#dialNeedle',{rotation:46,duration:0.62,ease:'power2.inOut',svgOrigin:'110 108'}, 19.42);
+tl.fromTo('#dialLab',{opacity:0,y:16},{opacity:1,y:0,duration:0.28,ease:'power2.out',
+  immediateRender:false}, 19.88);
+resolve('#preRoute', 20.04, {x:0}, 0.36);
+resolve('#rtLab2', 20.14, {}, 0.26);
+tl.fromTo(['#pr1','#pr2','#pr3'],{y:52,scale:0.72,opacity:0},
+  {y:0,scale:1,opacity:1,duration:0.32,ease:'back.out(2.0)',stagger:0.055,
+   immediateRender:false}, 20.16);
+tl.to('#pr2',{y:-26,scale:1.1,duration:0.22,ease:'power3.out',
+  transformOrigin:'50% 50%'}, 20.44);
+tl.to('#pr2',{y:-14,scale:1.05,duration:0.26,ease:'power2.inOut',
+  transformOrigin:'50% 50%'}, 20.66);
+tl.fromTo('#preLab',{opacity:0,y:16},{opacity:1,y:0,duration:0.28,ease:'power2.out',
+  immediateRender:false}, 20.60);
+tl.fromTo('#conn',{opacity:0},{opacity:1,duration:0.24,ease:'none',
+  immediateRender:false}, 20.84);
+tl.fromTo('#pkL',{attr:{cx:300,cy:0}},{attr:{cx:540,cy:130},duration:0.32,ease:'power2.in',
+  immediateRender:false}, 20.86);
+tl.fromTo('#pkR',{attr:{cx:780,cy:0}},{attr:{cx:540,cy:130},duration:0.32,ease:'power2.in',
+  immediateRender:false}, 20.86);
+bloom('#puckBloom', 21.16, 2.6, 0.85);
+pop('#puck', 21.16, 0.5, 'back.out(2.6)');
+tl.fromTo('#puckTicks',{opacity:0,rotation:-40},{opacity:1,rotation:0,duration:0.42,
+  ease:'power3.out',transformOrigin:'50% 50%',immediateRender:false}, 21.22);
+tl.fromTo('#puckLab',{opacity:0,y:16},{opacity:1,y:0,duration:0.28,ease:'power2.out',
+  immediateRender:false}, 21.40);
+resolve('#trkBar', 21.64, {scaleX:1,transformOrigin:'0% 50%'}, 0.30);
+tl.to('#trkInner',{clipPath:'inset(0% 0% 0% 0%)',duration:0.86,ease:'power2.inOut'}, 21.72);
+[22.86,23.02,23.18,23.34,23.50].forEach(function(t,i){
+  tl.to('#sgm'+(i+1)+' .segBars b',{backgroundColor:'#8CF5DF',duration:0.20,ease:'none'}, t);
+  tl.fromTo('#sgm'+(i+1)+' .segMark',{scale:1.9,opacity:0},
+    {scale:1,opacity:1,duration:0.26,ease:'back.out(2.4)',
+     transformOrigin:'50% 50%',immediateRender:false}, t);
+});
+resolve('#ruleWrap', 23.86, {}, 0.26);
+tl.to('#ruleLine',{scaleX:1,duration:0.46,ease:'power2.out',
+  transformOrigin:'0% 50%'}, 23.88);
+
+/* ================= S9 · COMPLIANCE GATE (24.60 → 28.20) ================ */
+rig('#rig9', 24.60, 28.20);
+hide(['#gateBeam','#vd1','#vd2','#vd3','#vd4','#shutT','#shutB','#flow'], 24.60);
+ghost(['#coreBox'], 24.60, 0.16);
+gsap.set('#shutT',{scaleY:0}); gsap.set('#shutB',{scaleY:0});
+tl.fromTo('#s9Eye',{opacity:0,x:-24},{opacity:1,x:0,duration:0.30,ease:'power2.out',
+  immediateRender:false}, 24.64);
+tl.fromTo('#gate',{scaleY:0.4,opacity:0},{scaleY:1,opacity:1,duration:0.38,ease:'back.out(1.6)',
+  transformOrigin:'50% 50%',immediateRender:false}, 24.64);
+tl.fromTo('#gateLab',{opacity:0,y:-16},{opacity:1,y:0,duration:0.28,ease:'power2.out',
+  immediateRender:false}, 24.76);
+tl.fromTo(['#up1','#up2','#up3','#up4'],{y:-120,opacity:0},
+  {y:0,opacity:1,duration:0.32,ease:'power3.out',stagger:0.07,immediateRender:false}, 24.82);
+tl.fromTo('#flow',{opacity:0},{opacity:1,duration:0.26,ease:'none',
+  immediateRender:false}, 25.26);
+tl.set('#gateBeam',{opacity:1,x:0}, 25.58);
+tl.to('#gateBeam',{x:948,duration:0.62,ease:'power1.inOut'}, 25.60);
+tl.to('#gateBeam',{x:0,duration:0.62,ease:'power1.inOut'}, 26.28);
+tl.to('#gateBeam',{x:948,duration:0.62,ease:'power1.inOut'}, 26.94);
+[['#vd1',26.34],['#vd2',26.62],['#vd3',27.00],['#vd4',27.50]].forEach(function(a){
+  tl.fromTo(a[0],{y:-46,opacity:0},{y:0,opacity:1,duration:0.30,ease:'back.out(2.0)',
+    immediateRender:false}, a[1]);
+});
+tl.to('#gateLab',{color:'#BFFFF1',duration:0.24,ease:'none'}, 26.56);
+tl.to('#gate',{borderColor:'rgba(140,245,223,.45)',duration:0.3,ease:'none'}, 26.56);
+resolve('#coreBox', 27.06, {}, 0.32);
+bloom('#gateBloom', 27.84, 2.6, 0.9);
+tl.to('#gateBeam',{backgroundColor:'#FF4D9D',duration:0.14,ease:'none'}, 27.84);
+tl.set(['#shutT','#shutB'],{opacity:1}, 27.84);
+tl.to('#shutT',{scaleY:1,duration:0.22,ease:'power3.in'}, 27.86);
+tl.to('#shutB',{scaleY:1,duration:0.22,ease:'power3.in'}, 27.86);
+
+/* ================= S10 · PROOF · BROWSER (28.20 → 32.58) ================ */
+rig('#rig10', 28.20, 32.58, false);
+hide(['#liveChip'], 28.20);
+gsap.set('#bwHome',{y:0});
+gsap.set('#bwCreative',{clipPath:'inset(0% 0% 100% 0%)'});
+tl.fromTo('#s10Eye',{opacity:0,x:-24},{opacity:1,x:0,duration:0.30,ease:'power2.out',
+  immediateRender:false}, 28.24);
+tl.fromTo('#bwin',{y:110,scale:0.9,opacity:0},{y:0,scale:1,opacity:1,duration:0.44,
+  ease:'back.out(1.5)',transformOrigin:'50% 40%',immediateRender:false}, 28.22);
+tl.fromTo('#bCaret',{opacity:0},{opacity:1,duration:0.12,ease:'none',
+  immediateRender:false}, 28.54);
+typeTx('#burlTx','elevenmusic.io', 28.58, 0.62);
+tl.to('#bCaret',{opacity:0,duration:0.10,ease:'none'}, 29.28);
+tl.set('#bCaret',{opacity:0}, 29.36);
+tl.to('#bwHome',{y:-470,duration:1.10,ease:'power1.inOut'}, 29.36);
+pop('#liveChip', 29.58, 0.74, 'back.out(2.2)');
+tl.fromTo('#liveDot',{scale:0.4},{scale:1,duration:0.34,ease:'back.out(3)',
+  transformOrigin:'50% 50%',immediateRender:false}, 29.64);
+tl.to('#bCaret',{opacity:1,duration:0.10,ease:'none'}, 30.68);
+typeTx('#burlTx','elevenlabs.io/creative', 30.74, 0.72);
+tl.to('#bCaret',{opacity:0,duration:0.10,ease:'none'}, 31.50);
+tl.set('#bCaret',{opacity:0}, 31.64);
+tl.to('#bwCreative',{clipPath:'inset(0% 0% 0% 0%)',duration:0.40,ease:'power3.out'}, 31.58);
+tl.to('#liveTx',{color:'#BFFFF1',duration:0.2,ease:'none'}, 31.66);
+
+/* ================= S11 · CTA (32.58 → 35.10, CARD) ================= */
+rig('#rig11', 32.58, 35.10, false);
+hide(['#ctaTx','#ctaMark'], 32.58);
+ghost(['#ctaPill'], 32.58, 0.14);
+tl.fromTo('#ctaFollow',{y:-40,opacity:0},{y:0,opacity:1,duration:0.34,ease:'power3.out',
+  immediateRender:false}, 32.66);
+bloom('#ctaBloom', 33.28, 2.4, 0.85);
+tl.set('#ctaTx',{opacity:1}, 33.30);
+tl.fromTo('#ctaPill',{scaleX:0.24,scaleY:0.7},
+  {scaleX:1,scaleY:1,opacity:1,duration:0.38,ease:'back.out(1.7)',
+   transformOrigin:'50% 50%',immediateRender:false}, 33.30);
+charsIn('#ctaTx', 33.46, 0.020, 0.36);
+tl.fromTo('#ctaMark',{opacity:0,y:22},{opacity:1,y:0,duration:0.32,ease:'power2.out',
+  immediateRender:false}, 34.06);
+tl.to('#ctaPill',{scale:1.02,duration:0.22,ease:'power2.out',
+  transformOrigin:'50% 50%',overwrite:'auto'}, 34.42);
+tl.to('#ctaPill',{scale:1,duration:0.30,ease:'power2.inOut',
+  transformOrigin:'50% 50%',overwrite:'auto'}, 34.66);
+
+/* ================= captions ================= */
+document.querySelectorAll('.cap').forEach(function(el){
+  if(el.id==='cap01') return;   /* frame 0 is the cover — no entrance */
+  var t=parseFloat(el.getAttribute('data-start'));
+  tl.fromTo(el,{y:20,opacity:0,scale:0.965},
+    {y:0,opacity:1,scale:1,duration:0.16,ease:'power3.out',
+     transformOrigin:'50% 50%',immediateRender:false}, t);
+});
+
+window.__glOK = GL.ok;
+window.__timelines['root']=tl;
+</script>
+</body>
+</html>

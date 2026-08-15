@@ -20,10 +20,10 @@ and `docs/03-quality-bar.md` for why AI-slop is a carrier problem rather than a 
 
 The fault in a clone that sounds wrong is **spectral shape, not loudness**, and it is not where
 instinct puts it. A first fix measured a single 2 to 5 kHz "consonant" band and looked solved.
-Splitting into eight narrow bands showed the TTS was putting its energy **either side** of her
+Splitting into eight narrow bands showed the TTS was putting its energy **either side** of the source
 actual voice:
 
-| Band | Her voice | The generated read |
+| Band | Source voice | The generated read |
 |---|---|---|
 | 400 to 700 Hz | **50% of total energy** | 33% |
 | 250 to 400 Hz | | +6.5% excess, mud |
@@ -34,7 +34,7 @@ actual voice:
 deviation from **44.9 to 7.2**, and the decisive move was **−7.7 dB at 900 Hz**.
 
 **Do not "add body" to match a percentage.** A +2 dB shelf at 190 Hz, added to lift the
-400 to 700 Hz share toward hers, spilled upward into 250 to 400 Hz and *caused* the mud. Cut the
+400 to 700 Hz share toward the source's, spilled upward into 250 to 400 Hz and *caused* the mud. Cut the
 excess; do not boost the deficit.
 
 Know what the EQ costs: reshaping the envelope dropped the lip-sync correlation metric from
@@ -96,7 +96,7 @@ lip-sync is not visible at reel scale.
 ### Measure drift on a crop around every face and hand, never globally
 
 **Global `mean|Δ|` against frame 0 looked acceptable while a hand was morphing into a second face
-at her hairline.** Cropping to the head region exposed it climbing **12 to 24**.
+at the subject's hairline.** Cropping to the head region exposed it climbing **12 to 24**.
 
 Sample a crop around every face and every hand in a generated clip **separately**. A global average
 over a mostly-static plate cannot see a local catastrophe, and the local catastrophe is the only
@@ -111,10 +111,10 @@ to return, which kills a push-in that a negative prompt could not.
 Recorded on vid15 round 1 rather than in the main log, but it is the same class of fault. Kling's
 `--ref` drags the **reference pose** along with the likeness. The fix is both halves together:
 state the target pose in the prompt, **and** name the reference pose in the negative prompt
-("seated, sitting down, phone held upright, phone screen toward her face").
+("seated, sitting down, phone held upright, phone screen toward the subject's face").
 
-**And a held pose drifts mid-clip, in the opposite direction.** At the i2v stage her arms uncrossed
-and a hand melted into her sweater **within 1 second**. Name the body part that must not move, and
+**And a held pose drifts mid-clip, in the opposite direction.** At the i2v stage the subject's arms uncrossed
+and a hand melted into their sweater **within 1 second**. Name the body part that must not move, and
 verify frames at **0.1s, mid and end**, not just the last frame.
 
 ### Extend a generated shot backwards with `--last-image`
@@ -151,8 +151,8 @@ was the correct call.
 **Any hard-edged region operation on a photographic plate reads as pasted, however good the content
 inside it is.** Defocusing a laptop screen with `crop` then `gblur` then `overlay` gives an
 axis-aligned rectangle, but the screen is a **trapezoid in perspective**, so the box overhung the
-bezel onto the cushion and the client's note was "the window is being stitched". He was describing
-the blur, not the UI under it.
+bezel onto the cushion and the client's note was "the window is being stitched". They were
+describing the blur, not the UI under it.
 
 The fix: build a **feathered polygon mask of the actual glass quad**, `alphamerge` it onto the
 blurred copy, and `overlay` that. **Pull the quad in about 6px** so the soft edge lands on the

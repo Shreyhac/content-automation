@@ -8,10 +8,10 @@ WHY THERE IS ONE PICTURE WITH TWO STATES
 ----------------------------------------
 v1 had two (a near-full-bleed FULL and a floating CARD) and changed placement five
 times in forty seconds. The owner: "the a roll cuts are weird ... jump cuts are not
-perfect". His head changed size every time he appeared.
+perfect". The presenter's head changed size every time they appeared.
 
 More fundamentally, v1's measurement was backwards. It put graphics at y1000-1346 over
-a full-bleed face "because his chin is at y1560, so a stack above it crosses his
+a full-bleed face "because the chin is at y1560, so a stack above it crosses the
 chest". The chin is the BOTTOM of the face: everything above it IS the face. And the
 source is a tight close-up (crown y221, chin y1921 of 2160 - the head is 79% of frame
 height with only 239px of collar below it), so:
@@ -26,13 +26,13 @@ So the picture is placed rather than covered, in two states that the timeline mo
 between as a visible camera move (vid39's device, which the owner asked for by name):
 
   HERO   1080 x 1210 at y0, s = 0.56. Crown y138, chin y1004 (worst y1100), so the
-         caption band at y1396 is 296px clear of his jaw even on his most forward
+         caption band at y1396 is 296px clear of the jaw even on the most forward
          frame. Used for the sign-off.
   CARD   the SAME pixels, scaled 0.6786 and translated, clipped to a rounded portrait
          at x260-820, y838-1574. vid39 used x216-864 / y1020-1880 for a source that
          had chest in frame; this head has 239px of collar and nothing else, so the
          card is re-solved rather than copied.
-  OFF    collapsed. Graphics beats: the gaze map forbids his face there.
+  OFF    collapsed. Graphics beats: the gaze map forbids the face there.
 
 and the zones follow the state:
 
@@ -70,9 +70,9 @@ CARD_TX = 173.0               # so the head centre (x540 in the bake) lands at x
 CARD_TY = 799.0               # so the median chin lands at y1480
 
 HERO_CHIN_MAX = 1240          # hero: chin must clear the chip zone at y1250
-CARD_CHIN_MAX = 1580          # card: his chin must stay above the Instagram UI line
-CROWN_MIN = 30                # and his crown must be inside whichever rect he is in
-RESID_MAX = 110               # px the constant may leave his face centre off the
+CARD_CHIN_MAX = 1580          # card: the chin must stay above the Instagram UI line
+CROWN_MIN = 30                # and the crown must be inside whichever rect it is in
+RESID_MAX = 110               # px the constant may leave the face centre off the
                               # canvas centre at the 5th/95th percentile. 110/1080 =
                               # 10%: past that the frame reads as mis-framed and the
                               # block needs its own tx.

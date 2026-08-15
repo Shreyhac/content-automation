@@ -1,14 +1,14 @@
 # Content Automation: agent instructions
 
 You are the **editor**. You take an A-roll (and a brief, and sometimes a reference video) and
-produce a finished cut for one of four creators. These instructions override your defaults.
+produce a finished cut using one of four editing templates. These instructions override your defaults.
 
 ## Before you touch anything
 
-1. **Identify the creator from the footage, not from the brief.** Briefs arrive from the wrong
-   account. Extract a frame and compare against `reference-cuts/`. The creator decides the
+1. **Identify the template from the footage, not from the brief.** Briefs arrive from the wrong
+   account. Extract a frame and compare against `reference-cuts/`. The footage decides the
    entire system.
-2. **Read `creators/<creator>/PROFILE.md` and `GRAMMAR.md`.** Their hard rules outrank every
+2. **Read `templates/<template>/PROFILE.md` and `GRAMMAR.md`.** Their hard rules outrank every
    general rule in this repo, including this file.
 3. **Read `docs/01-pipeline.md`** and follow it in order.
 4. **Whisper the A-roll before trusting any pasted script.** The audio is the source of truth.
@@ -101,12 +101,12 @@ allowlist entry that matches nothing as a failure. See `docs/07-troubleshooting.
 - **Three modes, and a beat is in exactly one.** CARD (the A-roll owns its rect, graphics own
   the rest, zero overlap), SPLIT (a hard seam, graphics above, face below, and the split must
   reach the edge), and FULL-BLEED (at most one self-grounded element in measured clear space).
-  Card is the default. Split is used when the creator asks for it, and Nader's shorts are built
-  that way. Full-bleed is for the opening beat of a short, or when a copy brief demands it.
+  Card is the default. Split is used when the creator asks for it, and `longform-chunked` shorts are
+  built that way. Full-bleed is for the opening beat of a short, or when a copy brief demands it.
   A full-width band laid across a person's torso is none of these and has been rejected
   explicitly: rows available above a full-width band are `H*1080/W`, which cannot hold a head.
 - **Full-bleed needs its own safe zone.** The card guard only ran in card mode once, so text
-  landed on his face for a whole film. Measure the head contour in every mode.
+  landed on the presenter's face for a whole film. Measure the head contour in every mode.
 - **Measure the head with Vision before solving any geometry** (`tools/vision/`). Crown from
   person segmentation, chin and centre-x from the face contour. Vision's face bounding box is
   not the head; it stops at the hairline. **Measure the landmark the complaint actually names.**
@@ -114,7 +114,7 @@ allowlist entry that matches nothing as a failure. See `docs/07-troubleshooting.
   wrong on one film, and an average over a take is not a constraint on a beat.
 - **Measure the window, not the take**, and **centre on the median, not the extremes**.
   Extremes-centring protects one frame and skews every other. An eleven-sample average missed
-  him leaning into the CTA line.
+  the presenter leaning into the CTA line.
 - **The formula travels, the constants never do.** Every take needs its own solve. Copying a
   previous video's numbers has cropped a crown or pushed a chin into the UI band every single
   time it has been tried.
@@ -159,7 +159,7 @@ allowlist entry that matches nothing as a failure. See `docs/07-troubleshooting.
   contract: identical settings gave 36.8 then 24.9 Mbps as content changed. `-q high` is not
   high, it halves the master's bitrate. Verify the delivered file against the master with
   `ffprobe` every render, not once per project.
-- **Never grade his A-roll.** His footage ships untouched. The renderer itself shifts colour by
+- **Never grade the creator's A-roll.** Their footage ships untouched. The renderer itself shifts colour by
   3 to 7%, so any grade you add compounds with a shift you did not ask for. An HDR or HLG source
   clip anywhere in the composition forces the whole output into HDR and shifts every other clip
   including the untouched A-roll: `ffprobe` `color_transfer` on every non-generated clip.
@@ -167,10 +167,10 @@ allowlist entry that matches nothing as a failure. See `docs/07-troubleshooting.
 - **No hashtags.** The caption body is the ranking surface and the first 125 characters are the
   preview. The caption pack is paste-ready only: no research, no rationale, no character counts,
   no sources.
-- **The CTA .docx is required at first delivery**, not when he asks for it, whenever the script
+- **The CTA .docx is required at first delivery**, not when the owner asks for it, whenever the script
   says "comment X and I'll send you Y". `tools/deliver/make_cta_doc.py`.
 - **Grep for em dashes before every delivery.** Banned in on-screen text, captions and
-  published copy, all creators. Use "·" for label separators, a comma or colon in sentences.
+  published copy, every template. Use "·" for label separators, a comma or colon in sentences.
   This is the most-skipped rule in the repo: ten shipped caption packs and two shipped SRTs
   currently carry them. Grep the SRT and the caption pack, not just the composition.
   **The vendored skills in `.claude/skills/` are full of em dashes** in their prose and their
@@ -178,11 +178,11 @@ allowlist entry that matches nothing as a failure. See `docs/07-troubleshooting.
   into anything this repo produces.
 - **Verify the deliverable exists with `ls` and `ffprobe`.** Spotlight indexing is disabled on
   the owner's machine, so Finder Recents and `mdfind` will not see a file you just wrote.
-- Then open it for review: `tools/review/rr share out/vidNN-final.mp4 --name "<creator>"`, and
+- Then open it for review: `tools/review/rr share out/vidNN-final.mp4 --name "<template>"`, and
   hand over the link. `docs/08-review-workflow.md` is the manual, including the order that keeps
   a client's notes from looking ignored: fix, reply, push, and only then share the new render.
 
 ## After every video
 
-Update `creators/<creator>/HISTORY.md` with what each review round changed, and promote
+Update `templates/<template>/HISTORY.md` with what each review round changed, and promote
 anything reusable into the relevant file in `playbooks/`. The repo is the product.

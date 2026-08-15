@@ -1,0 +1,299 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>vid67 — launch-your-agent, the reference cut shot for shot</title>
+<style>
+@font-face{font-family:'Inter';src:url('assets/fonts/inter-800.woff2')format('woff2');font-weight:800;font-display:block}
+@font-face{font-family:'Inter';src:url('assets/fonts/inter-600.woff2')format('woff2');font-weight:600;font-display:block}
+@font-face{font-family:'Fraunces';src:url('assets/fonts/fraunces-italic.woff2')format('woff2');font-style:italic;font-weight:900;font-display:block}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   vid67 · Dr Alvaro Cintas' `DbqcQUgxlyC` rebuilt shot for shot on his A-roll
+
+   HIS INSTRUCTION  "can you do the exact same editing for me? You can use the
+   exact same visuals from the creator's video as well."
+
+   So there are no invented graphics here. This is the reference's shot list,
+   its cut rhythm, its two-layout grammar and its word-sticker captions, re-timed
+   onto the creator's 35.233s delivery. The creator recorded the reference's script
+   verbatim, so the two timelines are aligned WORD BY WORD (136 of 148 words
+   anchored by difflib) rather than scaled — every cut lands on the same spoken
+   word it lands on in the reference.
+
+   ── WHAT IS LIFTED, AND WHAT COULD NOT BE ────────────────────────────────
+   11 shots are the reference's own footage, cropped to this band.
+   6 are rebuilt, each because the reference's frame is unusable:
+     the Claude app is titled "Dr Cintas" throughout · the .env shows a live
+     ANTHROPIC_API_KEY · the run FAILS on screen ("insufficient credit balance")
+     under a VO saying it deployed · the spec page reads PLANNED . NOT LAUNCHED ·
+     the meeting notes belong to a third party · the inbox is a real person's.
+   3 are his face full-bleed, exactly where the reference plays its own.
+
+   ── THE CROPS ────────────────────────────────────────────────────────────
+   The reference burns its captions into the picture at y924-975 (measured), so
+   no lift may extend past y920. Each is a 1080x620 window with a per-shot y
+   offset chosen so that shot's payload survives, then 2x lanczos to 2160x1240.
+   The reference is 1080x1920, so lifted footage carries half this composition's
+   detail; the 6 rebuilds are the only shots at true resolution.
+
+   ── THE GEOMETRY IS HIS, NOT THE REFERENCE'S ─────────────────────────────
+   Measured over all 176 samples of the take (vid67/facebox.csv, Vision):
+     crown y280-375 · chin y1003-1166 · head 886px worst case
+   The reference seams at y955 because Cintas sits further from his lens. Here
+   that would bury the chin. Solved instead:
+     seam y620 · picture pushed down 380 · worst crown y660 (40px below the
+     seam) · worst chin y1546 (54px above Instagram's bottom band)
+
+   LAYOUTS   SPLIT  B-roll y0-620 full width · his face below, scale 1, +380y
+             FULL   his face full-bleed, untouched
+   CAPTIONS  1-4 words on a dark pill, 70 of them, every change on a word
+             onset. On SPLIT the pill sits in the band's lower edge, which is
+             where the reference puts its own; on FULL it drops below his chin.
+   TRANSITIONS  hard cuts. The reference has none and neither does this. No CSS
+             transform ever animates on a box containing a <video> — that is
+             what deadlocked the capture engine on vid66b.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:2160px;height:3840px;background:#000;overflow:hidden}
+#stage{position:absolute;left:0;top:0;width:1080px;height:1920px;
+  transform:scale(2);transform-origin:0 0;overflow:hidden;background:#000;}
+
+#faceScene{position:absolute;left:0;top:0;width:1080px;height:1920px;z-index:3;
+  clip-path:inset(0px 0px 0px 0px);}
+#faceCam{position:absolute;left:0;top:0;width:1080px;height:1920px;
+  transform-origin:0 0;transform:translate(0px,0px) scale(1);}
+#faceCam video{position:absolute;left:0;top:0;width:1080px;height:1920px;
+  object-fit:cover;display:block;}
+
+/* the B-roll band: ONE track, always playing, revealed only on SPLIT beats.
+   Seventeen separate <video> elements stalled the capture engine; one cannot,
+   and with a single always-on element there is no data-start window for a clip
+   to fall outside of. */
+#btop{position:absolute;left:0;top:0;width:1080px;height:620px;z-index:5;
+  overflow:hidden;background:#0A0A0C;}
+#btop video{position:absolute;left:0;top:0;width:1080px;height:620px;
+  object-fit:cover;display:block;}
+#seam{position:absolute;left:0;top:618px;width:1080px;height:4px;z-index:6;
+  background:rgba(0,0,0,.55);}
+
+#capW{position:absolute;left:0;top:548px;width:1080px;text-align:center;z-index:8;}
+#capW.full{top:1246px;}
+/* inline-block so the BOX is the ink — a full-width centred container measures
+   1080px wide and trips every edge gate falsely (vid66b) */
+#cap{display:inline-block;font-family:'Inter';font-weight:800;font-size:44px;
+  letter-spacing:-.018em;line-height:1.14;color:#FFFFFF;
+  background:rgba(10,10,12,.70);border-radius:12px;padding:9px 20px 12px;
+  text-shadow:0 2px 10px rgba(0,0,0,.5);white-space:nowrap;}
+
+/* the CTA the reference stamps under its own last shot, rebuilt: its version
+   carries Cintas's profile photo in the pill */
+#cta{position:absolute;left:0;top:1392px;width:1080px;text-align:center;z-index:8;
+  opacity:0;visibility:hidden;}
+#ctaP{display:inline-flex;align-items:center;gap:18px;
+  background:rgba(18,18,20,.86);border:2px solid rgba(255,255,255,.16);
+  border-radius:999px;padding:16px 30px 18px;}
+#ctaT{font-family:'Inter';font-weight:800;font-size:52px;color:#fff;letter-spacing:-.01em}
+#ctaA{width:54px;height:54px;border-radius:50%;background:#D97757;
+  display:inline-flex;align-items:center;justify-content:center;
+  font-family:'Inter';font-weight:800;font-size:34px;color:#fff}
+
+#flash{position:absolute;left:0;top:0;width:1080px;height:1920px;z-index:9;
+  background:#FFFFFF;opacity:0;pointer-events:none;}
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="vid67" data-start="0"
+     data-duration="35.233333" data-fps="30" data-width="2160" data-height="3840">
+  <div id="stage">
+
+    <div id="faceScene" data-layout-ignore>
+      <div id="faceCam">
+        <video id="aroll" src="assets/aroll.mp4" data-start="0" data-duration="35.233333"
+               data-track-index="0" muted playsinline></video>
+      </div>
+    </div>
+
+    <div id="btop" data-layout-ignore>
+      <video id="vband" src="assets/bandtrack.mp4"
+             data-start="0" data-duration="35.233333" data-track-index="1"
+             muted playsinline></video>
+    </div>
+    <div id="seam" data-layout-ignore></div>
+
+    <div id="capW"><div id="cap"></div></div>
+    <div id="cta"><div id="ctaP"><span id="ctaT">Comment AGENT</span><span id="ctaA">↑</span></div></div>
+
+    <div id="flash" data-layout-ignore></div>
+  </div>
+
+  <audio id="vo" src="assets/vo.mp4" data-start="0" data-duration="35.233333"
+         data-track-index="30" data-volume="1"></audio>
+  <audio id="sx00" src="assets/sfx/riser.mp3" data-start="0.000" data-duration="0.60" data-track-index="40" data-volume="0.16"></audio>
+  <audio id="sx01" src="assets/sfx/wsh2.mp3" data-start="2.200" data-duration="0.35" data-track-index="41" data-volume="0.13"></audio>
+  <audio id="sx02" src="assets/sfx/click2.mp3" data-start="3.240" data-duration="0.20" data-track-index="42" data-volume="0.11"></audio>
+  <audio id="sx03" src="assets/sfx/click.mp3" data-start="5.220" data-duration="0.20" data-track-index="43" data-volume="0.11"></audio>
+  <audio id="sx04" src="assets/sfx/wsh.mp3" data-start="7.869" data-duration="0.32" data-track-index="44" data-volume="0.12"></audio>
+  <audio id="sx05" src="assets/sfx/click.mp3" data-start="9.720" data-duration="0.20" data-track-index="45" data-volume="0.11"></audio>
+  <audio id="sx06" src="assets/sfx/click2.mp3" data-start="10.620" data-duration="0.20" data-track-index="46" data-volume="0.11"></audio>
+  <audio id="sx07" src="assets/sfx/wsh.mp3" data-start="11.540" data-duration="0.32" data-track-index="47" data-volume="0.12"></audio>
+  <audio id="sx08" src="assets/sfx/click2.mp3" data-start="13.840" data-duration="0.20" data-track-index="48" data-volume="0.11"></audio>
+  <audio id="sx09" src="assets/sfx/click.mp3" data-start="14.720" data-duration="0.20" data-track-index="49" data-volume="0.11"></audio>
+  <audio id="sx10" src="assets/sfx/click2.mp3" data-start="15.360" data-duration="0.20" data-track-index="50" data-volume="0.11"></audio>
+  <audio id="sx11" src="assets/sfx/wsh2.mp3" data-start="16.340" data-duration="0.35" data-track-index="51" data-volume="0.13"></audio>
+  <audio id="sx12" src="assets/sfx/click2.mp3" data-start="17.000" data-duration="0.20" data-track-index="52" data-volume="0.11"></audio>
+  <audio id="sx13" src="assets/sfx/click.mp3" data-start="20.100" data-duration="0.20" data-track-index="53" data-volume="0.11"></audio>
+  <audio id="sx14" src="assets/sfx/click2.mp3" data-start="21.180" data-duration="0.20" data-track-index="54" data-volume="0.11"></audio>
+  <audio id="sx15" src="assets/sfx/wsh.mp3" data-start="22.980" data-duration="0.32" data-track-index="55" data-volume="0.12"></audio>
+  <audio id="sx16" src="assets/sfx/wsh.mp3" data-start="24.119" data-duration="0.32" data-track-index="56" data-volume="0.12"></audio>
+  <audio id="sx17" src="assets/sfx/wsh.mp3" data-start="26.220" data-duration="0.32" data-track-index="57" data-volume="0.12"></audio>
+  <audio id="sx18" src="assets/sfx/wsh.mp3" data-start="27.580" data-duration="0.32" data-track-index="58" data-volume="0.12"></audio>
+  <audio id="sx19" src="assets/sfx/wsh2.mp3" data-start="31.820" data-duration="0.35" data-track-index="59" data-volume="0.13"></audio>
+  <audio id="sx20" src="assets/sfx/shine2.mp3" data-start="32.900" data-duration="0.90" data-track-index="60" data-volume="0.15"></audio>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<script>
+var tl = gsap.timeline({ paused: true, defaults: { immediateRender: false } });
+window.__timelines = { vid67: tl };
+var HALF = 0.5 / 30;
+
+function put(sel, vars, t){ if (t <= HALF) gsap.set(sel, vars); tl.set(sel, vars, t); }
+
+/* ── THE FACE. Two states, hard cuts, never a tween. ─────────────────────── */
+var FACE = {
+  full:  { clip:"inset(0px 0px 0px 0px)",   cam:{ x:0, y:0,     scale:1 } },
+  split: { clip:"inset(620px 0px 0px 0px)", cam:{ x:0, y:380, scale:1 } }
+};
+function cut(state, t){
+  var f = FACE[state];
+  put("#faceScene", { clipPath: f.clip }, t);
+  put("#faceCam", Object.assign({ transformOrigin:"0 0" }, f.cam), t);
+  put("#btop", { autoAlpha: state === "split" ? 1 : 0 }, t);
+  put("#seam", { autoAlpha: state === "split" ? 1 : 0 }, t);
+  put("#capW", { className: state === "split" ? "" : "full" }, t);
+}
+
+cut("split",  0.000);   // the claude-code agent tree
+cut("full",  2.200);   // his face, as the reference plays it
+cut("split",  3.240);   // the launch-your-agent repo
+cut("split",  5.220);   // the managed-agent diagram
+cut("split",  7.869);   // reference shows the Claude app titled 'Dr Cintas'
+cut("split",  9.720);   // usage dashboard
+cut("split", 10.620);   // git clone launch-your-agent
+cut("split", 11.540);   // reference shows a live ANTHROPIC_API_KEY
+cut("split", 13.840);   // the skills list
+cut("split", 14.720);   // dashboard
+cut("split", 15.360);   // dashboard + rubric tooltip
+cut("full", 16.340);   // his face — the segment the first cut missed
+cut("split", 17.000);   // typing the agent's job
+cut("split", 20.100);   // the prompt completed
+cut("split", 21.180);   // Claude scopes the agent
+cut("split", 22.980);   // reference shows 'agent creation failed'
+cut("split", 24.119);   // reference shows PLANNED . NOT LAUNCHED
+cut("split", 26.220);   // reference shows a third party's meeting notes
+cut("split", 27.580);   // reference shows a real person's inbox
+cut("full", 31.820);   // his face + the CTA
+
+/* ── CAPTIONS ───────────────────────────────────────────────────────────── */
+var CAPS = [
+  [ 0.000, "If you haven't"],
+  [ 0.500, "built an AI"],
+  [ 1.040, "agent yet,"],
+  [ 1.840, "this is the"],
+  [ 2.200, "easiest way"],
+  [ 2.760, "to start."],
+  [ 3.240, "This free open"],
+  [ 3.740, "source GitHub"],
+  [ 4.200, "repo is"],
+  [ 4.700, "gonna let you"],
+  [ 5.220, "build your first"],
+  [ 5.800, "AI agent"],
+  [ 6.400, "without"],
+  [ 6.640, "ever"],
+  [ 7.060, "touching the"],
+  [ 7.640, "terminal."],
+  [ 8.180, "Open Cloud"],
+  [ 8.660, "Code based"],
+  [ 9.180, "in the GitHub"],
+  [ 9.720, "repo"],
+  [10.120, "along with"],
+  [10.620, "the setup"],
+  [10.940, "prompt,"],
+  [11.540, "add your API"],
+  [12.080, "key, and"],
+  [12.680, "you are"],
+  [13.180, "ready to go."],
+  [13.840, "Then simply"],
+  [14.280, "launch your"],
+  [14.720, "agent and"],
+  [15.200, "tell it"],
+  [15.480, "what you want"],
+  [15.940, "it to do."],
+  [16.340, "For example,"],
+  [17.000, "I asked it"],
+  [17.540, "to send me a"],
+  [18.020, "daily AI"],
+  [18.520, "news summary"],
+  [19.040, "on"],
+  [19.380, "Telegram"],
+  [19.820, "every morning"],
+  [20.360, "at 8"],
+  [20.920, "a.m."],
+  [21.180, "It built the"],
+  [21.660, "agent"],
+  [21.880, "deployed"],
+  [22.280, "to the cloud"],
+  [22.820, "and now"],
+  [23.260, "it runs"],
+  [23.760, "automatically"],
+  [24.360, "every"],
+  [24.840, "single"],
+  [25.260, "day."],
+  [25.680, "You can use it"],
+  [26.220, "for meeting"],
+  [26.600, "summaries,"],
+  [27.580, "reminders,"],
+  [28.080, "research,"],
+  [28.400, "or"],
+  [28.840, "almost"],
+  [29.480, "any repetitive"],
+  [30.060, "tasks"],
+  [30.520, "that you want"],
+  [31.100, "to automate."],
+  [31.820, "So if you wanna"],
+  [32.220, "try it out,"],
+  [33.020, "just comment"],
+  [33.420, "agent"],
+  [33.920, "and I'll"],
+  [34.480, "send you the link."],
+];
+window.__CAPS = CAPS;   // gates seek with suppressEvents, so tl.call() never
+                        // fires for them; they set the text from this instead
+(function(){
+  var el = document.getElementById("cap");
+  for (var i = 0; i < CAPS.length; i++){
+    (function(c){
+      tl.call(function(){ el.textContent = c[1]; }, null, c[0]);
+      tl.fromTo("#cap", { scale:0.94 }, { scale:1, duration:0.10, ease:"power2.out",
+        transformOrigin:"50% 50%" }, c[0]);
+    })(CAPS[i]);
+  }
+  tl.to("#cap", { opacity:0, duration:0.24, ease:"power2.in" }, 35.233 - 0.30);
+})();
+
+/* the CTA arrives on the word "comment" and holds to the end */
+put("#cta", { autoAlpha:0 }, 0);
+tl.set("#cta", { autoAlpha:1 }, 32.900);
+tl.fromTo("#cta", { scale:0.90, y:16 }, { scale:1, y:0, duration:0.28,
+  ease:"back.out(2.0)", transformOrigin:"50% 50%" }, 32.900);
+
+/* one white frame on the two hardest cuts — the only effect in the file */
+[2.200, 16.340].forEach(function(t){
+  tl.fromTo("#flash", { opacity:0 }, { opacity:0.40, duration:0.05, ease:"none" }, t - 0.05);
+  tl.to("#flash", { opacity:0, duration:0.06, ease:"none" }, t);
+});
+</script>
+</body>
+</html>

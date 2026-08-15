@@ -23,11 +23,11 @@ wrong. Three concrete cases this catches that nothing upstream did:
 
 Usage
 -----
-    python3 tools/qa/benchmark.py out/vid67-final.mp4 --creator shreyansh \\
+    python3 tools/qa/benchmark.py out/vid67-final.mp4 --creator card-reel \\
         --master hf67/assets/aroll.mp4 \\
         --srt out/vid67-final.srt --caption-pack out/vid67-caption.md
 
-    python3 tools/qa/benchmark.py out/vid62-short.mp4 --creator nader \\
+    python3 tools/qa/benchmark.py out/vid62-short.mp4 --creator longform-chunked \\
         --master-bitrate 32.78 --master-resolution 2160x3840
 
 Exit code
@@ -171,8 +171,9 @@ def scene_pass(path, duration, threshold=0.25):
     """Shot changes, from ffmpeg's own scene score.
 
     A grid-cell difference is the right tool for a frozen run and the wrong one
-    for a cut: demi2's b-roll moves so hard that a cell threshold tuned to catch
-    real cuts reported 218 of them in 37.8s, a 0.17s mean shot. A cut changes
+    for a cut: the fast-cut-ad demo film's b-roll moves so hard that a cell
+    threshold tuned to catch real cuts reported 218 of them in 37.8s, a 0.17s
+    mean shot. A cut changes
     the WHOLE frame, which is what `scene` scores.
 
     0.25 is the value the archive already uses to tell "an edit I have to beat"
@@ -180,8 +181,9 @@ def scene_pass(path, duration, threshold=0.25):
     reported three cuts, two of which were fast head movement.
 
     READ THE RESULT AS A FLOOR, NOT A COUNT. This is the least trustworthy number
-    the script produces and no threshold fixes it. demi2's density comes from
-    static crop-cuts of the same person against the same wall, which barely score
+    the script produces and no threshold fixes it. The fast-cut-ad demo film's
+    density comes from static crop-cuts of the same person against the same wall,
+    which barely score
     as scene changes at all: its plan is 42 shots over 36.2s and the detector sees
     11 at 0.25, 16 at 0.10 and still only 19 at 0.06. The same sweep pushes vid63,
     whose 13 scenes the detector reads correctly as 10 at 0.25, up to 66 false
@@ -251,8 +253,8 @@ def motion_pass(frames, fps, grid=(6, 10), still=1.0):
 
 def band_pass(frames):
     """Mean luma of the reserved bottom band (y1600 to 1920 of 1920, the bottom
-    16.67%). He sent back a frame of one with "What the fuck is this?": content
-    stopped at y1530 and the bottom 390px averaged 13/255, which in a player
+    16.67%). The creator sent back a frame of one with "What the fuck is this?":
+    content stopped at y1530 and the bottom 390px averaged 13/255, which in a player
     reads as a broken black bar rather than as a reserved zone. A wide shallow
     stage lift took it to 28.5. Reserving a zone means keeping TEXT out of it,
     never leaving it black."""
@@ -302,9 +304,9 @@ def face_pass(path, duration, sample_fps=1.0):
     Two separate numbers, two separate failures behind them:
 
       * presence as a fraction of runtime. "No need to show my face too much"
-        settled shreyansh at about 30%; Nader's "better A-rolls and more
-        A-rolls" turned out to mean b-roll, and face share falling 43.2% to
-        39.4% was in a round he approved.
+        settled card-reel at about 30%; the longform-chunked account's "better
+        A-rolls and more A-rolls" turned out to mean b-roll, and face share
+        falling 43.2% to 39.4% was in a round the creator approved.
       * the chin. Above the chin IS the face, so a chin below y1600 is inside
         the Instagram bottom UI band. `contourBot` is the landmark to read:
         Vision's bounding box is not the head, and three rounds on one film
@@ -442,7 +444,8 @@ def main():
         description="Measure a delivered film against the numbers real rejections set.")
     ap.add_argument("film", help="the delivered mp4, e.g. out/vid67-final.mp4")
     ap.add_argument("--creator", default="house",
-                    help="shreyansh | gaurav | nader | demi | house")
+                    help="card-reel | paper-split | longform-chunked | "
+                         "fast-cut-ad | house")
     ap.add_argument("--master", help="the CAMERA master A-roll, for the bitrate and "
                                      "resolution contract. Not the project's CRF-17 "
                                      "transcode, which carries a higher rate than the "
@@ -576,7 +579,7 @@ def main():
             print("master     %.2f Mbps (declared)" % master["total_mbps"])
     else:
         print("master     not supplied. The two delivery-contract metrics are SKIPPED, "
-              "and they are the two he has complained about most.")
+              "and they are the two the creator has complained about most.")
     if m.get("aspect_mismatch"):
         print("           delivered %.3f AR against a %.3f master, so this is a CROP and "
               "not a rescale." % m["aspect_mismatch"])

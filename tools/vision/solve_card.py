@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Solve the face-card transform per face-safe window from measured head geometry.
 
-vid44 round 1 estimated crown/chin/centre by eye and the owner saw him sitting 103px
-off-centre. Never again: every window gets its own s/x/y derived from that window's
+vid44 round 1 estimated crown/chin/centre by eye and the owner saw the presenter sitting
+103px off-centre. Never again: every window gets its own s/x/y derived from that window's
 own measured crown (person segmentation), chin (face contour) and head centre.
 
 Card (CARD-R, this client's standing default): x2280..3660, y440..1720 in 4K.
@@ -16,18 +16,18 @@ Targets:
 ROUND 2, ONE CONSTANT PER WINDOW. The tracking curve is gone.
 
 Round 1 gave each window a smoothed tx track (+-1.4s moving average at 0.4s spacing),
-reasoning that a constant is only correct at the median and he sways up to 594px. The
-owner's read of the result was "why is Nader's frame always moving left-right, you
+reasoning that a constant is only correct at the median and the presenter sways up to
+594px. The owner's read of the result was "why is the frame always moving left-right, you
 have added some issue." A follow that slow does not register as camera operation; it
 registers as a bug. So the transform is now constant for the whole window.
 
 That changes which windows can be carded at all, so the self-limiting test is now
-measured against the constant instead of against the track: if holding him at the
-window median still leaves him more than RESID_MAX off card centre, that window plays
-FULL-BLEED, where the source framing already holds him.
+measured against the constant instead of against the track: if holding the presenter at
+the window median still leaves them more than RESID_MAX off card centre, that window
+plays FULL-BLEED, where the source framing already holds them.
 
 Subdivision is also gone. Round 1 split long windows at 5.5s to keep the transform
-close to him, which is only safe if every sub-window boundary coincides with a cut,
+close to the presenter, which is only safe if every sub-window boundary coincides with a cut,
 otherwise the face jumps mid-shot, which is worse than the drift it was fixing. One
 window, one transform, no exceptions.
 
@@ -48,7 +48,7 @@ CROWN_BIAS = 0.42      # crown sits at 42% of the leftover slack -> more room be
                        # chin than above the crown, so shoulders read and the head never
                        # looks stuck to the card's top edge
 RESID_MAX  = 120       # px off card centre tolerated by a constant transform.
-                       # 120/1380 = 8.7% of card width. Beyond that the eye reads him
+                       # 120/1380 = 8.7% of card width. Beyond that the eye reads them
                        # as mis-framed rather than as sitting slightly off axis.
 
 W = [tuple(x) for x in json.load(open("face-safe-windows.json"))["safe"]]

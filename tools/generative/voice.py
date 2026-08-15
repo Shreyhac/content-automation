@@ -44,13 +44,13 @@ API = "https://api.elevenlabs.io/v1"
 DEFAULT_MODEL = "eleven_v3"
 FALLBACK_MODEL = "eleven_multilingual_v2"
 
-# Tuned on the Demi clone to keep a natural conversational cadence rather than
+# Tuned on the client voice clone to keep a natural conversational cadence rather than
 # smoothing it out. similarity_boost stays high because the point of a clone is
 # the person, not a pleasant voice.
 DEFAULT_SETTINGS = dict(stability=0.35, similarity_boost=0.85,
                         style=0.20, use_speaker_boost=True)
 
-# Cost and latency measured on the Demi UGC build, 2026: a 12 to 20 second line
+# Cost and latency measured on the fast-cut-ad UGC build, 2026: a 12 to 20 second line
 # on eleven_v3 returned in 8 to 20s and billed roughly 1 credit per character.
 # A four-candidate sweep of one line is therefore about 4x the line length in
 # credits and under two minutes of wall time. A clone is free on a paid plan.
@@ -315,12 +315,12 @@ def cmd_eqfit(a):
     """Fit an EQ chain by iteration against the source's own band profile.
 
     Measure, compare, adjust, repeat. DO NOT choose frequencies by ear. Seven
-    rounds on the Demi clone took total band deviation from 44.9 to 7.2, and
+    rounds on the client voice clone took total band deviation from 44.9 to 7.2, and
     the decisive move was -7.7 dB at 900 Hz, a frequency nobody would have
     picked by listening.
 
     Cuts only, by default. Adding body to match a percentage backfires: a
-    +2 dB shelf at 190 Hz, added to lift the 400 to 700 Hz share toward hers,
+    +2 dB shelf at 190 Hz, added to lift the 400 to 700 Hz share toward the source's,
     spilled upward into 250 to 400 Hz and CAUSED the mud it was meant to fix.
     Cut the excess; do not boost the deficit.
 

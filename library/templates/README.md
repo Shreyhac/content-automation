@@ -1,7 +1,7 @@
 # Templates
 
 `vertical-reel/` is a 1080x1920 skeleton (2160x3840 output) carrying the CURRENT grammar.
-Its parent is `reference-builds/shreyansh-vid67/`, the newest delivered shreyansh build, and
+Its parent is `reference-builds/card-reel-vid67/`, the newest delivered card-reel build, and
 it was rewritten off that file: the vid42-generation template it replaces was three theme
 generations stale.
 

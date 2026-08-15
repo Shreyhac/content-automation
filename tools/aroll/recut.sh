@@ -14,13 +14,13 @@
 # jump cut. That is why these particular in/out points were chosen over tighter ones.
 #
 # Each splice keeps a slice of the real room silence on both sides, so the joined
-# sentence break has the pacing he actually spoke:
+# sentence break has the pacing the presenter actually spoke:
 #   A: 0.30s after "sites." + 0.21s before "So"   = 0.51s
 #   B: 0.13s after "need."  + 0.11s before "Now," = 0.24s (the original was 0.24s)
 set -euo pipefail
 cd "$(dirname "$0")"
 
-SRC="/Volumes/Shreyansh/nader new video/incogni edited.mp4"
+SRC="/Volumes/EXTERNAL/incogni project/incogni edited.mp4"
 [ -f "$SRC" ] || { echo "master not mounted: $SRC"; exit 1; }
 
 # keep-ranges in original frames / seconds

@@ -9,7 +9,7 @@ Now they can.
 ```sh
 tools/review/rr out/vid47-final.mp4       # local review, opens a browser
 tools/review/rr                           # gallery of everything in out/
-tools/review/rr share out/vid47-final.mp4 --name "Nader"
+tools/review/rr share out/vid47-final.mp4 --name "the client"
 tools/review/rr pull vid47
 tools/review/rr push vid47
 tools/review/rr inbox

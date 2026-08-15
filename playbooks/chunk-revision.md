@@ -10,8 +10,8 @@ frame in the delivered file is byte-for-byte the frame the client already approv
 something already out the door, and the second half covers the harder version: a composition that
 was authored as **one** file and has to be chunked after the fact.
 
-Worked cases: vid46, vid56 and vid58 (Nader Incogni dashboard retrofit, 2026-08-13) and demi2
-(2026-08-13).
+Worked cases: vid46, vid56 and vid58 (longform-chunked Incogni dashboard retrofit, 2026-08-13) and
+the fast-cut-ad build (2026-08-13).
 
 ---
 
@@ -57,10 +57,10 @@ ffprobe -v error -select_streams v:0 \
 ffmpeg -i new.mp4 -i old.mp4 -lavfi psnr -f null -
 ```
 
-**A stale reference is worse than no reference.** A PSNR run on demi2 against an earlier probe
-render reported a "failure" that was really a source edit made after that probe was rendered
-("Still at it, Jon?" became "Still at it?"). Confirm what the baseline actually contains before
-believing a delta.
+**A stale reference is worse than no reference.** A PSNR run on the fast-cut-ad build against an
+earlier probe render reported a "failure" that was really a source edit made after that probe was
+rendered ("Still at it, Jon?" became "Still at it?"). Confirm what the baseline actually contains
+before believing a delta.
 
 ### Verify the joins, not the film
 
@@ -88,7 +88,7 @@ interiors are the approved file.
 ### Retrofitting real footage into an approved frame
 
 - **Read the composition before proposing to replace anything in it.** From one frame, vid46's
-  "Nader N. / Bay St / 1,240 signals" card looked like a fabricated stand-in worth swapping for
+  "J. Doe / Bay St / 1,240 signals" card looked like a fabricated stand-in worth swapping for
   the sponsor's real panel. It is a prop in a 7-second mechanic: the record assembles, gets priced,
   then sells down a spine to three named buyers, with matching geometry across the c1 to c2 join.
   And the swap was semantically backwards, because the real panel shows what Incogni **removed**
@@ -157,9 +157,9 @@ frames, 1 chunk re-rendered. Every untouched chunk stream-copied.
 
 ## Part 2: chunking a composition that was authored as one file
 
-demi2 would not render at all. 28 `<video>` elements, every one 2160x3840 at 52 to 100 Mbps, in
-one page: three attempts **hard-reset the 8GB M2 Air** with a blank screen. After chunking, the
-whole 36.4s film rendered at 4K in **4 minutes** with the machine untouched.
+The fast-cut-ad build would not render at all. 28 `<video>` elements, every one 2160x3840 at 52 to
+100 Mbps, in one page: three attempts **hard-reset the 8GB M2 Air** with a blank screen. After
+chunking, the whole 36.4s film rendered at 4K in **4 minutes** with the machine untouched.
 
 **It is the video EXTRACTION stage, not the worker count.** `--low-memory-mode` auto-enables at
 8GB or less and already pins one worker, which is why the crashed logs read `workerCount:1` under
@@ -197,10 +197,10 @@ finished before the chunk began leaves the element at its natural CSS state.
 `immediateRender` holding the element at its from-state, it correctly stays hidden. Dropping them
 is what makes late chips appear early.
 
-**A straddle guard only sees the tween families it can parse.** demi2's first version matched
-`}, <literal>)` and so never checked the chip entrances (`}, t)` inside a `forEach`) or the caption
-entrances (`}, t + 0.02)`, read from the DOM): two of the three families in the file. It passed by
-luck. Enumerate every family, then prove the guard can fail on a deliberately bad boundary.
+**A straddle guard only sees the tween families it can parse.** The fast-cut-ad build's first
+version matched `}, <literal>)` and so never checked the chip entrances (`}, t)` inside a
+`forEach`) or the caption entrances (`}, t + 0.02)`, read from the DOM): two of the three families
+in the file. It passed by luck. Enumerate every family, then prove the guard can fail on a deliberately bad boundary.
 
 **The emitter has the same blind spot, and its version is worse.** It rebases only **literal**
 tween positions. A `forEach` or array-computed position passes through verbatim and then fires at
@@ -241,9 +241,9 @@ lie.
 
 ### The emitter must copy every asset reference syntax the document can contain
 
-demi2's emitter linked everything matched by `src="assets/..."`, and so never linked a single
-`@font-face` file, because CSS references fonts as `src:url("assets/...")`. Chrome silently
-rendered every caption in a fallback font across **two delivered cuts**; lint, validate and the
+The fast-cut-ad build's emitter linked everything matched by `src="assets/..."`, and so never
+linked a single `@font-face` file, because CSS references fonts as `src:url("assets/...")`. Chrome
+silently rendered every caption in a fallback font across **two delivered cuts**; lint, validate and the
 frame QA all passed it, and the owner's "is this IBM flex font?" was what caught it.
 
 Match every reference syntax, not the one that was easy to grep. And verify the result off the
@@ -253,8 +253,8 @@ compile log, not by eye: see `docs/07-troubleshooting.md` on
 ### Render settings the split does not carry for you
 
 **`--resolution portrait-4k` is required.** Without it a 1080x1920 composition renders at 1080p
-and silently delivers a quarter of the pixels. demi2's first validation render did exactly that
-and looked like a success.
+and silently delivers a quarter of the pixels. The fast-cut-ad build's first validation render did
+exactly that and looked like a success.
 
 Numbers: 8 chunks at 143/175/133/110/53/209/143/126 = 1092 frames, 2160x3840 at 30fps, 75.1 Mbps
 against sources running 52.0 / 64.7 / 99.9 min / median / max, 36.400000s, 327 MB.

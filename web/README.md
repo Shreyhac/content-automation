@@ -20,7 +20,7 @@ Being straight about this matters, because a judge will ask.
 
 **Real:** the upload, the review canvas, the notes (stored, listed, seekable, deletable), the
 download, the range requests that make scrubbing work, and the reel you are watching, which is
-`reference-cuts/shreyansh-vid67-launch-your-agent.mp4`, an actual shipped and owner-approved film.
+`reference-cuts/card-reel-vid67-launch-your-agent.mp4`, an actual shipped and owner-approved film.
 
 **Staged:** the pipeline stages between upload and result. They run on a timer of about 38 seconds
 instead of invoking ffmpeg, whisper, HyperFrames and the render. Those stage names are not

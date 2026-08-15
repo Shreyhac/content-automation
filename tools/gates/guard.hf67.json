@@ -1,11 +1,11 @@
 {
-  "_": "A REAL, RUNNABLE config, not an illustration. This is vid67 (shreyansh,",
+  "_": "A REAL, RUNNABLE config, not an illustration. This is vid67 (card-reel,",
   "__": "`launch-your-agent`, 35.233s, delivered), and every number in it is a",
   "___": "measurement of that one film. guard.example.json shows every key that",
   "____": "exists; this file shows one film's actual answers. Re-derive, never inherit.",
 
-  "project": "../../reference-builds/shreyansh-vid67",
-  "_project": "the in-repo copy of the film, which is CODE ONLY: reference-builds carry no media by policy, so a run against it reports ASSET for assets/aroll.mp4, assets/bandtrack.mp4 and the fonts, and IMG0 for nothing because the film has no <img>. That is the gate working. For the clean PASS, point it at the film directory that has its assets: `--project ~/Desktop/shreyansh\\ claude/hf67`.",
+  "project": "../../reference-builds/card-reel-vid67",
+  "_project": "the in-repo copy of the film, which is CODE ONLY: reference-builds carry no media by policy, so a run against it reports ASSET for assets/aroll.mp4, assets/bandtrack.mp4 and the fonts, and IMG0 for nothing because the film has no <img>. That is the gate working. For the clean PASS, point it at the film directory that has its assets: `--project ~/Desktop/reel-factory/hf67`.",
 
   "document": "index.html",
   "timeline": "vid67",
@@ -42,22 +42,22 @@
       { "state": "split", "when": { "top": [">=", 610] } }
     ]
   },
-  "_face": "two states, hard cut, never a tween: FULL is inset(0px 0px 0px 0px), SPLIT is inset(620px 0px 0px 0px). The threshold is 610, between the two observed values and on neither, so a one-pixel rounding cannot flip the state. off_state names a state this film does not have, because his face never leaves the frame.",
+  "_face": "two states, hard cut, never a tween: FULL is inset(0px 0px 0px 0px), SPLIT is inset(620px 0px 0px 0px). The threshold is 610, between the two observed values and on neither, so a one-pixel rounding cannot flip the state. off_state names a state this film does not have, because the presenter's face never leaves the frame.",
 
   "states": {
     "split": {
-      "_": "B-roll band y0-620 full width, his face below it, picture pushed down 380. Worst crown 660 over 176 Vision samples of this take (crown y280-375 raw), 40px below the seam: no caption may run past it. No ink_zone: the graphics band IS a full-width video track. Measured, a zone inside it reads 241.3% covered, because ink is summed per element and overlapping elements double count, so the floor can never fail here.",
+      "_": "B-roll band y0-620 full width, the presenter's face below it, picture pushed down 380. Worst crown 660 over 176 Vision samples of this take (crown y280-375 raw), 40px below the seam: no caption may run past it. No ink_zone: the graphics band IS a full-width video track. Measured, a zone inside it reads 241.3% covered, because ink is summed per element and overlapping elements double count, so the floor can never fail here.",
       "text_must_clear_y": 660,
       "videos_painting": ["aroll", "vband"]
     },
     "full": {
-      "_": "his face full-bleed, untouched. No graphics rectangle exists, so ink_zone and the crown are DELETED rather than widened: a zone here measured 212.9% covered, which is a check that cannot fail. The band track must be dark here, and that is the one thing this state can assert.",
+      "_": "the presenter's face full-bleed, untouched. No graphics rectangle exists, so ink_zone and the crown are DELETED rather than widened: a zone here measured 212.9% covered, which is a check that cannot fail. The band track must be dark here, and that is the one thing this state can assert.",
       "videos_painting": ["aroll"]
     }
   },
 
   "face_windows": [[0.0, 35.234]],
-  "_face_windows": "one window covering the film, deliberately. He is on screen for every frame of vid67: under the band on SPLIT beats, whole-frame on FULL beats. Recorded as a decision so nobody later reads it as an omission. On a film where he leaves, this is the list of windows he MAY appear in and everywhere else is forbidden.",
+  "_face_windows": "one window covering the film, deliberately. The presenter is on screen for every frame of vid67: under the band on SPLIT beats, whole-frame on FULL beats. Recorded as a decision so nobody later reads it as an omission. On a film where the presenter leaves, this is the list of windows they MAY appear in and everywhere else is forbidden.",
 
   "void": { "after_t": 0.0, "min_ink_frac": 0.14 },
   "_void": "inert on this film: no state carries an ink_zone. Kept so the next edit that adds a graphics panel has the floor already sitting here.",

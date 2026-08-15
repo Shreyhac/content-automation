@@ -7,7 +7,7 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-SRC="/Volumes/Shreyansh/nader new video/incogni edited.mp4"
+SRC="/Volumes/EXTERNAL/incogni project/incogni edited.mp4"
 OUT=assets/aroll
 mkdir -p "$OUT"
 

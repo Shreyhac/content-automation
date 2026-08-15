@@ -1,8 +1,8 @@
 {
   "_comment": [
-    "The worked example, generalised off the Demi UGC build. Copy it and replace",
+    "The worked example, generalised off the fast-cut-ad UGC build. Copy it and replace",
     "the content. target_rate and source_consonant are MEASUREMENTS OF THE REAL",
-    "PERSON, taken from her own recording, not defaults: 3.62 words/sec of speech",
+    "PERSON, taken from their own recording, not defaults: 3.62 words/sec of speech",
     "and a 4.80% share in 2 to 5 kHz. Without them the scorer has nothing to be",
     "right about.",
     "Every candidate here is the SAME LINE. That is the point: you are choosing a",

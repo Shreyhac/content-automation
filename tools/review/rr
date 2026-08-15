@@ -4,7 +4,7 @@
 #   ./rr out/vid47-final.mp4      review locally (re-renders stack as v2, v3, ...)
 #   ./rr                          gallery of everything in out/
 #
-#   ./rr share out/vid47-final.mp4 --name "Nader"   upload, print the private client link
+#   ./rr share out/vid47-final.mp4 --name "the client"   upload, print the private client link
 #   ./rr pull vid47                                 bring the client's notes into review/data/
 #   ./rr push vid47                                 send your replies + resolved marks back
 #   ./rr inbox                                      what clients left that you have not pulled

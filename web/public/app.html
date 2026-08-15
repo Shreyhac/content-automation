@@ -64,7 +64,7 @@
   <div class="wrap col">
     <p class="kicker">Step 02 / Source</p>
     <h1 class="d2">Drop the raw take.</h1>
-    <p class="lead">One A-roll file. We read the duration locally in your browser. The bytes stay on your machine for this prototype, only the filename and size are sent.</p>
+    <p class="lead">One A-roll file. We read the duration locally in your browser, then upload the file so the edit runs on your actual footage.</p>
 
     <div class="drop" id="drop" tabindex="0" role="button" aria-label="Choose a video file">
       <p class="d3">Drag a video here</p>
@@ -91,10 +91,20 @@
   <div class="wrap col">
     <p class="kicker">Step 03 / Build</p>
     <h1 class="d2">Cutting.</h1>
-    <p class="lead" id="pipesub">Nine passes. Roughly forty seconds. Every stage below is a real step from the Reel Factory pipeline.</p>
+    <p class="lead" id="pipesub">Every stage below is a real step from the Reel Factory pipeline.</p>
+    <p class="tag" id="modetag" hidden></p>
+
+    <div class="uprow" id="uprow" hidden>
+      <p class="kicker" id="uplab">Uploading your file</p>
+      <div class="bar"><span id="upfill"></span></div>
+    </div>
+
     <div class="bar"><span id="barfill"></span></div>
     <ol class="stages" id="stages"></ol>
     <p class="err" id="piperr" role="alert" hidden></p>
+    <div class="crow" id="fallrow" hidden>
+      <button class="btn btn--go btn--sm" id="fallgo" type="button">Continue with the sample reel</button>
+    </div>
   </div>
 </section>
 
@@ -104,6 +114,7 @@
     <p class="kicker">Step 04 / Review</p>
     <h1 class="d2">Mark it up.</h1>
     <p class="lead">Pause on a frame, drag a box over the problem, type the note. Coordinates are stored normalised so a note lands in the right place on any screen.</p>
+    <p class="tag" id="revmode" hidden></p>
 
     <div class="revgrid">
       <div class="player">
@@ -149,7 +160,8 @@
   <div class="wrap col">
     <p class="kicker">Step 05 / Delivery</p>
     <h1 class="d2">Reel is out.</h1>
-    <p class="lead">Notes are with the editor. The cut below is yours to download now, 1080x1920, H.264, bitrate matched to your master.</p>
+    <p class="lead">Notes are with the editor. The cut below is yours to download now, 9:16, H.264, captions burned in.</p>
+    <p class="tag" id="donemode" hidden></p>
 
     <div class="donegrid">
       <div class="card pad">

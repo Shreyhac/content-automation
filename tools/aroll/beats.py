@@ -34,8 +34,8 @@ take rather than ten splices.
 
 ACTS, AND THE FACE'S THREE STATES (v3)
 --------------------------------------
-v1 changed the face's placement 5 times, by CUTS, and his head changed size every time
-he appeared. v2 answered that with one fixed band. v3 keeps the discipline but adopts
+v1 changed the face's placement 5 times, by CUTS, and the presenter's head changed size
+every time they appeared. v2 answered that with one fixed band. v3 keeps the discipline but adopts
 vid39's device, which the owner asked for by name: the face is ONE video with two
 designed states, and it only ever moves between them as a visible, tweened camera move
 (clip-path + scale together, 0.34s), never as a cut.
@@ -43,7 +43,7 @@ designed states, and it only ever moves between them as a visible, tweened camer
   HERO   the picture fills y0-1210 at s=0.56; chin sits at y1004 (worst y1100)
   CARD   the same picture scaled 0.6786 into a rounded portrait at x260-820,
          y850-1574 - vid39's floating card, re-solved for THIS head
-  OFF    collapsed to nothing (graphics beats: the gaze map forbids his face)
+  OFF    collapsed to nothing (graphics beats: the gaze map forbids the face)
 
 SPLIT beats run CARD with the graphics above it (y150-640) and the caption in the gap
 (y690-826), which is vid39's split-screen exactly. GFX beats run OFF and the graphics
@@ -72,10 +72,10 @@ ROOM = 50.70
 BEATS = [
  dict(n="b1", sent=0, f=99, a=0.00, act="A1", face=True, mode="SPLIT",
       say="your name, your address, and even your phone number.",
-      tail="natural, to 3.30 (his own pause; s1 starts there, so A1 has NO internal "
+      tail="natural, to 3.30 (the presenter's own pause; s1 starts there, so A1 has NO internal "
            "splice at all and the picture cannot jump)",
       art="the record: NAME / ADDRESS / PHONE bars slide off on their word onsets, "
-          "in the TALK graphics zone BELOW his face"),
+          "in the TALK graphics zone BELOW the face"),
 
  dict(n="b2", sent=1, f=111, a=3.30, act="A1", face=True, mode="SPLIT",
       say="Somebody can be pulling it all up in a single search.",
@@ -122,16 +122,16 @@ BEATS = [
           "the slabs already on screen; nothing new arrives"),
 
  dict(n="b8", sent=36, f=123, a=203.40, act="A4", face=False, mode="GFX",
-      say="You can use the code NADER for 60% off Incogni's annual plan.",
+      say="You can use the code CODEWORD for 60% off Incogni's annual plan.",
       tail="natural, to 207.50 (s37 starts 207.56)",
-      art="the coupon: the ONE card in the short. NADER stamps on the word. It "
+      art="the coupon: the ONE card in the short. CODEWORD stamps on the word. It "
           "carries ANNUAL PLAN and the 30-DAY GUARANTEE because neither is spoken"),
 
  dict(n="b9", sent=38, f=100, a=216.02, act="A5", face=True, mode="HERO",
       say="Your data is already out there whether you like it or not.",
       tail="natural, to 219.353 (s39 starts 219.36, so A5 is continuous)",
       art="the face returns for the sign-off; the coupon holds as a chip below it. "
-          "The band wipes out from 218.72, just before his gaze drops"),
+          "The band wipes out from 218.72, just before the gaze drops"),
 
  dict(n="b10", sent=39, f=86, a=219.36, act="A5", face=False, room=True,
       mode="GFX",
@@ -149,8 +149,8 @@ CHUNKS = [("s1", 0, 4), ("s2", 5, 9)]
 # ---------------------------------------------------------------------------
 # THE FACE BAND, one placement, three blocks. Source ranges are CONTINUOUS: a
 # face block never contains an audio splice, so the picture can never jump-cut
-# inside one. (This is why b1 runs to 3.30 rather than to 2.92: dropping his
-# natural 0.38s pause would have put a 0.3s jump in the middle of the hook.)
+# inside one. (This is why b1 runs to 3.30 rather than to 2.92: dropping the
+# presenter's natural 0.38s pause would have put a 0.3s jump in the middle of the hook.)
 #
 #   src_a, src_b   source range, continuous
 #   at             short-timeline start (derived below; must equal src_a's map)
@@ -163,11 +163,11 @@ FACE_CLIPS = [
          note="starts 0.30s into b5: gaze safe window is [91.7, 101.9], so the "
               "audio leads the picture by 9 frames. The only J-cut in the short."),
     dict(clip="a5", src_a=215.72, src_b=219.0533, beat="b9",
-         note="starts 0.30s BEFORE b9's audio (safe from 215.3), so his face is "
+         note="starts 0.30s BEFORE b9's audio (safe from 215.3), so the face is "
               "already settled when the sign-off begins. It ends at 219.053, "
-              "one frame past the end of the conceal wipe: his gaze drops from "
+              "one frame past the end of the conceal wipe: the gaze drops from "
               "218.9, and the wipe starts at 218.72 and eats the band TOP-DOWN, so "
-              "his eyes are already out of frame before the first downcast frame."),
+              "the eyes are already out of frame before the first downcast frame."),
 ]
 
 

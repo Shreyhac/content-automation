@@ -15,27 +15,29 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 WORDS = json.load(open(os.path.join(HERE, 'transcript.json')))
 
 # --- whisper corrections, proofed against the live sources -------------------
-# Whisper hears his own name and the coupon as "NAUTTER"/"NAUTER"; incogni.com/nader
-# returns 200 and the partner page reads "Use coupon code NADER at checkout".
+# the sponsor coupon code. Replace CODEWORD with the real code and the variants below
+# with what whisper actually produces for it. It is a coupon code: it must never reach
+# the screen wrong. Whisper hears the coupon as "CODEWERD"/"CODEWORT"; incogni.com/<partner>
+# returns 200 and the partner page reads "Use coupon code CODEWORD at checkout".
 SEQ_FIX = [
-    (['NAUTTER'],            ['NADER']),
-    (['NAUTER'],             ['NADER']),
-    (['NAUTTER,'],           ['NADER,']),
-    (['Nauter'],             ['NADER']),
-    (['Nautter'],            ['NADER']),
+    (['CODEWERD'],           ['CODEWORD']),
+    (['CODEWORT'],           ['CODEWORD']),
+    (['CODEWERD,'],          ['CODEWORD,']),
+    (['Codewort'],           ['CODEWORD']),
+    (['Codewerd'],           ['CODEWORD']),
     (['in', 'Cogniz'],       ['Incogni']),
     (['Cogniz'],             ['Incogni']),
     (['Incogni,'],           ['Incogni,']),
     (['Aura,'],              ['Aura,']),
 ]
 WORD_FIX = {
-    'incogni': 'Incogni', 'aura': 'Aura', 'nautter': 'NADER', 'nauter': 'NADER',
+    'incogni': 'Incogni', 'aura': 'Aura', 'codewerd': 'CODEWORD', 'codewort': 'CODEWORD',
     'deloitte': 'Deloitte', 'eff': 'EFF',
 }
 
 # Words rendered in BLUE (the system accent). Rationed: brand names and quantities.
 BLUE = re.compile(
-    r'^(incogni|deloitte|nader|[^a-z]*[\$€]?\d[\d,\.]*[a-z%\+]*)[\.,\?!:;]?$', re.I)
+    r'^(incogni|deloitte|codeword|[^a-z]*[\$€]?\d[\d,\.]*[a-z%\+]*)[\.,\?!:;]?$', re.I)
 # Words rendered in GREEN (removed / verified / winner).
 GREEN = re.compile(r'^(removal|removals|removed|verified|guarantee|free)[\.,\?!:;]?$', re.I)
 

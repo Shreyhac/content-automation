@@ -35,12 +35,12 @@ Use it before spending a generation, because these calls cost money and minutes.
 voice.py clone  --sample raw-reference.mp3 --name "Creator X" --i-did-not-denoise -o voice.json
 voice.py takes  --config takes.json --outdir audio --json-out takes.json.out
 voice.py sweep  --voice-id RAW,DENOISED --text-file line.txt --models eleven_v3,eleven_multilingual_v2
-voice.py eqfit  --source her-real-recording.wav --generated audio/cand-v3-tagged-035.mp3 -o eq-chain.txt
+voice.py eqfit  --source real-recording.wav --generated audio/cand-v3-tagged-035.mp3 -o eq-chain.txt
 voice.py master --in audio/cand-v3-tagged-035.mp3 --out audio/vo-s1.mp3 \
                 --eq eq-chain.txt --words 21 --target-rate 3.62
 ```
 
-**Cost and latency**, measured on the Demi UGC build in 2026: a 12 to 20 second line on
+**Cost and latency**, measured on the fast-cut-ad UGC build in 2026: a 12 to 20 second line on
 `eleven_v3` returns in 8 to 20s and bills roughly one credit per character, so a four-candidate
 sweep of one line is about 4x the line length in credits and under two minutes of wall time. The
 clone itself is free on a paid plan.
@@ -64,11 +64,11 @@ Four rules are enforced in code, not left to memory:
   nonsense. `--no-asr` exists and its help text says what you are choosing.
 - **Fit the EQ by iteration against the source's own band profile.** `eqfit` measures eight narrow
   bands on both files, prints the per-band deviation each round, and cuts the excess. Not one wide
-  "consonant" band: that looked solved while the TTS was piling energy either side of her voice
-  (her 400 to 700 Hz carried **50% of total energy** against the model's 33%, with +6.5% at
+  "consonant" band: that looked solved while the TTS was piling energy either side of the source voice
+  (the source's 400 to 700 Hz carried **50% of total energy** against the model's 33%, with +6.5% at
   250 to 400, +8% at 700 to 1200, +6.3% at 1200 to 2000). Seven rounds took total deviation from
   **44.9 to 7.2** and the decisive move was **−7.7 dB at 900 Hz**, which nobody picks by ear.
-  Cuts only by default: a +2 dB shelf at 190 Hz, added to lift the 400 to 700 Hz share toward hers,
+  Cuts only by default: a +2 dB shelf at 190 Hz, added to lift the 400 to 700 Hz share toward the source's,
   spilled upward and *caused* the mud. `--allow-boost` exists; read the docstring first.
   Know the cost before running it: reshaping the envelope dropped the lip-sync correlation metric
   from **0.310 to 0.243**.
@@ -126,7 +126,7 @@ lip-sync is not visible at reel scale. OmniHuman has been renamed under FAL more
 **`i2v` refuses to run without a `--negative-prompt`.** Kling's reference image drags the reference
 *pose* along with the likeness, and the fix is both halves together: the target pose in the prompt
 **and** the reference pose named in the negative prompt. A held pose then drifts mid-clip in the
-opposite direction: on vid15 her arms uncrossed and a hand melted into her sweater **within 1
+opposite direction: on vid15 the subject's arms uncrossed and a hand melted into their sweater **within 1
 second**. `--no-negative` overrides deliberately.
 
 **Pick the i2v model for keyframe control, not the house habit.** Kling 2.6 i2v has no last-image
@@ -156,7 +156,7 @@ No key, no cost. Run it on every generated clip before it enters a cut. Exit 1 w
 region breaches `--fail`.
 
 **Measure drift on a crop around every face and every hand, never globally.** Global `mean|Δ|`
-against frame 0 looked acceptable while a hand was morphing into a second face at her hairline;
+against frame 0 looked acceptable while a hand was morphing into a second face at the subject's hairline;
 cropping to the head region exposed it climbing **12 to 24**, which is where the default
 `--fail 12` comes from. A global average over a mostly static plate cannot see a local catastrophe,
 and the local catastrophe is the only thing a viewer will look at. The report prints the global

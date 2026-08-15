@@ -9,16 +9,16 @@
 
 MEASURE DRIFT ON A CROP AROUND EVERY FACE AND EVERY HAND, NEVER GLOBALLY.
 
-Global mean|delta| against frame 0 looked acceptable on a Demi take while a
-hand was morphing into a second face at her hairline. Cropping to the head
+Global mean|delta| against frame 0 looked acceptable on a client take while a
+hand was morphing into a second face at the subject's hairline. Cropping to the head
 region exposed it climbing 12 to 24. A global average over a mostly static
 plate cannot see a local catastrophe, and the local catastrophe is the only
 thing a viewer will look at. This script therefore reports per region and fails
 on the WORST region, never on the mean of them.
 
 It also samples 0.1s, mid and end explicitly, because a held pose drifts mid
-clip, not only at the end: on vid15 her arms uncrossed and a hand melted into
-her sweater within 1 second, and a last-frame check passed it.
+clip, not only at the end: on vid15 the subject's arms uncrossed and a hand melted into
+their sweater within 1 second, and a last-frame check passed it.
 
 When a take is clean early and rots late, trim to the clean window and mirror
 it back, forward plus a reversed tail. The clean-window line at the bottom of

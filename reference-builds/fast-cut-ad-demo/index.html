@@ -1,0 +1,562 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+@font-face{font-family:"Plex";font-style:normal;font-weight:100 700;font-display:block;src:url("assets/fonts/IBMPlexSans-VF.woff2") format('woff2');}
+@font-face{font-family:"Season";font-style:normal;font-weight:300 700;font-display:block;src:url("assets/fonts/SeasonMixUprightsVF.woff2") format('woff2');}
+
+:root{
+  --ground:#040120; --lift:#0B0538; --blue:#246CE0; --tint:#DAE8FF;
+  --orange:#FD8502; --otint:#FFEDE4; --pink:#CE3DA2; --white:#fff; --dim:#837E97;
+  /* the real app's dark chrome, sampled from client/ui-real */
+  --appbg:#0B0F26; --appbg2:#080C1E; --appcard:#141A38; --appinset:#0D1230;
+  --apptext:#E8ECF8; --appdim:#8A91B4; --appline:rgba(130,150,220,.16);
+  --ink:#1B1830;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+#root{position:relative;width:1080px;height:1920px;overflow:hidden;background:var(--ground);
+  font-family:"Plex",sans-serif;-webkit-font-smoothing:antialiased}
+
+/* ── footage ───────────────────────────────────────────────────── */
+video.shot{position:absolute;inset:0;width:1080px;height:1920px;object-fit:cover;z-index:1}
+
+/* ── flash / whip ──────────────────────────────────────────────── */
+.flash{position:absolute;inset:0;background:var(--tint);opacity:0;z-index:40;pointer-events:none}
+
+/* ── captions ──────────────────────────────────────────────────── */
+.cap{position:absolute;left:70px;right:70px;bottom:450px;z-index:30;display:flex;justify-content:center}
+.cap span{display:inline-block;background:rgba(4,1,32,.86);color:#fff;font-size:54px;line-height:1.24;
+  font-weight:700;letter-spacing:-.012em;padding:16px 30px;border-radius:18px;text-align:center;
+  max-width:940px;box-shadow:0 0 60px rgba(4,1,32,.5)}
+.cap em{font-style:normal;color:var(--tint)}
+
+/* ── logo chips — in the darkened top band over the hands b-roll ── */
+.chiprow{position:absolute;left:0;right:0;top:260px;z-index:20;
+  display:flex;flex-direction:column;justify-content:flex-start;align-items:center;gap:34px}
+.chip{width:150px;height:150px;border-radius:34px;background:rgba(253,248,240,.97);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 46px rgba(36,108,224,.34)}
+.chip img{width:84px;height:84px;object-fit:contain}
+.chip.sq img{width:74px;height:74px}
+
+/* block D: the reference's organic graph — curved dotted spokes around a hub */
+#midchips{position:absolute;inset:0;z-index:20}
+#midinner{position:absolute;inset:0}
+#midchips .chip{position:absolute}
+#webs{position:absolute;inset:0;width:1080px;height:1920px}
+#webs path{fill:none;stroke:rgba(238,242,252,.75);stroke-width:3.5;
+  stroke-linecap:round;stroke-dasharray:1 16}
+.sdot{position:absolute;width:20px;height:20px;border-radius:50%}
+.tdot{position:absolute;width:22px;height:22px;border-radius:50%}
+#td1{left:205px;top:371px;background:#6EC6F0;box-shadow:0 0 20px rgba(110,198,240,.85)}
+#td2{left:853px;top:1131px;background:#F2994A;box-shadow:0 0 20px rgba(242,153,74,.85)}
+#td3{left:853px;top:751px;background:#6FCF97;box-shadow:0 0 20px rgba(111,207,151,.85)}
+
+/* ── split screen (his call, final): him below, the tool UIs above ── */
+#splitwrap{position:absolute;left:0;top:960px;width:1080px;height:960px;overflow:hidden;z-index:12}
+#splitwrap video{position:absolute;left:0;top:-380px;width:1080px;height:1920px;object-fit:cover}
+#toolpane{position:absolute;left:0;top:0;width:1080px;height:960px;z-index:13;
+  background:#FDF8F0;border-bottom:4px solid rgba(27,24,48,.12);overflow:hidden}
+.tcard{position:absolute;left:60px;top:70px;width:960px;height:820px;border-radius:28px;
+  background:#fff;border:2px solid rgba(27,24,48,.10);overflow:hidden;
+  box-shadow:0 18px 60px rgba(27,24,48,.14)}
+.tbar{height:78px;background:#F4F1EA;display:flex;align-items:center;gap:12px;padding:0 26px}
+.tbar i{width:16px;height:16px;border-radius:50%;background:#D9D4C8;display:block}
+.tbar img{width:40px;height:40px;object-fit:contain;margin-left:12px}
+.tbar span{font-size:30px;font-weight:600;color:var(--ink)}
+.tbody{padding:30px 34px;height:calc(100% - 78px)}
+.dline{height:20px;border-radius:8px;background:#E4E0D5;margin-bottom:18px}
+.w95{width:95%}.w92{width:92%}.w90{width:90%}.w85{width:85%}.w80{width:80%}
+.w70{width:70%}.w60{width:60%}.w40{width:40%}.w0{width:0;height:8px}
+/* docs */
+.docs .doctool{height:54px;border-radius:12px;background:#4C8BEA;margin-bottom:24px;opacity:.85}
+.docs .docpage{background:#FBFAF6;border:2px solid #ECE8DD;border-radius:14px;padding:34px 40px;height:560px}
+/* chatgpt */
+.gpt .gmsg{border-radius:18px;padding:22px 26px;margin-bottom:22px;font-size:28px;line-height:1.4}
+.gpt .user{background:#E8E5DC;color:var(--ink);max-width:80%;margin-left:auto}
+.gpt .bot{background:#F4F1EA}
+.gpt .bot .dline{background:#DDD8CB}
+.gpt .gcomposer{position:absolute;left:34px;right:34px;bottom:30px;border:2px solid #D9D4C8;
+  border-radius:16px;padding:20px 24px;font-size:27px;color:#8C879C}
+/* gmail */
+.mail .mrow{display:flex;gap:18px;align-items:baseline;padding:24px 10px;border-bottom:2px solid #EFEBE1;font-size:27px;color:#5E5A70}
+.mail .mrow b{color:var(--ink);width:230px;flex:none;font-weight:600}
+.mail .mrow span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mail .unread{background:#F6F3EB;border-radius:12px}
+.mail .unread b{font-weight:700}
+/* calendar */
+.cal .crow{display:flex;gap:20px;align-items:center;margin-bottom:26px}
+.cal .crow>span{width:100px;flex:none;font-size:25px;color:#8C879C;text-align:right}
+.cal .cev{flex:1;border-radius:12px;padding:18px 22px;font-size:27px;font-weight:600;color:#fff}
+.cal .b{background:#4C8BEA}.cal .g{background:#3E9B63}.cal .o{background:#E8843C}.cal .p{background:#8A63C9}
+/* slack */
+.slack .smsg{margin-bottom:24px;font-size:27px;color:#3A3650;display:flex;gap:14px;align-items:baseline}
+.slack .smsg b{font-size:29px;color:var(--ink)}
+.slack .smsg em{font-style:normal;font-weight:700;color:#611f69;flex:none}
+/* hubspot */
+.hub{display:flex;gap:22px}
+.hub .hcol{flex:1;background:#F6F3EB;border-radius:14px;padding:18px}
+.hub .hcol b{display:block;font-size:24px;color:#5E5A70;margin-bottom:14px;text-transform:uppercase;letter-spacing:.06em}
+.hub .hcard{height:88px;border-radius:10px;background:#fff;border:2px solid #ECE8DD;margin-bottom:12px;
+  font-size:24px;color:var(--ink);padding:12px 14px;font-weight:600}
+.hub .hi{border-color:#E8843C;box-shadow:0 0 0 3px rgba(232,132,60,.25)}
+
+/* ── grid scene (block C) — a scrim over his footage, not a void ── */
+#grid{position:absolute;inset:0;z-index:25;background:
+   radial-gradient(1100px 900px at 50% 34%, rgba(36,108,224,.30), transparent 68%),
+   rgba(4,1,32,.80);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:70px;padding:180px 90px}
+#gwrap{display:grid;grid-template-columns:repeat(3,168px);grid-template-rows:repeat(2,168px);gap:34px}
+#gwrap .gc{width:168px;height:168px;border-radius:38px;background:#FDF8F0;
+  display:flex;align-items:center;justify-content:center;box-shadow:0 0 56px rgba(36,108,224,.30)}
+#gwrap .gc img{width:92px;height:92px;object-fit:contain}
+#grule{width:0;height:3px;background:var(--tint);opacity:.8}
+#glabel{font-family:"IBM Plex Mono",monospace;font-weight:500;font-size:38px;letter-spacing:.14em;
+  color:var(--tint);text-transform:uppercase}
+
+/* ── the "sits on top" row (block G) — CHEST band (round-1 note) ── */
+#stack{position:absolute;inset:0;z-index:20;pointer-events:none}
+/* round 3: the hierarchy — Client clear of his chin, connector lines, row lower */
+#dtile{position:absolute;left:435px;top:920px;width:210px;height:210px;border-radius:47px;
+  overflow:hidden;box-shadow:0 14px 40px rgba(0,0,0,.45)}
+#dtile img{width:100%;height:100%;display:block}
+.hline{position:absolute;border-radius:2px}
+#lrail{background:repeating-linear-gradient(90deg,rgba(218,232,255,.6) 0 9px,transparent 9px 22px)}
+#ltrunk,.ldrop{background:repeating-linear-gradient(180deg,rgba(218,232,255,.6) 0 9px,transparent 9px 22px)}
+#ltrunk{left:538px;top:1130px;width:4px;height:40px;transform-origin:top center}
+#lrail{left:215px;top:1168px;width:650px;height:4px;transform-origin:center}
+.ldrop{width:4px;height:38px;top:1172px;transform-origin:top center}
+#srow{position:absolute;left:0;right:0;top:1210px;height:120px;display:flex;justify-content:center;
+  align-items:center;gap:18px}
+#srow .sc{width:112px;height:112px;border-radius:26px;background:rgba(253,248,240,.95);
+  display:flex;align-items:center;justify-content:center}
+#srow .sc img{width:62px;height:62px;object-fit:contain}
+
+/* ── the Client app (block F) — the REAL dark chrome over his footage ── */
+#ui{position:absolute;inset:0;z-index:25}
+#win{position:absolute;left:70px;top:330px;width:940px;height:1180px;border-radius:30px;
+  background:var(--appbg);overflow:hidden;border:1.5px solid var(--appline);
+  box-shadow:0 0 90px rgba(36,108,224,.30)}
+#bar{height:64px;background:var(--appbg2);display:flex;align-items:center;padding:0 26px;gap:12px}
+#bar i{width:17px;height:17px;border-radius:50%;display:block}
+#body{padding:30px 34px;display:flex;flex-direction:column;gap:22px;height:calc(100% - 64px)}
+#greet{font-family:"Season",serif;font-weight:400;font-size:54px;color:var(--apptext);letter-spacing:.01em}
+#composer{border:2px solid rgba(87,120,220,.55);border-radius:22px;background:var(--appinset);
+  padding:24px 28px;display:flex;flex-direction:column;gap:20px;
+  box-shadow:0 0 44px rgba(36,108,224,.18)}
+#ctext{font-size:38px;color:var(--apptext);min-height:50px;line-height:1.3}
+#ctext.ph{color:#6E7494}
+#ctext .car{display:inline-block;width:3px;height:40px;background:var(--blue);
+  transform:translateY(6px);margin-left:3px}
+#crow{display:flex;align-items:center;gap:16px}
+#crow .plus{font-size:38px;color:#6E7494;line-height:1}
+#crow .sp{flex:1}
+#fnk{font-family:"IBM Plex Mono",monospace;font-size:24px;color:#9FB4E8;background:#1A2142;
+  border-radius:11px;padding:8px 15px;letter-spacing:.04em}
+#hold{font-size:28px;color:var(--appdim)}
+#send{width:60px;height:60px;border-radius:15px;background:#202748;display:flex;
+  align-items:center;justify-content:center;font-size:32px;color:#8A91B4}
+#req{align-self:flex-end;max-width:680px;background:#CFE0FA;color:#16305E;font-size:32px;
+  line-height:1.34;border-radius:20px;padding:18px 26px}
+.card{border-radius:22px;background:var(--appcard);padding:24px 26px;display:flex;
+  flex-direction:column;gap:14px;border:1.5px solid var(--appline)}
+.card .ch{display:flex;align-items:flex-start;gap:16px}
+.card .ct{flex:1}
+.card .tag{font-family:"IBM Plex Mono",monospace;font-size:22px;letter-spacing:.16em;color:var(--appdim)}
+.card .ttl{font-size:34px;font-weight:600;color:#F0F3FC;margin-top:4px}
+.card .lg{width:54px;height:54px;border-radius:13px;background:#fff;display:flex;
+  align-items:center;justify-content:center}
+.card .lg img{width:34px;height:34px;object-fit:contain}
+.card .ln{font-size:28px;color:#A9B0CE;line-height:1.4}
+.card .ac{background:var(--appinset);border-radius:14px;padding:16px 20px;font-size:25px;
+  color:#C6CCE4;line-height:1.42}
+.card .ac b{font-family:"IBM Plex Mono",monospace;font-size:20px;letter-spacing:.16em;color:#6E7494;
+  font-weight:400;display:block;margin-bottom:8px}
+/* the payoff, inside the same window: both tasks ticked + the untouched dock.
+   ABSOLUTE, not flexed under the cards — stacked, the column overflows the
+   window's 1180px and the whole payoff clips into invisibility (caught on the
+   round-2 QA sheet: frames 26.5 and 27.0 were identical to 25.8). The two
+   phases swap: cards fade out at 26.20, this fades in over the same area. */
+#phase2{position:absolute;left:34px;right:34px;top:560px;bottom:280px;display:flex;
+  flex-direction:column;gap:16px;opacity:0}
+#ticks{display:flex;flex-direction:column;gap:12px}
+#ticks .trow{border-radius:15px;background:var(--appcard);padding:14px 18px;display:flex;
+  align-items:center;gap:14px;border:1.5px solid var(--appline)}
+#ticks .trow img{width:36px;height:36px;object-fit:contain}
+#ticks .trow span{font-size:27px;color:var(--apptext);font-weight:500}
+#ticks .trow .ok{margin-left:auto;font-size:29px;color:#4ADE80}
+/* round 2: dock at the BOTTOM of the card, icons in colour */
+#minidock{display:flex;justify-content:center;align-items:center;gap:16px;margin-top:auto}
+#minidock .di{width:84px;height:84px;border-radius:21px;background:rgba(253,248,240,.95);
+  display:flex;align-items:center;justify-content:center}
+#minidock .di img{width:48px;height:48px;object-fit:contain}
+#dlabel{text-align:center;font-family:"IBM Plex Mono",monospace;font-size:27px;letter-spacing:.14em;
+  color:var(--appdim);text-transform:uppercase;margin-top:6px}
+
+/* (round 6: endcard styles removed — the client outro clip is the CTA) */
+
+/* ── the CTA pill on his last line ─────────────────────────────── */
+#ctapill{position:absolute;left:50%;top:1130px;transform:translateX(-50%);z-index:29;
+  background:var(--blue);color:#fff;font-size:40px;font-weight:600;padding:22px 44px;
+  border-radius:999px;white-space:nowrap;box-shadow:0 0 66px rgba(36,108,224,.6)}
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="root" data-start="0" data-duration="37.7667" data-width="1080" data-height="1920">
+
+<!-- ══ FOOTAGE — native framing throughout, no crop alternation ═══ -->
+<video id="ar_a1" class="clip shot" data-start="0" data-duration="4.7667" data-track-index="0" src="assets/shots/ar_a1.mp4" muted playsinline></video>
+<!-- (round 3: hook is back on the A-roll per his markup; the blurred working
+     footage moved to the context beat — see b1d at the END of the video stack,
+     where DOM order lets it paint over ar_a3) -->
+<video id="ar_a2" class="clip shot" data-start="4.7667" data-duration="3.9666" data-track-index="1" src="assets/shots/ar_a2.mp4" muted playsinline></video>
+<video id="ar_a3" class="clip shot" data-start="8.7333" data-duration="6.1334" data-track-index="2" src="assets/shots/ar_a3.mp4" muted playsinline></video>
+<video id="dock2" class="clip shot" data-start="14.4667" data-duration="1.5267" data-track-index="3" src="assets/shots/dock2.mp4" muted playsinline></video>
+<!-- round 6 (team): block E breathes — 3 held shots instead of 7 cuts.
+     s18 keeps the "lives on your Mac" typing sync at 16.96; then one long
+     integrations hold (b6) and one long, READABLE routine-card hold (b3). -->
+<video id="s18a" class="clip shot" data-start="15.98" data-duration="1.8867" data-track-index="4" src="assets/shots/s18a.mp4" muted playsinline></video>
+<video id="be3" class="clip shot" data-start="17.8667" data-duration="2.9933" data-track-index="5" src="assets/shots/be3.mp4" muted playsinline></video>
+<video id="ar_f" class="clip shot" data-start="20.8667" data-duration="6.5666" data-track-index="11" src="assets/shots/ar_f.mp4" muted playsinline></video>
+<video id="ar_g1" class="clip shot" data-start="27.4333" data-duration="4.7667" data-track-index="12" src="assets/shots/ar_g1.mp4" muted playsinline></video>
+<video id="ar_g2" class="clip shot" data-start="32.20" data-duration="1.6667" data-track-index="13" src="assets/shots/ar_g2.mp4" muted playsinline></video>
+<!-- last in the stack so these paint OVER the base A-roll (same-z videos
+     stack by DOM order, not track-index) -->
+<video id="b1d" class="clip shot" data-start="10.60" data-duration="4.1667" data-track-index="14" src="assets/shots/b1d.mp4" muted playsinline></video>
+<!-- round 11: the working b-roll returns as a HANDS crop (no screen readable —
+     Client may not appear before "lives on my Mac"); a dark radial scrim over the
+     top band hides any drifting screen sliver, exactly like the reference
+     darkens its top third under the Viktor pill -->
+<video id="bo2a" class="clip shot" data-start="2.84" data-duration="1.9267" data-track-index="15" src="assets/shots/bo2a.mp4" muted playsinline></video>
+<video id="bo2b" class="clip shot" data-start="4.7667" data-duration="0.7666" data-track-index="16" src="assets/shots/bo2b.mp4" muted playsinline></video>
+<!-- the split (final): him cropped into the bottom pane; non-timed wrapper
+     because video may not nest in a timed div -->
+<div id="splitwrap">
+  <video id="ar_sp" class="clip" data-start="5.5333" data-duration="3.2000" data-track-index="17" src="assets/shots/ar_sp.mp4" muted playsinline></video>
+</div>
+<!-- round 6: the client's official outro replaces the built endcard -->
+<video id="outro2" class="clip shot" data-start="33.8600" data-duration="3.9000" data-track-index="18" src="assets/shots/outro2.mp4" muted playsinline style="z-index:28"></video>
+
+<!-- (round 4: floating hook chips removed on his note — clean face + caption) -->
+
+<!-- ══ CHIPS — four land in the darkened band over the hands b-roll ══ -->
+<div id="chips" class="clip chiprow" data-start="2.84" data-duration="2.6933" data-track-index="31">
+  <div class="chip" id="c1"><img src="assets/logos/gmail.svg" alt="Gmail"></div>
+  <div class="chip" id="c2"><img src="assets/logos/gcal.svg" alt="Google Calendar"></div>
+  <div class="chip sq" id="c3"><img src="assets/logos/slack.svg" alt="Slack"></div>
+  <div class="chip sq" id="c4"><img src="assets/logos/hubspot.svg" alt="HubSpot"></div>
+</div>
+
+<!-- ══ SPLIT TOP PANE — the six tools' UIs swiping one by one ═════ -->
+<div id="toolpane" class="clip" data-start="5.5333" data-duration="3.2000" data-track-index="32">
+  <div class="tcard" id="tc-docs">
+    <div class="tbar"><i></i><i></i><i></i><img src="assets/logos/gdocs.svg" alt=""><span>Google Docs</span></div>
+    <div class="tbody docs">
+      <div class="doctool"></div>
+      <div class="docpage">
+        <div class="dline w80"></div><div class="dline w95"></div><div class="dline w90"></div>
+        <div class="dline w60"></div><div class="dline w0"></div>
+        <div class="dline w85"></div><div class="dline w92"></div><div class="dline w40"></div>
+      </div>
+    </div>
+  </div>
+  <div class="tcard" id="tc-gpt">
+    <div class="tbar"><i></i><i></i><i></i><img src="assets/logos/openai.svg" alt=""><span>ChatGPT</span></div>
+    <div class="tbody gpt">
+      <div class="gmsg user">Summarise this thread and draft a reply</div>
+      <div class="gmsg bot"><div class="dline w90"></div><div class="dline w95"></div><div class="dline w70"></div></div>
+      <div class="gcomposer">Message ChatGPT…</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ GRID SCENE — over his footage, dimmed, not a void ══════════ -->
+<div id="grid" class="clip" data-start="8.7333" data-duration="1.8667" data-track-index="33">
+  <div id="gwrap">
+    <div class="gc"><img src="assets/logos/gmail.svg" alt="Gmail"></div>
+    <div class="gc"><img src="assets/logos/gcal.svg" alt="Google Calendar"></div>
+    <div class="gc"><img src="assets/logos/slack.svg" alt="Slack"></div>
+    <div class="gc"><img src="assets/logos/hubspot.svg" alt="HubSpot"></div>
+    <div class="gc"><img src="assets/logos/gdocs.svg" alt="Google Docs"></div>
+    <div class="gc"><img src="assets/logos/openai.svg" alt="OpenAI"></div>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:26px">
+    <div id="grule"></div>
+    <div id="glabel">six tools · one job</div>
+  </div>
+</div>
+
+<!-- ══ BLOCK D — connected tools, context flowing between them ═══ -->
+<div id="midchips" class="clip" data-start="10.60" data-duration="3.8667" data-track-index="33">
+  <div id="midinner">
+  <svg id="webs" viewBox="0 0 1080 1920">
+    <path id="w1" d="M 216 382 Q 540 437 864 382"/>
+    <path id="w2" d="M 864 382 Q 919 572 864 762"/>
+    <path id="w3" d="M 864 762 Q 919 952 864 1142"/>
+    <path id="w4" d="M 864 1142 Q 540 1087 216 1142"/>
+    <path id="w5" d="M 216 1142 Q 161 952 216 762"/>
+    <path id="w6" d="M 216 762 Q 271 572 216 382"/>
+  </svg>
+  <div class="sdot" id="sd1" style="left:530px;top:400px;background:#6EC6F0"></div>
+  <div class="sdot" id="sd2" style="left:882px;top:562px;background:#F2C94C"></div>
+  <div class="sdot" id="sd3" style="left:882px;top:942px;background:#F2994A"></div>
+  <div class="sdot" id="sd4" style="left:530px;top:1104px;background:#BB6BD9"></div>
+  <div class="sdot" id="sd5" style="left:178px;top:942px;background:#6FCF97"></div>
+  <div class="sdot" id="sd6" style="left:234px;top:562px;background:#EB5757"></div>
+  <div class="chip" id="m1" style="position:absolute;left:141px;top:307px"><img src="assets/logos/gmail.svg" alt=""></div>
+  <div class="chip" id="m2" style="position:absolute;left:789px;top:307px"><img src="assets/logos/gcal.svg" alt=""></div>
+  <div class="chip sq" id="m3" style="position:absolute;left:141px;top:687px"><img src="assets/logos/slack.svg" alt=""></div>
+  <div class="chip sq" id="m4" style="position:absolute;left:789px;top:687px"><img src="assets/logos/hubspot.svg" alt=""></div>
+  <div class="chip" id="m5" style="position:absolute;left:141px;top:1067px"><img src="assets/logos/gdocs.svg" alt=""></div>
+  <div class="chip sq" id="m6" style="position:absolute;left:789px;top:1067px"><img src="assets/logos/openai.svg" alt=""></div>
+
+  <div class="tdot" id="td1"></div>
+  <div class="tdot" id="td2"></div>
+  <div class="tdot" id="td3"></div>
+  </div>
+</div>
+
+<!-- ══ CLIENT APP — the real dark chrome, over his blurred footage ══ -->
+<div id="ui" class="clip" data-start="20.8667" data-duration="6.5666" data-track-index="35">
+  <div id="win">
+    <div id="bar"><i style="background:#F2685E"></i><i style="background:#F5BE4F"></i><i style="background:#61C554"></i></div>
+    <div id="body">
+      <div id="greet">Still at it?</div>
+      <div id="composer">
+        <div id="ctext" class="ph">Ask Client anything…</div>
+        <div id="crow">
+          <span class="plus">+</span><span class="sp"></span>
+          <span id="fnk">fn ⊕</span><span id="hold">Hold to talk</span>
+          <span id="send">↑</span>
+        </div>
+      </div>
+      <div id="phase1">
+      <div id="req">Reply to John and update the HubSpot deal</div>
+      <div class="card" id="cardG">
+        <div class="ch">
+          <div class="ct"><div class="tag">COMPLETED</div><div class="ttl">Draft Gmail Reply</div></div>
+          <div class="lg"><img src="assets/logos/gmail.svg" alt="Gmail"></div>
+        </div>
+        <div class="ln">Draft saved as a reply in that thread.</div>
+        <div class="ac"><b>ACTION CONTENT</b>Hi John — thanks for the nudge. Sending the updated scope across today, and I've moved our call to Thursday.</div>
+      </div>
+      <div class="card" id="cardH">
+        <div class="ch">
+          <div class="ct"><div class="tag">COMPLETED</div><div class="ttl">Update HubSpot Deal</div></div>
+          <div class="lg"><img src="assets/logos/hubspot.svg" alt="HubSpot"></div>
+        </div>
+        <div class="ln">Deal moved to <strong>Proposal Sent</strong> · note added.</div>
+      </div>
+      </div>
+      <div id="phase2">
+      <div id="ticks">
+        <div class="trow"><img src="assets/logos/gmail.svg" alt=""><span>Draft Gmail Reply</span><span class="ok">✓</span></div>
+        <div class="trow"><img src="assets/logos/hubspot.svg" alt=""><span>Update HubSpot Deal</span><span class="ok">✓</span></div>
+      </div>
+      <div id="minidock">
+        <div class="di"><img src="assets/logos/gmail.svg" alt=""></div>
+        <div class="di"><img src="assets/logos/gcal.svg" alt=""></div>
+        <div class="di"><img src="assets/logos/slack.svg" alt=""></div>
+        <div class="di"><img src="assets/logos/hubspot.svg" alt=""></div>
+        <div class="di"><img src="assets/logos/gdocs.svg" alt=""></div>
+        <div class="di"><img src="assets/logos/openai.svg" alt=""></div>
+      </div>
+      <div id="dlabel">not one of them opened</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- ══ SITS ON TOP (block G) — chest band ═════════════════════════ -->
+<div id="stack" class="clip" data-start="27.4333" data-duration="4.7667" data-track-index="37">
+  <div id="dtile"><img src="assets/ui/client-app-icon.png" alt="Client"></div>
+  <div class="hline" id="ltrunk"></div>
+  <div class="hline" id="lrail"></div>
+  <div class="hline ldrop" style="left:213px"></div>
+  <div class="hline ldrop" style="left:343px"></div>
+  <div class="hline ldrop" style="left:473px"></div>
+  <div class="hline ldrop" style="left:603px"></div>
+  <div class="hline ldrop" style="left:733px"></div>
+  <div class="hline ldrop" style="left:863px"></div>
+  <div id="srow">
+    <div class="sc"><img src="assets/logos/gmail.svg" alt=""></div>
+    <div class="sc"><img src="assets/logos/gcal.svg" alt=""></div>
+    <div class="sc"><img src="assets/logos/slack.svg" alt=""></div>
+    <div class="sc"><img src="assets/logos/hubspot.svg" alt=""></div>
+    <div class="sc"><img src="assets/logos/gdocs.svg" alt=""></div>
+    <div class="sc"><img src="assets/logos/openai.svg" alt=""></div>
+  </div>
+</div>
+
+<!-- ══ CTA PILL ══════════════════════════════════════════════════ -->
+<div id="ctapill" class="clip" data-start="33.10" data-duration="0.74" data-track-index="38">Download for Mac</div>
+
+<!-- (round 6: the built endcard is gone — the client's outro clip plays instead) -->
+
+<!-- ══ FLASHES ═══════════════════════════════════════════════════ -->
+
+<!-- ══ CAPTIONS ══════════════════════════════════════════════════ -->
+<div class="clip cap" data-start="0.00" data-duration="1.42" data-track-index="50"><span>I counted the tools I moved between</span></div>
+<div class="clip cap" data-start="1.42" data-duration="1.42" data-track-index="50"><span>in one hour yesterday</span></div>
+<div class="clip cap" data-start="2.84" data-duration="1.36" data-track-index="50"><span>Email, calendar,</span></div>
+<div class="clip cap" data-start="4.20" data-duration="1.32" data-track-index="50"><span>Slack, the CRM,</span></div>
+<div class="clip cap" data-start="5.52" data-duration="1.56" data-track-index="50" style="bottom:auto;top:960px;height:0;align-items:center" data-layout-allow-overflow=""><span>a doc, and a ChatGPT tab</span></div>
+<div class="clip cap" data-start="7.08" data-duration="1.6533" data-track-index="50" style="bottom:auto;top:960px;height:0;align-items:center" data-layout-allow-overflow=""><span>where I was pasting everything into</span></div>
+<div class="clip cap" data-start="8.74" data-duration="1.86" data-track-index="50"><span><em>Six things</em> to do one job</span></div>
+<div class="clip cap" data-start="10.60" data-duration="0.98" data-track-index="50"><span>Most of what I was doing</span></div>
+<div class="clip cap" data-start="11.58" data-duration="0.78" data-track-index="50"><span>was carrying context</span></div>
+<div class="clip cap" data-start="12.36" data-duration="1.10" data-track-index="50"><span>from one to the next,</span></div>
+<div class="clip cap" data-start="13.46" data-duration="1.00" data-track-index="50"><span>but not anymore</span></div>
+<div class="clip cap" data-start="14.46" data-duration="1.52" data-track-index="50"><span>because now I have <em>Client</em>,</span></div>
+<div class="clip cap" data-start="15.98" data-duration="1.88" data-track-index="50"><span>an AI teammate that lives on my Mac</span></div>
+<div class="clip cap" data-start="17.8667" data-duration="1.1733" data-track-index="50"><span>and it's connected to all of them,</span></div>
+<div class="clip cap" data-start="19.04" data-duration="1.00" data-track-index="50"><span>which means I mostly stopped</span></div>
+<div class="clip cap" data-start="20.04" data-duration="0.8267" data-track-index="50"><span>moving between them</span></div>
+<div class="clip cap" data-start="20.8667" data-duration="1.5133" data-track-index="50"><span>So now I just ask it once,</span></div>
+<div class="clip cap" data-start="22.38" data-duration="0.60" data-track-index="50"><span>reply to John</span></div>
+<div class="clip cap" data-start="22.98" data-duration="1.46" data-track-index="50"><span>and update the HubSpot deal</span></div>
+<div class="clip cap" data-start="24.44" data-duration="0.82" data-track-index="50"><span>and it does <em>both</em></span></div>
+<div class="clip cap" data-start="25.26" data-duration="2.1733" data-track-index="50"><span>without me opening a single window</span></div>
+<div class="clip cap" data-start="27.4333" data-duration="1.3267" data-track-index="50"><span>It's not a seventh tool</span></div>
+<div class="clip cap" data-start="28.76" data-duration="1.34" data-track-index="50"><span>It's the thing that sits on top</span></div>
+<div class="clip cap" data-start="30.10" data-duration="1.20" data-track-index="50"><span>of the other six</span></div>
+<div class="clip cap" data-start="31.30" data-duration="0.90" data-track-index="50"><span>So I don't have to</span></div>
+<div class="clip cap" data-start="32.20" data-duration="1.64" data-track-index="50"><span>You have to download it and check it out</span></div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<script>
+window.__timelines = window.__timelines || {};
+const tl = gsap.timeline({ paused: true });
+
+/* ── four chips land over the b-roll, one per spoken word ───── */
+const chipAt = [2.84, 3.42, 4.20, 4.7667];
+chipAt.forEach((t, i) => {
+  tl.from("#c" + (i + 1), { opacity: 0, y: 24, duration: .50, ease: "power2.out" }, t);
+});
+
+/* ── split pane: the six tools' UIs swipe one by one ──────────
+   FLAT literal statements, not a forEach: the chunk emitter can only rebase
+   literal positions, and these live in c2 whose clock starts at 4.7667. */
+/* round 12: the SPLIT is back (his note) — soft sequential swipes, one card
+   visible at a time, ChatGPT holds to the end of the beat */
+tl.fromTo("#tc-docs", { xPercent: 112 }, { xPercent: 0, duration: .50, ease: "power2.out" }, 5.5333);
+tl.to("#tc-docs", { xPercent: -112, duration: .35, ease: "power2.inOut" }, 5.95);
+tl.fromTo("#tc-gpt",  { xPercent: 112 }, { xPercent: 0, duration: .50, ease: "power2.out" }, 6.24);
+
+/* ── grid scene ─────────────────────────────────────────────── */
+tl.fromTo("#grid", { opacity: 0 }, { opacity: 1, duration: .35, ease: "power2.out" }, 8.7333);
+tl.from("#gwrap .gc", { opacity: 0, y: 18, duration: .50, stagger: .09, ease: "power2.out" }, 8.85);
+tl.to("#grule", { width: 470, duration: .45, ease: "power2.inOut" }, 9.60);
+tl.from("#glabel", { y: 18, opacity: 0, duration: .40, ease: "power2.out" }, 9.85);
+
+/* ── block D: tools connect, context flows between them ─────── */
+/* the graph assembles: chips pop playfully, spokes dot in, dots ride them */
+tl.from("#m1", { opacity: 0, y: 18, duration: .45, ease: "power2.out" }, 10.68);
+tl.from("#m2", { opacity: 0, y: 18, duration: .45, ease: "power2.out" }, 10.79);
+tl.from("#m3", { opacity: 0, y: 18, duration: .45, ease: "power2.out" }, 10.90);
+tl.from("#m4", { opacity: 0, y: 18, duration: .45, ease: "power2.out" }, 11.01);
+tl.from("#m5", { opacity: 0, y: 18, duration: .45, ease: "power2.out" }, 11.12);
+tl.from("#m6", { opacity: 0, y: 18, duration: .45, ease: "power2.out" }, 11.23);
+tl.fromTo("#webs path", { opacity: 0 }, { opacity: 1, duration: .40, stagger: .09, ease: "power2.out" }, 11.55);
+tl.fromTo(".sdot", { opacity: 0, scale: .4 }, { opacity: 1, scale: 1, duration: .35, stagger: .07, ease: "back.out(1.6)" }, 12.05);
+/* two bright dots travel the curves — context moving between tools */
+tl.fromTo("#td1", { x: 0, y: 0, opacity: 0 }, { opacity: 1, duration: .12 }, 12.16);
+tl.to("#td1", { x: 324, y: 28, duration: 0.18, ease: "none" }, 12.3);
+tl.to("#td1", { x: 648, y: 0, duration: 0.18, ease: "none" }, 12.48);
+tl.to("#td1", { x: 676, y: 190, duration: 0.18, ease: "none" }, 12.66);
+tl.to("#td1", { x: 648, y: 380, duration: 0.18, ease: "none" }, 12.84);
+tl.to("#td1", { x: 676, y: 570, duration: 0.18, ease: "none" }, 13.02);
+tl.to("#td1", { x: 648, y: 760, duration: 0.18, ease: "none" }, 13.2);
+tl.to("#td1", { x: 324, y: 732, duration: 0.18, ease: "none" }, 13.38);
+tl.to("#td1", { x: 0, y: 760, duration: 0.18, ease: "none" }, 13.56);
+tl.to("#td1", { x: -28, y: 570, duration: 0.18, ease: "none" }, 13.74);
+tl.to("#td1", { opacity: 0, duration: .14 }, 13.92);
+tl.set("#td1", { opacity: 0 }, 14.08);
+tl.fromTo("#td2", { x: 0, y: 0, opacity: 0 }, { opacity: 1, duration: .12 }, 12.16);
+tl.to("#td2", { x: -324, y: -28, duration: 0.18, ease: "none" }, 12.3);
+tl.to("#td2", { x: -648, y: 0, duration: 0.18, ease: "none" }, 12.48);
+tl.to("#td2", { x: -676, y: -190, duration: 0.18, ease: "none" }, 12.66);
+tl.to("#td2", { x: -648, y: -380, duration: 0.18, ease: "none" }, 12.84);
+tl.to("#td2", { x: -620, y: -570, duration: 0.18, ease: "none" }, 13.02);
+tl.to("#td2", { x: -648, y: -760, duration: 0.18, ease: "none" }, 13.2);
+tl.to("#td2", { x: -324, y: -732, duration: 0.18, ease: "none" }, 13.38);
+tl.to("#td2", { x: 0, y: -760, duration: 0.18, ease: "none" }, 13.56);
+tl.to("#td2", { x: 28, y: -570, duration: 0.18, ease: "none" }, 13.74);
+tl.to("#td2", { opacity: 0, duration: .14 }, 13.92);
+tl.set("#td2", { opacity: 0 }, 14.08);
+tl.fromTo("#td3", { x: 0, y: 0, opacity: 0 }, { opacity: 1, duration: .12 }, 12.16);
+tl.to("#td3", { x: 28, y: 190, duration: 0.18, ease: "none" }, 12.3);
+tl.to("#td3", { x: 0, y: 380, duration: 0.18, ease: "none" }, 12.48);
+tl.to("#td3", { x: -324, y: 352, duration: 0.18, ease: "none" }, 12.66);
+tl.to("#td3", { x: -648, y: 380, duration: 0.18, ease: "none" }, 12.84);
+tl.to("#td3", { x: -676, y: 190, duration: 0.18, ease: "none" }, 13.02);
+tl.to("#td3", { x: -648, y: 0, duration: 0.18, ease: "none" }, 13.2);
+tl.to("#td3", { x: -620, y: -190, duration: 0.18, ease: "none" }, 13.38);
+tl.to("#td3", { x: -648, y: -380, duration: 0.18, ease: "none" }, 13.56);
+tl.to("#td3", { x: -324, y: -352, duration: 0.18, ease: "none" }, 13.74);
+tl.to("#td3", { opacity: 0, duration: .14 }, 13.92);
+tl.set("#td3", { opacity: 0 }, 14.08);
+/* the graph clears BEFORE the Mac window opens — the reveal plays clean */
+tl.to("#midinner", { opacity: 0, duration: .30, ease: "power2.in" }, 14.10);
+tl.set("#midinner", { opacity: 0 }, 14.44);
+
+/* ── Client app — the real window ─────────────────────────────── */
+tl.from("#win",      { y: 24, opacity: 0, duration: .50, ease: "power2.out" }, 20.90);
+tl.from("#greet",    { y: 14, opacity: 0, duration: .40, ease: "power2.out" }, 21.02);
+tl.from("#composer", { y: 16, opacity: 0, duration: .45, ease: "power2.out" }, 21.12);
+
+/* the sentence types with his voice: "reply to John" 22.38, "and update…" 22.98 */
+const ASK = "Reply to John and update the HubSpot deal";
+tl.set("#ctext", { innerHTML: "", className: "" }, 21.90);
+tl.to({ n: 0 }, {
+  n: ASK.length, duration: 2.20, ease: "none",
+  onUpdate: function () {
+    const k = Math.round(this.targets()[0].n);
+    const el = document.getElementById("ctext");
+    if (el) el.innerHTML = ASK.slice(0, k) + '<span class="car"></span>';
+  }
+}, 21.90);
+
+/* enter, then the two results land */
+tl.fromTo("#send", { backgroundColor: "#202748", color: "#8A91B4" },
+                   { backgroundColor: "#246CE0", color: "#FFFFFF", duration: .14 }, 24.26);
+tl.from("#req",   { y: 14, opacity: 0, duration: .35, ease: "power2.out" }, 24.30);
+tl.from("#cardG", { y: 20, opacity: 0, duration: .45, ease: "power2.out" }, 24.52);
+tl.from("#cardH", { y: 20, opacity: 0, duration: .45, ease: "power2.out" }, 25.44);
+
+/* the payoff inside the same window: cards yield, ticks + dock take the frame */
+tl.to("#phase1", { opacity: 0, duration: .22, ease: "power2.in" }, 26.20);
+tl.to("#phase2", { opacity: 1, duration: .20, ease: "power2.out" }, 26.24);
+tl.from("#ticks .trow", { y: 14, opacity: 0, duration: .35, stagger: .16, ease: "power2.out" }, 26.24);
+tl.from("#minidock .di", { y: 14, opacity: 0, duration: .35, stagger: .05, ease: "power2.out" }, 26.64);
+tl.from("#dlabel",       { opacity: 0, duration: .35, ease: "power2.out" }, 27.00);
+
+/* ── sits on top — the hierarchy: Client, lines, the six below ──── */
+tl.from("#srow .sc",  { y: 16, opacity: 0, duration: .45, stagger: .06, ease: "power2.out" }, 27.50);
+tl.from("#dtile",     { y: -24, opacity: 0, duration: .50, ease: "power2.out" }, 30.14);
+tl.fromTo("#ltrunk", { scaleY: 0 }, { scaleY: 1, duration: .25, ease: "power2.out" }, 30.55);
+tl.fromTo("#lrail",  { scaleX: 0 }, { scaleX: 1, duration: .30, ease: "power2.inOut" }, 30.72);
+tl.fromTo(".ldrop",  { scaleY: 0 }, { scaleY: 1, duration: .20, stagger: .05, ease: "power2.out" }, 30.95);
+tl.to("#srow .sc",    { opacity: .42, duration: .34, ease: "power2.out" }, 30.40);
+
+/* ── CTA pill, then the client outro carries the close ──────── */
+tl.from("#ctapill", { y: 18, opacity: 0, duration: .45, ease: "power2.out" }, 33.14);
+
+/* ── captions: one bar, revealed whole on its first word ────── */
+document.querySelectorAll(".cap").forEach(el => {
+  const t = parseFloat(el.getAttribute("data-start"));
+  /* the caption that is live at t=0 must already be painted on the cover frame */
+  if (t <= 0) return;
+  tl.from(el.querySelector("span"), { y: 14, opacity: 0, duration: .26, ease: "power2.out" }, t + 0.02);
+});
+
+/* (flashes removed — the competitor grammar: sections change without strobes) */
+
+window.__timelines["root"] = tl;
+</script>
+</div>
+</body>
+</html>

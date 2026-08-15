@@ -13,10 +13,10 @@ import wave
 
 import numpy as np
 
-# Eight narrow bands, not one wide "consonant" band. A first fix on the Demi
+# Eight narrow bands, not one wide "consonant" band. A first fix on the client voice
 # clone measured a single 2 to 5 kHz share, looked solved, and missed that the
-# TTS was piling energy either side of her voice: 250 to 400 Hz +6.5%,
-# 700 to 1200 Hz +8%, 1200 to 2000 Hz +6.3%, while her own 400 to 700 Hz band
+# TTS was piling energy either side of the source voice: 250 to 400 Hz +6.5%,
+# 700 to 1200 Hz +8%, 1200 to 2000 Hz +6.3%, while the source's own 400 to 700 Hz band
 # carried 50% of total energy against the model's 33%.
 BANDS = [
     (80, 250),
@@ -110,7 +110,7 @@ def speech_rate(path, word_count):
 
     Rate over wall duration is not comparable between takes: a take with four
     tagged breaks and a flat take with one 0.13s pause can read the same. The
-    Demi creator measured 3.62 w/s of speech with clause pauses 0.20 to 0.54s,
+    client's presenter measured 3.62 w/s of speech with clause pauses 0.20 to 0.54s,
     median 0.26s.
     """
     dur = duration(path)

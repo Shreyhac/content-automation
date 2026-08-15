@@ -1,7 +1,7 @@
 # Chunked long-form
 
 For anything over about 60 seconds. Reference build:
-`reference-builds/nader-vid46-longform/` (shared architecture plus one specimen chunk).
+`reference-builds/longform-chunked-vid46-longform/` (shared architecture plus one specimen chunk).
 
 **Chunking is the right architecture, not a workaround.** Four minutes in one composition is
 unreviewable and un-iterable. A bug in one act should cost a 90-second re-render, not a

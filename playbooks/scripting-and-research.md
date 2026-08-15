@@ -18,7 +18,7 @@ Four artefacts, and they are read before scripting or scoping anything new:
 | `scripts-only.md` | **The build source.** 16 entries, each a competitor transcript plus the script to shoot from it |
 | `refs/` | The reference reels. MP4s are gitignored, `refs/fetch.sh` rebuilds them. `refs/sheets/*.jpg` are contact sheets (read as images to recover an edit), `refs/tx/` word-timestamped transcripts, `refs/README.md` the manifest |
 | `reference-editing-language.md` | Cross-cutting style analysis of all 16 |
-| `instagram-performance-2026-08-06.md` | His own 36-post performance audit, the *why* behind the script shapes |
+| `instagram-performance-2026-08-06.md` | The creator's own 36-post performance audit, the *why* behind the script shapes |
 
 **The method is: match a new A-roll to a script in the bank and continue.** The bank is not a
 library of ideas to browse, it is a set of proven shapes with a transcript attached, so a new take
@@ -29,14 +29,14 @@ Where the creator has recorded a reference's script **verbatim**, the reference'
 the shot list. **Re-time by word, not by ratio.** vid67 mapped 39.53s of reference onto 35.23s of
 delivery: `difflib` over the two normalised word sequences anchored **136 of 148 words**, each
 reference cut was mapped through the piecewise-linear result and then snapped to the nearest word
-onset in his take. Every boundary landed within 0.24s of an onset, most inside 0.10s. A flat ratio
+onset in the new take. Every boundary landed within 0.24s of an onset, most inside 0.10s. A flat ratio
 would have drifted a third of a second by the CTA.
 
 ---
 
 ## Grievance beats tutorial, by up to 140x
 
-He made three videos on the same topic, agents losing memory:
+The creator made three videos on the same topic, agents losing memory:
 
 | Framing | Plays |
 |---|---|
@@ -44,7 +44,7 @@ He made three videos on the same topic, agents losing memory:
 | The **warning** about it | 2,443 |
 | The **tutorial** for it | 1,016 |
 
-Monotonic. He has 1,453 followers against a 2,874 median and a 143k best, so nearly all reach comes
+Monotonic. The account has 1,453 followers against a 2,874 median and a 143k best, so nearly all reach comes
 from strangers, and a tutorial only lands on people who already care.
 
 **Write the complaint first. Add the fix only if there is room.**
@@ -52,7 +52,7 @@ from strangers, and a tutorial only lands on people who already care.
 The qualifying test for any hook: *would someone who has never used Claude Code understand the
 first line and think "yes, that annoys me too"?* If not, it caps near 2k.
 
-**The hook shape, taken from his own winners:** *[the tool] does [annoying human thing], [absurd
+**The hook shape, taken from the account's own winners:** *[the tool] does [annoying human thing], [absurd
 image or hard number]*. Personify the AI as a bad coworker. A number or a picture, never an
 adjective.
 
@@ -146,12 +146,12 @@ high enough to plan around: on recent films the VO overstated a claim roughly as
 - vid55's hook was true (free keys via NVIDIA NIM) and its OpenRouter claim was false.
 - vid60's VO overstated the free-provider count. The repo documents 290 providers, 90+ free, and
   about 1.53B tokens a month; the frames carry the true numbers, which are also the stronger ones,
-  and his audio was left alone.
+  and the recorded audio was left alone.
 - vid61's VO overstated the output formats: HTML only.
 - vid67's "you never touch the terminal" is false: the quickstart is three terminal commands.
 
 **A fabricated claim in an already-recorded VO is a decision, not a blocker.** Put the true number
-on the frame, leave his audio alone, and write the fact gate at the top of the breakdown so
+on the frame, leave the recorded audio alone, and write the fact gate at the top of the breakdown so
 whoever posts it knows what a commenter can be shown. **The one number that cannot be sourced gets
 cut, not invented**: vid60's hook wanted a Claude Code price to count down from, so the `$0`
 decodes in place instead.
@@ -164,12 +164,12 @@ API credit, that it is an unmaintained reference implementation, that it is toke
 ### Read a reference for what its frames claim, not just whether they are clean
 
 "Use the creator's visuals, no block around that" still has content that cannot ship. On vid67 six
-windows were unusable on their own terms: the creator's account name in four shots, his **live
-`ANTHROPIC_API_KEY` in plaintext**, a third party's meeting notes, and a real person's inbox.
+windows were unusable on their own terms: the reference creator's account name in four shots, their
+**live `ANTHROPIC_API_KEY` in plaintext**, a third party's meeting notes, and a real person's inbox.
 
 Two more mattered more than all of those. The reference's own screen shows the launch **failing**
 ("insufficient credit balance") and the spec page stamped `PLANNED · NOT LAUNCHED`, underneath a
-voiceover claiming it deployed and runs daily. **The creator faked his own payoff**, and lifting
+voiceover claiming it deployed and runs daily. **The reference creator faked their own payoff**, and lifting
 the frames would have shipped a contradiction at exactly the beat the reel exists to sell.
 
 Two mechanics for the same problem:

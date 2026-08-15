@@ -106,10 +106,12 @@ for w in out:
         merged[-1]["end"] = w["end"]
     else:
         merged.append(dict(w))
-# he says NADER; whisper hears NAUTTER. It is a coupon code: it must never reach the screen wrong.
+# the sponsor coupon code. Replace CODEWORD with the real code and the variants below
+# with what whisper actually produces for it. The presenter says CODEWORD; whisper hears
+# CODEWERD. It is a coupon code: it must never reach the screen wrong.
 for w in merged:
-    if w["word"].upper().strip(".,") in ("NAUTTER", "NAUGHTER", "NADDER"):
-        w["word"] = "NADER"
+    if w["word"].upper().strip(".,") in ("CODEWERD", "CODEWERT", "CODEWURD"):
+        w["word"] = "CODEWORD"
 # whisper drops a comma after "Report" that is not in the speech and makes the burned
 # caption read as a typo ("An independent Deloitte Assurance Report, confirmed ...").
 # Punctuation is the ONLY thing corrected here; no word is ever changed or removed.
@@ -126,7 +128,7 @@ for b in beats:
     ws = [w for w in out if w["beat"] == b["n"]]
     got = " ".join(w["word"] for w in ws)
     want = " ".join(b["words"]).replace(" -", "-").replace(" %", "%")
-    want = want.replace("NAUTTER", "NADER").replace("Report, confirmed", "Report confirmed")
+    want = want.replace("CODEWERD", "CODEWORD").replace("Report, confirmed", "Report confirmed")
     flag = "" if got == want else "   !! MISMATCH"
     if flag:
         bad = 1

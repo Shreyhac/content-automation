@@ -8,7 +8,7 @@
 /* ═══════════════════════════════════════════════════════════════════════════
    vertical-reel, the current-generation skeleton.
 
-   Parent: reference-builds/shreyansh-vid67 (delivered, 35.233s). Its caption
+   Parent: reference-builds/card-reel-vid67 (delivered, 35.233s). Its caption
    engine, its two-state face `cut()` system, its entrance conventions and its
    SFX bed are what this file carries, with every measured number replaced by a
    REPLACE marker. `guard.json` beside this file is a real derived stub from
@@ -77,9 +77,9 @@ html,body{width:2160px;height:3840px;background:#000;overflow:hidden}
 
 /* ══════════ THE FACE ══════════
    Two states, hard cuts, never a tween. There is no third mode and no
-   full-width band across his torso: a card is a frame, a slab is a cover.
-   SPLIT  graphics own y0 to the seam, his face owns everything below it
-   FULL   his face full-bleed, untouched
+   full-width band across the presenter's torso: a card is a frame, a slab is a cover.
+   SPLIT  graphics own y0 to the seam, the face owns everything below it
+   FULL   the face full-bleed, untouched
    Solve the geometry from a Vision measurement per take (tools/vision/,
    playbooks/face-geometry.md), never from a layout instinct:
      seam        REPLACE   graphics band height
@@ -124,7 +124,7 @@ html,body{width:2160px;height:3840px;background:#000;overflow:hidden}
 
 /* ══════════ CTA ══════════
    "Comment X and I'll send you Y" also needs a make_cta_doc.docx at first
-   delivery, not when he asks: tools/deliver/make_cta_doc.py. */
+   delivery, not when the owner asks: tools/deliver/make_cta_doc.py. */
 #cta{position:absolute;left:0;top:REPLACEpx;width:1080px;text-align:center;z-index:8;
   opacity:0;visibility:hidden}
 #ctaP{display:inline-flex;align-items:center;gap:18px;
@@ -223,7 +223,7 @@ function show(sel, t){ put(sel, { autoAlpha: 1 }, t); }
 function hide(sel, t){ put(sel, { autoAlpha: 0 }, t); }
 
 /* ══════════ THE BEAT MAP ══════════
-   Derive onsets from a 10ms RMS ENVELOPE of his own audio, not from whisper:
+   Derive onsets from a 10ms RMS ENVELOPE of the take's own audio, not from whisper:
    whisper smears emphatic delivery, and 62 of its word starts moved more than
    60ms against the envelope on one film. Use whisper only to know WHICH word an
    onset belongs to. tools/aroll/beats.py.

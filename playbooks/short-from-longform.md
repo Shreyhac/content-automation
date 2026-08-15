@@ -1,7 +1,7 @@
 # Making a short from a finished long-form
 
 The default method for any "make a short of this". Reference build:
-`reference-builds/nader-vid46-short/`. About three hours end to end and three render rounds when
+`reference-builds/longform-chunked-vid46-short/`. About three hours end to end and three render rounds when
 the film's measurements already exist.
 
 ---
@@ -102,7 +102,7 @@ both the off-by-one and the concat step.
 ## One face placement, full stop
 
 v1 alternated full-bleed (s=0.794) and card (s=0.399) five times with a 2.1s face island in the
-middle, so his head changed size every time he appeared.
+middle, so the presenter's head changed size every time they appeared.
 
 **Change visibility, never geometry. Only at act boundaries. No block under about 3.2s.**
 

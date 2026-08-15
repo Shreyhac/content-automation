@@ -1,5 +1,5 @@
 #!/bin/bash
-# vid46 final assembly, Incogni x Nader, 8 chunks, 6702 frames @ 3840x2160/30.
+# vid46 final assembly, Incogni longform, 8 chunks, 6702 frames @ 3840x2160/30.
 #
 # ROUND 2: the re-cut dropped the two duplicated takes (91.30-95.46 and
 # 124.88-136.58 in the original master), so the film is 493 frames shorter than

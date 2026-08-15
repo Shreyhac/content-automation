@@ -5,9 +5,9 @@
 #   * 236 placements over what LOOKED like 17 files, but boom.mp3/cboom.mp3 are
 #     byte-identical and so are riser.mp3/riser2.mp3, so it was 15 distinct sounds,
 #     and ONE of them (boom) carried 48 hits. Top four distinct sounds = 130/236 = 55%.
-#     His "why are you just using two or three SFX" was closer to the truth than the
-#     round-1 audit was.
-#   * volumes 0.16-0.34 with a median of 0.20, which he heard as too loud.
+#     The owner's "why are you just using two or three SFX" was closer to the truth than
+#     the round-1 audit was.
+#   * volumes 0.16-0.34 with a median of 0.20, which the owner heard as too loud.
 #   * the library files come at wildly different levels, so a single data-volume number
 #     meant a different loudness per file, and the fix each time was to nudge the
 #     volume up, which is how the bed ended up hot.
@@ -65,7 +65,7 @@ copy pop2  "$LIB/soft-kit/pop-message.mp3"
 copy pop3  "$LIB/soft-kit/pop-soft-long.mp3"
 copy pop4  "$LIB/soft-kit/pop-soap-bubble.mp3"
 
-echo "--- risers (into a cut; NOT the round-1 riser, he named it) ---"
+echo "--- risers (into a cut; NOT the round-1 riser, the owner named it) ---"
 copy rise1 "$LIB/rizer/soundreality-riser-hole-391174.mp3"
 copy rise2 "$LIB/rizer/dragon-studio-cinematic-riser-03-414575.mp3"
 copy rise3 "$LIB/rizer/soundreality-riser-wildfire-285209.mp3"

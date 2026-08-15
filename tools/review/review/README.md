@@ -65,7 +65,7 @@ next round opens with your old notes struck through and answered, and the new re
 
 ## Sending a cut to a client
 
-Clients (Nader, gaurav) get a private hosted link. Same player, same notes, no install, and it
+Clients get a private hosted link. Same player, same notes, no install, and it
 stays up when your Mac is off.
 
 **Nothing here needs a card.** The renders live as assets on a **private GitHub release**
@@ -87,7 +87,7 @@ Creates the private repo and its release, makes the KV namespace, deploys the wo
 **Every round:**
 
 ```sh
-./rr share out/vid48-final.mp4 --name "Nadernejad Media"   # prints the private link
+./rr share out/vid48-final.mp4 --name "Client Studio"     # prints the private link
 ./rr inbox                                                 # anything a client left, unpulled
 ./rr pull vid48                                            # notes land in review/data/vid48/
 ./rr                                                       # open them locally, with markup frames

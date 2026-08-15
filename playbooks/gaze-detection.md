@@ -1,7 +1,7 @@
 # Gaze detection: "don't show my face when I'm reading my notes"
 
 A constraint on the whole edit, not a decoration. Every face state in the video is driven by a
-measured face-safe window map. Required for Nader; applicable to any creator who reads.
+measured face-safe window map. Required for longform-chunked; applicable to any creator who reads.
 
 Tools: `tools/vision/gaze-detect.swift`, `tools/vision/build_windows.py`.
 
@@ -101,12 +101,12 @@ An earlier round shipped those same frames unflagged.
 ## Whitelist, not blacklist
 
 A blacklist (mark the unsafe spans) can only be as good as the detector that built it: two client
-notes about him visibly reading landed at moments where **no excluded span existed at all**,
-because eyelid aperture alone measured 0.347–0.361 there against a film median of 0.379,
+notes about the presenter visibly reading landed at moments where **no excluded span existed at
+all**, because eyelid aperture alone measured 0.347 to 0.361 there against a film median of 0.379,
 statistically indistinguishable from looking at the lens. A detector that cannot see a fault
 produces a blacklist with a hole in exactly the shape of what it cannot see.
 
-**Rewrite the gate as a whitelist: the windows his face MAY paint in, everywhere else forbidden.**
+**Rewrite the gate as a whitelist: the windows the face MAY paint in, everywhere else forbidden.**
 A missing window under a whitelist costs a beat of face (safe failure). A missing entry under a
 blacklist ships the defect (unsafe failure). Choose which way you want the gate to fail before you
 build it.
@@ -121,8 +121,9 @@ Two changes made the whitelist correct where the blacklist wasn't:
    had already failed three times before this.
 2. **Two windows still needed a documented human override** even under the better signal: the
    film's cover frame (the classifier's lead-trim was guarding what was actually a blink) and a
-   sign-off (the median dips because his eyes narrow when he smiles). **A classifier confident
-   enough to cut the presenter from his own sign-off needs a human check, not another threshold.**
+   sign-off (the median dips because the presenter's eyes narrow when they smile). **A classifier
+   confident enough to cut the presenter from their own sign-off needs a human check, not another
+   threshold.**
 
 ## Run length alone does not separate a blink from a glance when the signal runs backwards
 
@@ -131,8 +132,9 @@ One take's contour-aspect signal ran **inverted** relative to camera-facing (1.0
 all on that take, and only eye-openness stayed cleanly bimodal, thresholded at the **top** of the
 ambiguous band rather than its valley.
 
-Rejecting every short (0.4–0.6s) run as a blink on a run-length argument alone raised coverage from
-22.5% to 55.4% and shipped windows where he was **visibly reading at five timestamps** inside
+Rejecting every short (0.4 to 0.6s) run as a blink on a run-length argument alone raised coverage
+from 22.5% to 55.4% and shipped windows where the presenter was **visibly reading at five
+timestamps** inside
 "safe" territory. The fix was to tile and hand-adjudicate all 44 short runs: 36 were genuinely
 blinks, 8 were glances. A further trap one level down: `MIN_RUN=2` means single-sample dips never
 reach the run logic at all: 42 of those fell inside otherwise-safe windows and 3 were real glances
@@ -142,17 +144,17 @@ their reason attached, rather than left for the next threshold tweak to rediscov
 ## A confirmed exclusion is an editorial decision, not just a safety flag
 
 Once an exclusion is checked against the raw signal and found genuine (here: eye-openness
-0.45→0.13 sustained over 32 consecutive samples, frames showing him visibly reading), it stops
-being a binary "hide him" switch and becomes information about the shot: the picture moved to a
-smaller CARD for exactly that span, so he stayed on screen at a size the moment could support while
-graphics carried the argument, and returned to full size the instant the exclusion window ended.
-**The answer to "is this exclusion real" is sometimes "yes, and it tells you what the format should
-be", not just whether to cut him.**
+0.45→0.13 sustained over 32 consecutive samples, frames showing the presenter visibly reading), it
+stops being a binary "hide the face" switch and becomes information about the shot: the picture
+moved to a smaller CARD for exactly that span, so the presenter stayed on screen at a size the
+moment could support while graphics carried the argument, and returned to full size the instant the
+exclusion window ended. **The answer to "is this exclusion real" is sometimes "yes, and it tells you
+what the format should be", not just whether to cut away.**
 
 ## Bias
 
-**Err toward hiding him.** An extra second of graphics is a soft cost. Showing him reading is a
-hard failure, and it is the one thing the client actually asked for.
+**Err toward hiding the face.** An extra second of graphics is a soft cost. Showing the presenter
+reading is a hard failure, and it is the one thing the client actually asked for.
 
 Losing face time costs nothing when the client wants graphics in exactly those gaps.
 
@@ -168,5 +170,6 @@ The window map is not just a visibility switch. It constrains:
   means the face is hidden across both joins, so neither can read as a jump cut. That is why those
   in and out points and not tighter ones.
 - **Where the film can end.** If the closing line finishes with a downcast look, every frame at
-  the end of that window is a bad last frame, and holding an earlier one freezes him mid-sentence.
+  the end of that window is a bad last frame, and holding an earlier one freezes the presenter
+  mid-sentence.
   Cut to a composed lockup instead, which for a paid placement is also the correct thing to end on.

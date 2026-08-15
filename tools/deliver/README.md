@@ -4,7 +4,7 @@
 
 If the script says **"comment AGENT and I'll send you the link"**, the thing you send is a
 deliverable at **first delivery**, alongside the MP4 and the caption. Not later, not when
-he asks for it. The reel starts collecting comments the hour it posts, and until the doc
+the owner asks for it. The reel starts collecting comments the hour it posts, and until the doc
 exists there is nothing to send.
 
 ```bash

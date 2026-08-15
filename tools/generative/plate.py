@@ -34,7 +34,7 @@ whatever the model. But asking an image model for a new expression makes it
 silently redress the room: two of three variants did, so diff the background
 against the approved plate, not just the face (see drift.py --ref-image).
 
-Cost and latency, recorded on the Demi UGC build 2026 at FAL list price:
+Cost and latency, recorded on the fast-cut-ad UGC build 2026 at FAL list price:
 Kling ai-avatar v2 pro about $1.40 for a 10s clip, 4 to 9 minutes in queue.
 HeyGen Avatar IV similar money, 3 to 6 minutes. Budget a failed take per beat.
 """
@@ -104,8 +104,8 @@ I2V_PROMPT = (
 
 # The default negative prompt exists because Kling's reference image drags the
 # REFERENCE POSE along with the likeness, and a held pose then drifts mid-clip
-# in the opposite direction: on vid15 her arms uncrossed and a hand melted into
-# her sweater within 1 second. Name the target pose in the prompt AND the
+# in the opposite direction: on vid15 the subject's arms uncrossed and a hand melted into
+# their sweater within 1 second. Name the target pose in the prompt AND the
 # reference pose in the negative prompt. Both halves, or neither works.
 DEFAULT_NEGATIVE = ("changing pose, arms moving, hands morphing, extra fingers, "
                     "extra face, camera zoom, camera pan, cut, background change, "

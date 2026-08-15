@@ -29,7 +29,7 @@ app caches a rendered thumbnail **per file path**, and the delivery had overwrit
 path across several rounds; the cache entry never invalidated even though the bytes underneath it
 changed. Three checks that each take seconds and rule out most of the search space before touching
 any encode settings: `qlmanage -t -s <timeout>` (or the platform equivalent) against every candidate
-file including the client's own original: if *his* file also hangs, the bug isn't in your encode
+file including the client's own original: if *their* file also hangs, the bug isn't in your encode
 at all; `lsof`/`xattr -l` (dataless/provenance flags on synced files); a full decode pass
 (`ffmpeg -f null -`) to rule out a genuinely broken container. Resetting the preview cache and/or
 delivering to a brand-new file path (never reusing the exact output path across rounds) both
@@ -169,7 +169,7 @@ not reliably terminate the graph.** A multi-cue SFX-bed mix spun at ~99% CPU for
 wrote a short file. Give `apad` a `whole_dur=` and cap the output with `-t`.
 
 The same graph can work for months and then hang the first time a round **removes** something. With
-every SFX cue stripped out, demi2's mix had zero bounded inputs left, and those inputs were the
+every SFX cue stripped out, the fast-cut-ad demo film's mix had zero bounded inputs left, and those inputs were the
 only thing that had been terminating the trailing bare `apad`: ffmpeg spun forever. `whole_dur=DUR`
 is not an optimisation, it is what makes the graph terminable independent of its inputs.
 

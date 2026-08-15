@@ -11,24 +11,24 @@ Deduped across the whole portfolio, newest project wins. Copy the ones a build n
 
 | Family | Files | Used by |
 |---|---|---|
-| Clash Display | `clash-600`, `clash-700` | gaurav (display), shreyansh (display) |
-| Satoshi | `satoshi-500/700/900` | gaurav, shreyansh (body and captions) |
-| Rethink Sans | `rethink-sans-var` | Nader (display and all numbers) |
-| DM Sans | `dm-sans-var` | Nader (captions and body) |
+| Clash Display | `clash-600`, `clash-700` | paper-split (display), card-reel (display) |
+| Satoshi | `satoshi-500/700/900` | paper-split, card-reel (body and captions) |
+| Rethink Sans | `rethink-sans-var` | longform-chunked (display and all numbers) |
+| DM Sans | `dm-sans-var` | longform-chunked (captions and body) |
 | Geist Mono | `geist-mono` | all three (labels, mono) |
-| Fraunces | `fraunces-normal/black/italic`, `fraunces-var-a/b` | Nader (rationed second voice), the paper listicle family |
+| Fraunces | `fraunces-normal/black/italic`, `fraunces-var-a/b` | longform-chunked (rationed second voice), the paper listicle family |
 | Instrument Serif | `instrument-serif-italic-400-it` | rationed second voice |
 | Instrument Sans | `instrument-sans` | |
 | Inter | `inter-400/600/800` | tech-launch subjects |
 | Poppins | `poppins-500/600/700/800` | the older paper listicle family |
 | Space Grotesk | `space-grotesk-500/700` | music and audio subjects |
-| Gaegu | `Gaegu-400`, `Gaegu-700` | shreyansh, the hand-drawn marginalia voice. Loaded by every build from hf63 onward. |
-| IBM Plex | `IBMPlexSans-VF`, `IBMPlexMono-Regular/Medium` | Demi. Their brand book specifies Plex. |
+| Gaegu | `Gaegu-400`, `Gaegu-700` | card-reel, the hand-drawn marginalia voice. Loaded by every build from hf63 onward. |
+| IBM Plex | `IBMPlexSans-VF`, `IBMPlexMono-Regular/Medium` | fast-cut-ad. The client's brand book specifies Plex. |
 
-**One face a build needs is deliberately NOT here.** Demi's display face,
+**One face a build needs is deliberately NOT here.** The fast-cut-ad display face,
 `SeasonMixUprightsVF.woff2`, is a paid licence held by the client, so it is not redistributed in
-this repo. A Demi rebuild will fall back and look wrong until you copy it in from the client's
-brand package. See `creators/demi/PROFILE.md`.
+this repo. A fast-cut-ad rebuild will fall back and look wrong until you copy it in from the client's
+brand package. See `templates/fast-cut-ad/PROFILE.md`.
 
 Verify a face rendered, do not assume it loaded. A missing face falls back silently and a
 downscaled QA crop will hide the difference: check at native resolution, and treat the
@@ -57,7 +57,8 @@ Look here **before** the internet. Most of it is still uncurated.
 
 ### `sfx/saas/` (17 files)
 
-gaurav's own supplied pack. **He expects to hear it**: 80% of triggers on one film, 55% on another.
+The paper-split creator's own supplied pack. **They expect to hear it**: 80% of triggers on one film,
+55% on another.
 Fold a supplied pack in by class-matched substitution, taking over existing cues from the
 most-repeated file in the same class, never by inventing new beats.
 

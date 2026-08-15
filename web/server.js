@@ -19,6 +19,7 @@ const fsp  = fs.promises;
 const path = require('path');
 const url  = require('url');
 const crypto = require('crypto');
+const { edit } = require('./edit.js');
 
 const HERE   = __dirname;
 const ROOT   = path.resolve(HERE, '..');
@@ -26,14 +27,16 @@ const PUBLIC = path.join(HERE, 'public');
 const DATA   = path.join(HERE, 'data');
 const STORE  = path.join(DATA, 'store.json');
 const CONFIG = path.join(HERE, 'config.local.json');
+const UP     = path.join(DATA, 'uploads');
+const OUT    = path.join(DATA, 'out');
 
 /* ── the artefact the demo actually serves ─────────────────────────────────
  * A real, shipped, owner-approved reel. First existing candidate wins, so the
  * demo degrades to something that plays rather than to a broken <video>. */
 const CANDIDATES = [
-  path.join(ROOT, 'reference-cuts', 'shreyansh-vid67-launch-your-agent.mp4'),
-  path.join(ROOT, 'reference-cuts', 'shreyansh-vid63-strix.mp4'),
-  path.join(ROOT, 'reference-cuts', 'nader-vid62-incogni-short.mp4'),
+  path.join(ROOT, 'reference-cuts', 'card-reel-vid67-launch-your-agent.mp4'),
+  path.join(ROOT, 'reference-cuts', 'card-reel-vid63-strix.mp4'),
+  path.join(ROOT, 'reference-cuts', 'longform-chunked-vid62-incogni-short.mp4'),
   path.join(HERE, 'public', 'media', 'demo.mp4'),
 ];
 function pickArtefact() {
@@ -56,12 +59,24 @@ const STAGES = [
 ];
 const TOTAL_MS = STAGES.reduce((a, s) => a + s.ms, 0);
 
+/* Real mode. These five stages actually run against the uploaded file.
+ * No durations: the UI reports what happened, not a predicted clock. */
+const REAL_STAGES = [
+  { key: 'probe',   label: 'Reading the file',        detail: 'ffprobe: resolution, duration' },
+  { key: 'whisper', label: 'Transcribing',            detail: 'whisper, then re-wrapped to short caption lines' },
+  { key: 'cut',     label: 'Cutting dead air',        detail: 'silencedetect, 0.12s of air kept either side' },
+  { key: 'frame',   label: 'Framing 9:16 and burning captions', detail: 'cover-crop to 1080x1920, caption clear of the UI band' },
+  { key: 'deliver', label: 'Normalising loudness',    detail: 'loudnorm I=-14, TP=-1.5' },
+];
+
 /* ── tiny persistent store ────────────────────────────────────────────────── */
 let store = { sessions: {}, jobs: {}, notes: {} };
 let supa = null;
 
 async function loadStore() {
   await fsp.mkdir(DATA, { recursive: true });
+  await fsp.mkdir(UP, { recursive: true });
+  await fsp.mkdir(OUT, { recursive: true });
   try { store = JSON.parse(await fsp.readFile(STORE, 'utf8')); }
   catch { /* first run */ }
   for (const k of ['sessions', 'jobs', 'notes']) if (!store[k]) store[k] = {};
@@ -161,6 +176,20 @@ function serveFile(req, res, abs) {
 /* ── job state is computed from elapsed time, never from a stored counter ──
  * so a page refresh mid-run resumes correctly instead of restarting. */
 function jobView(job) {
+  if (job.mode === 'real') {
+    return {
+      id: job.id, filename: job.filename, mode: 'real',
+      state: job.state,                                   // uploading | running | done | failed
+      stages: REAL_STAGES.map((st) => Object.assign({}, st, job.stageState[st.key] || { state: 'pending' })),
+      videoUrl: job.state === 'done' ? '/api/jobs/' + job.id + '/result' : null,
+      error: job.error || null,
+      notes: job.editNotes || [],
+    };
+  }
+  return demoJobView(job);
+}
+
+function demoJobView(job) {
   const elapsed = Date.now() - job.startedAt;
   let acc = 0, stageIndex = 0;
   const stages = STAGES.map((s, i) => {
@@ -178,6 +207,56 @@ function jobView(job) {
     videoUrl: done ? '/api/artefact' : null,
     creator: job.creator,
   };
+}
+
+/* ── the real edit ────────────────────────────────────────────────────────
+ * Runs detached from the request that started it. The browser polls
+ * GET /api/jobs/:id and sees each stage flip as it actually completes, so the
+ * progress it draws is the process reporting on itself rather than a clock. */
+function startEdit(job, srcPath) {
+  job.state = 'running';
+  const outFile = path.join(OUT, job.id + '.mp4');
+  fs.mkdirSync(OUT, { recursive: true });
+
+  edit(srcPath, outFile, (key, state, note) => {
+    job.stageState[key] = { state, note: note || '' };
+    saveStore();
+  }).then((r) => {
+    if (r.ok) {
+      job.state = 'done';
+      job.editNotes = r.notes || [];
+      job.outFile = outFile;
+    } else {
+      job.state = 'failed';
+      job.error = r.err || 'the edit failed';
+    }
+    saveStore();
+  }).catch((e) => {
+    job.state = 'failed';
+    job.error = e.message;
+    saveStore();
+  }).finally(() => {
+    fsp.rm(srcPath, { force: true }).catch(() => {});
+  });
+}
+
+/* Raw binary body straight to disk. Streaming rather than buffering, because a
+ * phone-shot 4K clip is happily 300MB and holding that in memory to then write
+ * it out is a needless way to kill the process mid-demo. */
+function receiveUpload(req, dest, limit = 600 * 1024 * 1024) {
+  return new Promise((resolve, reject) => {
+    fs.mkdirSync(path.dirname(dest), { recursive: true });
+    const ws = fs.createWriteStream(dest);
+    let n = 0, killed = false;
+    req.on('data', (c) => {
+      n += c.length;
+      if (n > limit && !killed) { killed = true; ws.destroy(); req.destroy(); reject(new Error('file over 600MB')); }
+    });
+    req.on('error', reject);
+    ws.on('error', reject);
+    req.pipe(ws);
+    ws.on('close', () => { if (!killed) resolve(n); });
+  });
 }
 
 /* ── routes ───────────────────────────────────────────────────────────────── */
@@ -205,7 +284,11 @@ async function api(req, res, pathname) {
     const jid = id();
     store.jobs[jid] = {
       id: jid, filename: String(b.filename || 'upload.mp4').slice(0, 200),
-      sizeBytes: Number(b.sizeBytes) || 0, creator: b.creator || 'shreyansharora05',
+      sizeBytes: Number(b.sizeBytes) || 0, creator: b.creator || 'card-reel',
+      // Real mode is the default. It degrades to the sample reel only if the upload
+      // never arrives or the edit fails, and the UI says which one happened.
+      mode: b.mode === 'demo' ? 'demo' : 'real',
+      state: 'uploading', stageState: {}, editNotes: [],
       startedAt: Date.now(), createdAt: new Date().toISOString(),
     };
     store.notes[jid] = [];
@@ -220,6 +303,26 @@ async function api(req, res, pathname) {
     if (!job) return json(res, 404, { error: 'no such job' });
 
     if (!seg[3] && req.method === 'GET') return json(res, 200, jobView(job));
+
+    if (seg[3] === 'source' && req.method === 'POST') {
+      const safe = String(req.headers['x-filename'] || job.filename || 'upload.mp4')
+        .replace(/[^A-Za-z0-9._-]/g, '_').slice(-80);
+      const dest = path.join(UP, job.id + '-' + safe);
+      try {
+        const bytes = await receiveUpload(req, dest);
+        if (!bytes) { job.state = 'failed'; job.error = 'empty upload'; saveStore(); return json(res, 400, { error: 'empty upload' }); }
+        startEdit(job, dest);
+        return json(res, 200, { ok: true, bytes: bytes });
+      } catch (e) {
+        job.state = 'failed'; job.error = e.message; saveStore();
+        return json(res, 413, { error: e.message });
+      }
+    }
+
+    if (seg[3] === 'result') {
+      if (job.outFile && fs.existsSync(job.outFile)) return serveFile(req, res, job.outFile);
+      return json(res, 404, { error: 'not rendered yet' });
+    }
 
     if (seg[3] === 'notes') {
       const list = store.notes[job.id] || (store.notes[job.id] = []);

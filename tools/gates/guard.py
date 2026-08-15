@@ -31,19 +31,20 @@ one so nobody deletes a check thinking it is theoretical.
              validate, passes every safe-zone rule, and reads as a hole. The
              ink-coverage floor is the only thing that catches it (vid61).
   6. CONTRA  contrast over video. `validate` compares text to its CSS
-             background; over an A-roll the ground is his room. That hid 22
-             bare-text elements on vid62. Measured as the FRACTION of area
-             brighter than 150, never the mean: white type on a black screen
-             averages dark while still colliding, and the mean rated one title
-             fine at a measured bright-fraction of 59.6%.
+             background; over an A-roll the ground is the presenter's room.
+             That hid 22 bare-text elements on vid62. Measured as the FRACTION
+             of area brighter than 150, never the mean: white type on a black
+             screen averages dark while still colliding, and the mean rated one
+             title fine at a measured bright-fraction of 59.6%.
   7. VIDWIN  a <video> painted outside its own [data-start, +data-duration]
              window renders dead grey. Seven of nine dashboard placements on
              vid62 were black, on the film whose brief was "more screen
              recordings".
-  8. FACEWIN the presenter whitelist. A gate that lists the spans his face may
-             NOT paint in cannot catch what its detector missed; a missing
-             blacklist entry ships the defect while a missing whitelist entry
-             only costs a beat of face. Choose which way the gate fails.
+  8. FACEWIN the presenter whitelist. A gate that lists the spans the
+             presenter's face may NOT paint in cannot catch what its detector
+             missed; a missing blacklist entry ships the defect while a missing
+             whitelist entry only costs a beat of face. Choose which way the
+             gate fails.
   9. CSS     every stylesheet the document actually loads must be covered by
              the staleness hash, or a CSS fix silently never ships. `pichash`
              hashed chunk.js and base.css but not vid62.css, which held most of
@@ -155,10 +156,11 @@ def load_config(path, args):
         raw = json.load(fh)
 
     # A half-finished config must not be able to masquerade as a passing gate.
-    # Every TODO in a derived config is a MEASUREMENT: the crown of his head, the
-    # rectangle graphics are supposed to own, the windows his face may paint in.
-    # Treated as absent, each one simply switches its check off, and the run
-    # prints the same PASS a real one prints. That is the failure this repo has
+    # Every TODO in a derived config is a MEASUREMENT: the crown of the
+    # presenter's head, the rectangle graphics are supposed to own, the windows
+    # the presenter's face may paint in. Treated as absent, each one simply
+    # switches its check off, and the run prints the same PASS a real one
+    # prints. That is the failure this repo has
     # made more than any other: a gate that has never run is not a gate, and a
     # green run and a gate that silently did nothing produce identical output.
     # So refuse, name the paths, and make the operator resolve or DELETE each one.

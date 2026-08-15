@@ -66,8 +66,8 @@ measured carried text.
 
 `card_guard` enforced the graphics/face split **only while the face was carded**. In
 full-bleed there is no card edge, so nothing checked anything, and elements were placed by
-eye into the middle band, where he is. 180 frame-hits of text on his face across 23
-elements: a rail across his chin, caveats across his mouth, the CTA on his chest.
+eye into the middle band, where the presenter is. 180 frame-hits of text on the face across 23
+elements: a rail across the chin, caveats across the mouth, the CTA on the chest.
 
 Same shape, different gate: two gates walked `document.querySelectorAll('.scene')` and one
 chunk's hook markup did not carry that class, so the film's **first nineteen seconds**, the
@@ -143,15 +143,15 @@ deleted takes out the probe that would have named the splice.
 
 ### Whitelist, not blacklist, for presenter rules
 
-A gaze gate that listed the spans his face may **not** paint in cannot catch what its
+A gaze gate that listed the spans the face may **not** paint in cannot catch what its
 detector missed, and per-sample thresholds failed three times before the shape changed.
-It is now a whitelist: the windows his face MAY paint in, everywhere else forbidden.
+It is now a whitelist: the windows the face MAY paint in, everywhere else forbidden.
 
 **A missing window costs a beat of face. A missing blacklist entry ships the defect.
 Choose which way the gate fails.** Two windows on that film carried documented overrides,
-both found by eye and both real: the cover frame, and his sign-off, where the median dips
-because his eyes narrow when he smiles. A classifier confident enough to cut the presenter
-out of his own goodbye needs a human check, not more thresholds.
+both found by eye and both real: the cover frame, and the sign-off, where the median dips
+because the presenter's eyes narrow when they smile. A classifier confident enough to cut the
+presenter out of their own goodbye needs a human check, not more thresholds.
 
 ### An allowlist entry that matches nothing is worse than no entry
 
@@ -231,7 +231,7 @@ answers, and use both:
 
 ### Contrast over video needs its own check
 
-`validate` compares text to its CSS background. Over an A-roll the ground is his room, and
+`validate` compares text to its CSS background. Over an A-roll the ground is the room, and
 22 bare-text elements hid there on one film, including every eyebrow in it.
 
 Two subtleties, both learned by getting them wrong: use the **fraction of area brighter

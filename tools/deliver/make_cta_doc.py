@@ -2,7 +2,7 @@
 
 THE DELIVERABLE RULE. If the script says comment a keyword and you will send
 something, that something is a REQUIRED deliverable at FIRST delivery, alongside
-the MP4 and the caption. Not later, not when he asks. The reel starts collecting
+the MP4 and the caption. Not later, not when the owner asks. The reel starts collecting
 comments the hour it posts and there is nothing to send.
 
 WHAT THE DOC IS FOR, and this is the part that takes the time: it is where the

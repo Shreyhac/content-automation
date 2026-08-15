@@ -1,10 +1,10 @@
 # The paper split band
 
-gaurav's approved 9:16 split. Graphics on paper above, face in a rounded band below, **face on
-screen continuously**. Reference build: `reference-builds/gaurav-vid47/`.
+The paper-split creator's approved 9:16 split. Graphics on paper above, face in a rounded band
+below, **face on screen continuously**. Reference build: `reference-builds/paper-split-vid47/`.
 
-He specified it by sending a frame from an earlier approved build, which is worth remembering:
-when he references a video, go and measure that file.
+They specified it by sending a frame from an earlier approved build, which is worth remembering:
+when the creator references a video, go and measure that file.
 
 ---
 
@@ -50,7 +50,7 @@ crop=1854:3296:36:212   →   head 430px, face centred x540.6,
 - **Round the clip AND the band background to the same radius, and delete any straight full-width
   edge line.** That mismatch is what "the rounded edges look off" means.
 - **Clip any three.js canvas to the graphics zone permanently** (`inset(150px 0 1010px 0)`). A
-  loose field drifting onto his face reads as dirt on the lens.
+  loose field drifting onto the presenter's face reads as dirt on the lens.
 - **A paper wipe on a paper ground is an invisible cut.** Wipe colour must contrast the scene it
   covers: a deep green works where the world is ivory.
 - **Light and white brand marks vanish on paper.** Verify every mark on the actual card colour in

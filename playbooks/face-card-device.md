@@ -12,8 +12,8 @@ wrong form by both.
 When an owner asks for "the face card / the split screen / the keyframing like vid39", the
 technique underneath is that `bandOpen()` tweens the scene's `clip-path` **and** the video's
 `scale` and `y` together over about 0.34s. A correct-but-static face that changes state by wiping
-reads as a different, lesser video. One creator's v2 was geometrically correct and static, and he
-asked for the reference by name because of the move.
+reads as a different, lesser video. One creator's v2 was geometrically correct and static, and the
+creator asked for the reference by name because of the move.
 
 ---
 
@@ -28,7 +28,7 @@ captions   move ABOVE the card on split beats, around y840
 b-roll     always carded, never full-bleed
 ```
 
-Proxy in this repo: `reference-cuts/nader-vid39-orm-short.mp4`.
+Proxy in this repo: `reference-cuts/longform-chunked-vid39-orm-short.mp4`.
 
 ---
 
@@ -40,7 +40,7 @@ failed by copying:
 | Port | What happened | Re-solved to |
 |---|---|---|
 | To a 16:9 tight close-up (239px of collar, no chest) | A card with the same proportions is impossible; the head has to fill it | 560x736 at x260 to x820 / y838 to y1574, chin y1407 to 1481, worst 1545 |
-| To a creator with a ~975px head against the reference's ~600px | Sliced his hair off | Card top **960**: crown clears the top edge, chin clears y1600 |
+| To a creator with a ~975px head against the reference's ~600px | Sliced their hair off | Card top **960**: crown clears the top edge, chin clears y1600 |
 
 Copying 1020 would have put a chin under the like button.
 
@@ -110,8 +110,8 @@ On a split beat:
 
 There is a standing instruction that reads, in short form, "no full-bleed face, card or
 split". **The absolute form is wrong and the shipped films say so.** What one creator's
-brief actually said, on one film, was *stop opening on his full face: split-screen or card,
-and only on important beats*, and that film opens on 1.84s of graphics and is never
+brief actually said, on one film, was *stop opening on the presenter's full face: split-screen or
+card, and only on important beats*, and that film opens on 1.84s of graphics and is never
 full-bleed at all (face on 13.9s of 30.1, 46%). The three films after it:
 
 | Film | Open | Full-bleed after the open |
@@ -126,7 +126,7 @@ So the honest rule:
 - **Card is the default.** Graphics own the rest of the frame with zero overlap.
 - **Split when the brief asks for it**, or when the shot being copied is a split.
 - **Full-bleed is for the open and for a small number of emphasis beats**, the CTA among
-  them: he asks for the comment, so he is on screen for it.
+  them: the creator asks for the comment, so they are on screen for it.
 - **A copy brief overrides all of it.** When the job is a shot-for-shot rebuild of a
   reference, the reference's face grammar is the spec.
 - **Every state change is a hard cut, never a tween.** All four builds above set the
@@ -140,7 +140,7 @@ Run these before choosing, not after placing:
 1. **Coverage floor**, `s >= card_height / source_height`. Below it the scaled frame does
    not cover the card and ffmpeg refuses the crop.
 2. **`rows <= H * 1080 / W`.** A 700x640 card can only ever show 987 source rows, which is
-   a head. If the note is "only his head is visible", the card must get NARROWER.
+   a head. If the note is "only their head is visible", the card must get NARROWER.
 3. **The residual.** Where the subject oscillates faster than one constant `tx` per window
    can cover (187px on one take), that window cannot be carded: play it full-bleed. Eight
    of 24 windows on one film.
@@ -175,9 +175,9 @@ A card of width `W` at scale `s` shows `W/s` source pixels across, so the covera
 rows <= H * 1080 / W
 ```
 
-A 700×640 card has a ceiling of 987 rows: a head, always, however you nudge the crop. "Only his
+A 700×640 card has a ceiling of 987 rows: a head, always, however you nudge the crop. "Only their
 head is visible" was not fixed by repositioning the card; the card had to get **narrower**
-(560×700, ceiling 1349 rows) to show more of him. The same inequality run the other way sizes a
+(560×700, ceiling 1349 rows) to show more of them. The same inequality run the other way sizes a
 full-width band: a 1080-wide band at `s=1` shows exactly 700 source rows against a 720px
 crown-to-chin, so a band that must hold a talking head **has to be narrower than the frame**, or
 run to full frame height so `s` can come up (see below).
@@ -188,8 +188,8 @@ A 960×740 rounded card floating mid-frame, correctly sized and correctly placed
 still not a split: it is a card sitting in a frame, and the note it draws is "framing looks
 weird" even though nothing measured wrong. **A split half must run full width and all the way to
 the frame edge** (y1920 for a bottom half), not stop short of it to respect the reserved zone: on
-a full-bleed beat his video already covers y1600–1920 and nobody reads that as a violation, so a
-band may do the same. The reserved-zone rule protects his **chin and any text**, not pixels below
+a full-bleed beat the A-roll already covers y1600–1920 and nobody reads that as a violation, so a
+band may do the same. The reserved-zone rule protects the **chin and any text**, not pixels below
 it.
 
 Running the band to the true edge also fixes the size arithmetic instead of fighting it: a band
@@ -203,30 +203,30 @@ sides and one that matters.
 
 ## Do not card the face just to clear graphics off it
 
-The obvious fix for "text on his face" is to card the face so graphics own the other half. It
+The obvious fix for "text on the face" is to card the face so graphics own the other half. It
 trades one defect for another: carding empties the vacated half of the frame just as hard as the
-text collision it was meant to fix. **Keep him full-bleed and put graphics only in the
-measured-safe column** (from his real body reach, see `playbooks/face-geometry.md`'s
+text collision it was meant to fix. **Keep the presenter full-bleed and put graphics only in the
+measured-safe column** (from their real body reach, see `playbooks/face-geometry.md`'s
 "measure the subject" section): caught here only by screenshotting the composition before
 rendering, not by any gate, because a correctly-carded-and-empty half passes every check.
 
-## Only ONE of a set of face states may change his head size
+## Only ONE of a set of face states may change the head size
 
 A rebuild used three states off one baked camera: BAND (full-width bottom panel), CARD (the same
 pixels, clipped narrower), CLOSE (a real push-in on a hard cut, caption moved to the low band).
-BAND and CARD share one camera and differ only by `clip-path`, so his head is the **exact same
+BAND and CARD share one camera and differ only by `clip-path`, so the head is the **exact same
 size** in both: the change between them is a widen, not a resize, which is what makes two formats
 safe in one cut. CLOSE is a genuine size change and is allowed to be one only because it happens on
 a hard cut into a new shot. Two sizes that CUT between each other (not a hard cut, mid-scene) reads
 as a bug: this is the standing lesson from vid46's short, confirmed again here.
 
-## A vertical split is the only way to show him at native 1:1 without a punch-in
+## A vertical split is the only way to show the presenter at native 1:1 without a punch-in
 
-A full-width band of height H shows exactly H source rows, so his chin lands wherever the band's
+A full-width band of height H shows exactly H source rows, so the chin lands wherever the band's
 height puts it: usually deep in the reserved zone unless the band runs to the frame edge (above).
 A full-height **column** has no such constraint: solved from the CTA window specifically (not a
 whole-take percentile: see `playbooks/face-geometry.md`), a right column at `x440–1080`, native
-scale, `x=250` showed his head at true 1:1 because his head span in that window, not the take's
+scale, `x=250` showed the head at true 1:1 because the head span in that window, not the take's
 average, decided the column position.
 
 ## Two short windows separated by a gap

@@ -1,0 +1,758 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1080, height=1920" />
+<title>Three markdown files that fix your brand · vid50 (paper-split)</title>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<style>
+  @font-face{font-family:'Clash';font-weight:600;font-display:block;src:url(assets/fonts/clash-600.woff2) format('woff2');}
+  @font-face{font-family:'Clash';font-weight:700;font-display:block;src:url(assets/fonts/clash-700.woff2) format('woff2');}
+  @font-face{font-family:'Satoshi';font-weight:500;font-display:block;src:url(assets/fonts/satoshi-500.woff2) format('woff2');}
+  @font-face{font-family:'Satoshi';font-weight:700;font-display:block;src:url(assets/fonts/satoshi-700.woff2) format('woff2');}
+  @font-face{font-family:'Satoshi';font-weight:900;font-display:block;src:url(assets/fonts/satoshi-900.woff2) format('woff2');}
+  @font-face{font-family:'Geist Mono';font-weight:400 700;font-display:block;src:url(assets/fonts/geist-mono.woff2) format('woff2');}
+  @font-face{font-family:'Instrument Serif';font-style:italic;font-weight:400;font-display:block;src:url(assets/fonts/instrument-serif-italic-400-it.woff2) format('woff2');}
+  @font-face{font-family:'Space Grotesk';font-weight:500;font-display:block;src:url(assets/fonts/space-grotesk-500.woff2) format('woff2');}
+  @font-face{font-family:'Space Grotesk';font-weight:700;font-display:block;src:url(assets/fonts/space-grotesk-700.woff2) format('woff2');}
+
+  /* ══════════ THEME · DIRECTOR'S DESK, RE-ACCENTED ══════════
+     Ported from hf47 v2 (owner-approved paper split). The one change is the
+     accent: instead of the mint GO green, this film's accent is BOSTON CLAY
+     #B8422E, lifted verbatim from the `tertiary` token of the real Heritage
+     DESIGN.md that appears on screen. A film about brand systems should have
+     its own accent be an instance of the system it is explaining. It also sits
+     inside the portfolio's terracotta family, so nothing about the house look
+     moves. Solid fills and hairlines, no glow on type, no gradient type. */
+  :root{
+    --paper:#F3F1EA; --paper2:#E9E6DC; --card:#FBFAF6; --card2:#FFFFFF;
+    --ink:#101014; --ink2:#2C2C33; --mute:#5E5E67; --dim:#8A8A93;
+    --clay:#B8422E; --clayDeep:#8E2F1E; --claySoft:rgba(184,66,46,.12);
+    --slate:#6C7278; --lime:#F7F5F2;
+    --bad:#E5372B; --badSoft:rgba(229,55,43,.10);
+    --line:rgba(16,16,20,.12); --line2:rgba(16,16,20,.22);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{width:1080px;height:1920px;overflow:hidden;background:#000;}
+  #stage{position:relative;width:1080px;height:1920px;
+    font-family:'Satoshi',system-ui,sans-serif;-webkit-font-smoothing:antialiased;}
+  #paperBg{position:absolute;inset:0;background:var(--paper);}
+  .mono{font-family:'Geist Mono',ui-monospace,monospace;}
+  .tnum{font-variant-numeric:tabular-nums;}
+
+  /* ══════════ THE SPLIT · re-solved for THIS head ══════════
+     Vision over 56 frames: crown y709, chin y1088, head 379px, cx 497 on the
+     1080x1920 straight scale. He sits HIGH, so hf47's band top of y1080 is
+     unreachable: crown_out <= 1418s and chin_out <= 1560 cap crown at y1016.
+     Chosen s=0.690 -> the band is a TRANSFORM on the full-frame element, not a
+     crop: scale 1.379 (=1080/783), translate(-145px, 2px), origin 0 0.
+     Gives crown 960-999, chin 1470-1554, clearing the y1600 UI band by 46px
+     worst-case. Band y900 -> 1920 (1020px, 53%). Verified on rendered frames,
+     vid50/band_comp.jpg. Solve this per head; never copy the numbers. */
+  #amb{position:absolute;inset:0;overflow:hidden;}
+  #ambGlow{position:absolute;left:-180px;top:-420px;width:1440px;height:1440px;
+    background:radial-gradient(48% 48% at 50% 50%, rgba(184,66,46,.13) 0%, rgba(184,66,46,.04) 44%, rgba(184,66,46,0) 72%);}
+  #ambGlow2{position:absolute;left:-220px;top:520px;width:1520px;height:1120px;
+    background:radial-gradient(50% 50% at 50% 50%, rgba(16,16,20,.055) 0%, rgba(16,16,20,0) 70%);}
+  #grain{position:absolute;inset:0;opacity:.30;mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/></filter><rect width='220' height='220' filter='url(%23n)' opacity='0.5'/></svg>");
+    background-size:220px 220px;}
+
+  /* r2 note: "The client's frame is a bit zoomed. No need to zoom their frame. Just
+     keep the original frame." The band was a scale(1.379) blow-up of the A-roll.
+     It is now scale 1.0 with NO zoom at all: the split is simply a paper panel
+     laid over the top of the untransformed video, and he slides down 170px when
+     it arrives so his head clears the panel edge. Same framing, same size, just
+     positioned lower in the composition.
+     Crown min across the take is y696; +170 = 866, clearing the panel at y820
+     by 46px. Chin max 1126 +170 = 1296, far above the y1600 UI band. */
+  video.full{position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover;}
+  #splitPanel{position:absolute;left:0;top:0;width:1080px;height:820px;
+    background:var(--paper);border-bottom:1px solid var(--line2);
+    box-shadow:0 18px 44px rgba(16,16,20,.14);}
+  #splitGlow{position:absolute;left:-160px;top:-380px;width:1400px;height:1240px;
+    background:radial-gradient(46% 46% at 50% 50%, rgba(184,66,46,.13) 0%, rgba(184,66,46,0) 72%);}
+  .ov{position:absolute;left:0;top:0;width:1080px;height:1920px;}
+
+  .eyebrow{position:absolute;left:60px;top:104px;font-family:'Geist Mono',ui-monospace,monospace;
+    font-size:22px;font-weight:500;letter-spacing:6px;color:var(--mute);text-transform:uppercase;
+    white-space:nowrap;}
+
+  /* ══════════ HOOK ══════════
+     r1 note: "Text font is very off and is not visible. Also, I need animations
+     here, not just text." The type had no ground: it sat straight on the wall
+     art, so "ruining your brand" changed contrast mid-word. It is now on a paper
+     panel, in the same world as the rest of the film, and the beat is an EVENT:
+     three brand outputs that break apart on the lid shut.
+     Panel bottom is y690 because the source punch-in lifts his crown from
+     y860 to y696 across the first 1.5s; anything deeper eats his forehead. */
+
+  /* the specimen: one brand rendered three ways, which then desyncs */
+  .brk{position:absolute;top:470px;width:300px;height:266px;border-radius:16px;
+    background:var(--card);border:1px solid var(--line2);overflow:hidden;
+    box-shadow:0 10px 26px rgba(16,16,20,.09);}
+  .brk .bh{position:absolute;left:0;top:0;width:300px;height:34px;background:#1A1C1E;}
+  .brk .bh i{position:absolute;left:12px;top:9px;font-style:normal;
+    font-family:'Geist Mono',ui-monospace,monospace;font-size:12px;letter-spacing:2px;
+    color:#F7F5F2;text-transform:uppercase;}
+  .brk .bt{position:absolute;left:16px;top:54px;width:220px;
+    font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:30px;line-height:32px;
+    letter-spacing:-.02em;color:#1A1C1E;}
+  .brk .bl{position:absolute;left:16px;width:150px;height:8px;border-radius:4px;
+    background:#6C7278;opacity:.32;display:block;}
+  .brk .bl1{top:140px;} .brk .bl2{top:158px;width:110px;}
+  .brk .bb{position:absolute;left:16px;top:188px;width:96px;height:34px;border-radius:6px;
+    background:#B8422E;display:block;}
+  .brk .bs{position:absolute;right:16px;bottom:16px;width:56px;height:56px;border-radius:8px;
+    background:#1A1C1E;display:block;}
+  #bk0{left:60px;} #bk1{left:390px;} #bk2{left:720px;}
+  /* each card drifts to its own palette AND its own typeface, which is the
+     literal content of the claim: one brand, three unrelated renderings */
+  .brk.off0 .bh{background:#4C1D95;} .brk.off0 .bb{background:#7C3AED;} .brk.off0 .bs{background:#7C3AED;}
+  .brk.off0 .bt{font-family:'Instrument Serif',serif;font-style:italic;font-size:34px;color:#4C1D95;}
+  .brk.off1 .bh{background:#075985;} .brk.off1 .bb{background:#0EA5E9;} .brk.off1 .bs{background:#0EA5E9;}
+  .brk.off1 .bt{font-family:'Geist Mono',ui-monospace,monospace;font-size:22px;line-height:26px;color:#075985;}
+  .brk.off2 .bh{background:#14532D;} .brk.off2 .bb{background:#22C55E;} .brk.off2 .bs{background:#22C55E;}
+  .brk.off2 .bt{font-family:'Clash',sans-serif;font-size:38px;letter-spacing:-.05em;color:#14532D;}
+  .brk.off3 .bh{background:#7C2D12;} .brk.off3 .bb{background:#EA8C1B;} .brk.off3 .bs{background:#EA8C1B;}
+  .brk.off3 .bt{font-family:'Geist Mono',ui-monospace,monospace;font-size:24px;line-height:28px;color:#7C2D12;}
+  .brk.off4 .bh{background:#831843;} .brk.off4 .bb{background:#DB2777;} .brk.off4 .bs{background:#DB2777;}
+  .brk.off4 .bt{font-family:'Clash',sans-serif;font-size:26px;letter-spacing:.02em;color:#831843;}
+  .brk.off5 .bh{background:#134E4A;} .brk.off5 .bb{background:#14B8A6;} .brk.off5 .bs{background:#14B8A6;}
+  .brk.off5 .bt{font-family:'Instrument Serif',serif;font-style:italic;font-size:40px;color:#134E4A;}
+  /* the corruption sweep: ONE designed gesture crossing the row, instead of
+     three independent drifts. r1 v2 note: "this animation is weird". */
+  #hookSweep{position:absolute;left:0px;top:464px;width:76px;height:278px;
+    background:linear-gradient(90deg, rgba(184,66,46,0) 0%, rgba(184,66,46,.80) 50%, rgba(184,66,46,0) 100%);}
+  /* the same gesture in ink runs the row BEFORE the break, so the opening reads
+     as one system doing a pass, and the clay version reads as it going wrong */
+  #hookScan{position:absolute;left:0px;top:464px;width:64px;height:278px;
+    background:linear-gradient(90deg, rgba(16,16,20,0) 0%, rgba(16,16,20,.30) 50%, rgba(16,16,20,0) 100%);}
+
+  /* On paper the tracking no longer has to fight the footage: -.02em holds the
+     word spaces open without the .16em word-spacing hack, and three typefaces
+     stacked in one block was part of "font is very off", so the serif line and
+     the file pill are gone. Two voices here, not four. */
+  #hookT1{position:absolute;left:60px;top:156px;width:960px;font-family:'Clash',sans-serif;
+    font-weight:700;font-size:96px;line-height:96px;letter-spacing:-.02em;color:var(--ink);}
+  #hookT2{position:absolute;left:60px;top:254px;width:960px;font-family:'Clash',sans-serif;
+    font-weight:700;font-size:96px;line-height:96px;letter-spacing:-.02em;color:var(--clay);}
+  #hookStrike{position:absolute;left:60px;top:360px;width:730px;height:12px;border-radius:6px;
+    background:var(--clay);transform-origin:0 50%;}
+
+  /* ══════════ THE THREE FILE CHIPS ══════════ */
+  .fchip{position:absolute;width:960px;height:132px;left:60px;border-radius:22px;
+    background:var(--card);border:1px solid var(--line);display:flex;align-items:center;
+    gap:26px;padding:0 32px;box-shadow:0 10px 26px rgba(16,16,20,.07);}
+  .fchip.on{border:2px solid var(--clay);background:var(--card2);
+    box-shadow:0 20px 48px rgba(16,16,20,.13);}
+  .fchip .ic{width:64px;height:64px;flex:none;border-radius:16px;background:var(--paper2);
+    border:1px solid var(--line);display:flex;align-items:center;justify-content:center;
+    font-family:'Geist Mono',ui-monospace,monospace;font-size:22px;font-weight:700;
+    color:var(--clayDeep);}
+  .fchip .fn{font-family:'Geist Mono',ui-monospace,monospace;font-size:44px;font-weight:700;
+    letter-spacing:-.01em;color:var(--ink);flex:none;}
+  .fchip .fd{font-family:'Satoshi',sans-serif;font-weight:700;font-size:26px;color:var(--mute);
+    text-align:right;flex:1;}
+  #fc0{top:236px;} #fc1{top:388px;} #fc2{top:540px;}
+
+  /* ══════════ THE DESIGN.MD EDITOR ══════════ */
+  #edCard{position:absolute;left:60px;top:150px;width:960px;height:568px;border-radius:24px;
+    background:#12120F;border:1px solid rgba(255,255,255,.13);overflow:hidden;
+    box-shadow:0 26px 64px rgba(16,16,20,.22);}
+  #edBar{position:absolute;left:0;top:0;width:960px;height:56px;background:#1B1B17;
+    border-bottom:1px solid rgba(255,255,255,.09);display:flex;align-items:center;
+    padding:0 22px;gap:12px;}
+  .dot{width:12px;height:12px;border-radius:50%;flex:none;}
+  #edName{margin-left:14px;font-family:'Geist Mono',ui-monospace,monospace;font-size:21px;
+    color:#C9C6BC;letter-spacing:1px;}
+  #edSpec{margin-left:auto;font-family:'Geist Mono',ui-monospace,monospace;font-size:16px;
+    color:#7C7A72;letter-spacing:2px;text-transform:uppercase;}
+  /* 13 lines at 32px = 438px of body, so the swatch strip fits INSIDE the card
+     and the whole thing still ends at y782, clear of the caption at y790. The
+     first pass put the swatches in their own row at y806 and they printed
+     straight through the caption. */
+  #edBody{position:absolute;left:0;top:56px;width:960px;height:438px;padding:22px 30px;}
+  .ln{font-family:'Geist Mono',ui-monospace,monospace;font-size:22px;line-height:32px;
+    color:#C9C6BC;white-space:pre;}
+  .ln .k{color:#8FB8A8;} .ln .v{color:#E4C08A;} .ln .c{color:#6E6B62;}
+  .grp{position:absolute;left:16px;width:928px;border-radius:10px;
+    background:rgba(184,66,46,0);}
+  .grp.on{background:rgba(184,66,46,.22);}
+  #edCaret{position:absolute;left:30px;top:22px;width:12px;height:24px;background:var(--clay);
+    border-radius:2px;}
+  #swRow{position:absolute;left:0;top:494px;width:960px;height:74px;display:flex;
+    border-top:1px solid rgba(255,255,255,.10);}
+  .sw{flex:1;position:relative;overflow:hidden;}
+  .sw i{position:absolute;left:0;bottom:0;width:100%;height:26px;
+    background:rgba(0,0,0,.42);font-family:'Geist Mono',ui-monospace,monospace;
+    font-style:normal;font-size:14px;letter-spacing:1px;color:#EDEAE1;text-align:center;
+    line-height:26px;}
+
+  /* ══════════ THE FINISHED PAGE ══════════ */
+  #pgFrame{position:absolute;left:110px;top:150px;width:860px;height:568px;border-radius:22px;
+    overflow:hidden;background:#F7F5F2;border:1px solid var(--line2);
+    box-shadow:0 26px 64px rgba(16,16,20,.20);}
+  #pgNav{position:absolute;left:0;top:0;width:860px;height:62px;
+    border-bottom:1px solid rgba(26,28,30,.10);display:flex;align-items:center;padding:0 34px;gap:30px;}
+  #pgLogo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:22px;
+    letter-spacing:3px;color:#1A1C1E;text-transform:uppercase;}
+  .pgLink{font-family:'Space Grotesk',sans-serif;font-weight:500;font-size:16px;
+    letter-spacing:2px;color:#6C7278;text-transform:uppercase;}
+  #pgH{position:absolute;left:44px;top:126px;width:530px;font-family:'Space Grotesk',sans-serif;
+    font-weight:700;font-size:58px;line-height:60px;letter-spacing:-.03em;color:#1A1C1E;}
+  #pgP{position:absolute;left:44px;top:284px;width:500px;font-family:'Space Grotesk',sans-serif;
+    font-weight:500;font-size:24px;line-height:34px;color:#6C7278;}
+  #pgBtn{position:absolute;left:44px;top:404px;padding:20px 40px;border-radius:8px;
+    background:#B8422E;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:22px;
+    letter-spacing:2px;color:#FFFFFF;text-transform:uppercase;}
+  #pgBtn2{position:absolute;left:250px;top:404px;padding:20px 40px;border-radius:8px;
+    border:1px solid rgba(26,28,30,.28);font-family:'Space Grotesk',sans-serif;font-weight:700;
+    font-size:22px;letter-spacing:2px;color:#1A1C1E;text-transform:uppercase;}
+  #pgArt{position:absolute;right:44px;top:132px;width:200px;height:352px;border-radius:8px;
+    background:#1A1C1E;}
+  #pgArt b{position:absolute;left:28px;bottom:28px;width:144px;height:8px;border-radius:4px;
+    background:#B8422E;display:block;}
+  .tokTag{position:absolute;display:inline-flex;align-items:center;gap:8px;padding:9px 16px;
+    border-radius:999px;background:var(--card2);border:1px solid var(--clay);
+    font-family:'Geist Mono',ui-monospace,monospace;font-size:17px;letter-spacing:1px;
+    color:var(--clayDeep);white-space:nowrap;box-shadow:0 8px 20px rgba(16,16,20,.14);}
+  #tk0{left:60px;top:108px;} #tk1{left:660px;top:108px;}
+
+  /* ══════════ THE SKILL LIBRARY ══════════ */
+  #skHead{position:absolute;left:60px;top:150px;width:960px;font-family:'Clash',sans-serif;
+    font-weight:700;font-size:60px;line-height:62px;letter-spacing:-.03em;color:var(--ink);}
+  #skCount{position:absolute;right:60px;top:150px;font-family:'Clash',sans-serif;
+    font-weight:700;font-size:60px;letter-spacing:-.03em;color:var(--clay);
+    font-variant-numeric:tabular-nums;}
+  #skList{position:absolute;left:60px;top:236px;width:960px;}
+  .skRow{position:absolute;left:0;width:960px;height:80px;border-radius:18px;background:var(--card);
+    border:1px solid var(--line);display:flex;align-items:center;gap:22px;padding:0 28px;
+    box-shadow:0 8px 20px rgba(16,16,20,.06);}
+  .skRow .sn{font-family:'Geist Mono',ui-monospace,monospace;font-size:30px;font-weight:700;
+    color:var(--ink);flex:none;}
+  .skRow .sd{font-family:'Satoshi',sans-serif;font-weight:500;font-size:23px;color:var(--mute);
+    flex:1;text-align:right;}
+  .skRow .sf{font-family:'Geist Mono',ui-monospace,monospace;font-size:17px;letter-spacing:2px;
+    color:var(--clayDeep);flex:none;padding:7px 14px;border-radius:999px;
+    background:var(--claySoft);}
+
+  /* ══════════ THE LOCK ══════════ */
+  .lkCard{position:absolute;width:290px;height:340px;border-radius:24px;background:var(--card);
+    border:1px solid var(--line2);box-shadow:0 18px 44px rgba(16,16,20,.12);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;}
+  .lkCard .li{font-family:'Geist Mono',ui-monospace,monospace;font-size:30px;font-weight:700;
+    color:var(--ink);}
+  .lkCard .ld{font-family:'Satoshi',sans-serif;font-weight:700;font-size:21px;color:var(--mute);
+    text-align:center;width:220px;}
+  .lkCard .lg{width:74px;height:74px;border-radius:20px;background:var(--claySoft);
+    border:1px solid rgba(184,66,46,.40);display:flex;align-items:center;justify-content:center;
+    font-family:'Clash',sans-serif;font-weight:700;font-size:34px;color:var(--clayDeep);}
+  #lk0{left:60px;top:236px;} #lk1{left:395px;top:236px;} #lk2{left:730px;top:236px;}
+  #lkSeal{position:absolute;left:60px;top:622px;width:960px;text-align:center;
+    font-family:'Clash',sans-serif;font-weight:700;font-size:78px;letter-spacing:-.03em;
+    color:var(--clay);}
+
+  /* ══════════ THE OUTPUTS ══════════ */
+  .outCard{position:absolute;width:290px;height:400px;border-radius:20px;overflow:hidden;
+    background:#F7F5F2;border:1px solid var(--line2);box-shadow:0 18px 44px rgba(16,16,20,.14);}
+  .outCard .oh{position:absolute;left:0;top:0;width:290px;height:44px;background:#1A1C1E;}
+  .outCard .oh i{position:absolute;left:16px;top:13px;font-family:'Geist Mono',ui-monospace,monospace;
+    font-style:normal;font-size:15px;letter-spacing:2px;color:#F7F5F2;text-transform:uppercase;}
+  .outCard .ot{position:absolute;left:20px;top:74px;width:250px;
+    font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:34px;line-height:36px;
+    letter-spacing:-.02em;color:#1A1C1E;}
+  .outCard .ob{position:absolute;left:20px;top:186px;width:190px;height:9px;border-radius:5px;
+    background:#6C7278;opacity:.34;display:block;}
+  .outCard .ob2{position:absolute;left:20px;top:208px;width:150px;height:9px;border-radius:5px;
+    background:#6C7278;opacity:.34;display:block;}
+  .outCard .oc{position:absolute;left:20px;top:250px;width:120px;height:40px;border-radius:6px;
+    background:#B8422E;display:block;}
+  .outCard .oa{position:absolute;right:20px;bottom:24px;width:78px;height:78px;border-radius:8px;
+    background:#1A1C1E;display:block;}
+  #out0{left:60px;top:226px;} #out1{left:395px;top:226px;} #out2{left:730px;top:226px;}
+  .outCard.on{border:2px solid var(--clay);box-shadow:0 26px 60px rgba(16,16,20,.20);}
+  #outSeal{position:absolute;left:60px;top:640px;width:960px;text-align:center;
+    font-family:'Instrument Serif',serif;font-style:italic;font-size:60px;color:var(--clayDeep);}
+
+  /* ══════════ THE CONTRAST ══════════ */
+  .vsCol{position:absolute;top:186px;width:440px;}
+  .vsCol .vh{font-family:'Geist Mono',ui-monospace,monospace;font-size:20px;letter-spacing:4px;
+    text-transform:uppercase;margin-bottom:20px;}
+  .vsTile{position:absolute;width:440px;height:118px;border-radius:16px;border:1px solid var(--line);
+    display:flex;align-items:center;padding:0 24px;gap:18px;background:var(--card);}
+  .vsTile .vb{width:52px;height:52px;border-radius:12px;flex:none;display:block;}
+  .vsTile .vt{font-family:'Satoshi',sans-serif;font-weight:700;font-size:24px;color:var(--ink2);}
+  #vsL{left:60px;} #vsR{left:580px;}
+  #vsLh{position:absolute;left:60px;top:186px;color:var(--bad);}
+  #vsRh{position:absolute;left:580px;top:186px;color:var(--clayDeep);}
+
+  /* ══════════ CTA ══════════ */
+  #ctaWord{position:absolute;left:60px;top:172px;width:960px;text-align:center;
+    font-family:'Clash',sans-serif;font-weight:700;font-size:150px;line-height:150px;
+    letter-spacing:-.05em;color:var(--clay);}
+  #ctaSub{position:absolute;left:60px;top:334px;width:960px;text-align:center;
+    font-family:'Geist Mono',ui-monospace,monospace;font-size:24px;letter-spacing:6px;
+    color:var(--mute);text-transform:uppercase;}
+  #ctaSrc{position:absolute;left:60px;top:428px;width:960px;}
+  .srcRow{position:absolute;left:0;width:960px;height:104px;border-radius:20px;background:var(--card);
+    border:1px solid var(--line);display:flex;align-items:center;gap:22px;padding:0 30px;
+    box-shadow:0 10px 26px rgba(16,16,20,.07);}
+  .srcRow .sq{width:56px;height:56px;border-radius:14px;flex:none;background:var(--paper2);
+    border:1px solid var(--line);display:flex;align-items:center;justify-content:center;
+    font-family:'Clash',sans-serif;font-weight:700;font-size:26px;color:var(--clayDeep);}
+  .srcRow .su{font-family:'Geist Mono',ui-monospace,monospace;font-size:27px;color:var(--ink);
+    flex:1;}
+  .srcRow .sm{font-family:'Satoshi',sans-serif;font-weight:700;font-size:22px;color:var(--mute);
+    flex:none;}
+  #ctaSer{position:absolute;left:60px;top:684px;width:960px;text-align:center;
+    font-family:'Instrument Serif',serif;font-style:italic;font-size:54px;color:var(--ink2);}
+
+  /* ══════════ CAPTIONS · x130-950, clear of the like/comment rail ══════════ */
+  #capwrap{position:absolute;left:130px;top:0;width:820px;height:1920px;}
+  .cap{position:absolute;left:0;width:820px;top:726px;text-align:center;
+    font-family:'Satoshi',sans-serif;font-weight:900;font-size:46px;line-height:56px;
+    letter-spacing:-.02em;color:var(--ink);}
+  .cap em{font-style:normal;color:var(--clayDeep);}
+  .cap.ser{font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;font-size:54px;}
+
+  /* ══════════ TRANSITIONS ══════════ */
+  .wipe{position:absolute;inset:0;overflow:hidden;}
+  .wipe i{position:absolute;left:-30%;top:-14%;width:160%;height:128%;display:block;
+    transform:skewX(-11deg);background:var(--ink);}
+  .wipe.clay i{background:var(--clayDeep);}
+  .flash{position:absolute;inset:0;background:#FFFFFF;}
+</style>
+</head>
+<body>
+<div id="stage" data-composition-id="main" data-start="0" data-duration="27.8667" data-width="1080" data-height="1920">
+
+  <div id="paperBg" class="clip" data-layout-ignore data-start="0" data-duration="27.8667" data-track-index="0"></div>
+  <div id="amb" class="clip" data-layout-ignore data-start="0" data-duration="27.8667" data-track-index="1">
+    <div id="ambGlow"></div><div id="ambGlow2"></div>
+  </div>
+  <div id="grain" class="clip" data-layout-ignore data-start="0" data-duration="27.8667" data-track-index="2"></div>
+
+  <!-- ═══════ THE FACE ═══════
+       HOOK plays FULL BLEED because the band crop clips the laptop, and the
+       laptop is the hook. At the first cut the A-roll moves into the band. -->
+  <!-- ONE video for the whole film now, never scaled. It runs full frame until
+       the lid shuts, then slides down 170px as the panel arrives. -->
+  <video id="fullVid" class="full clip" muted playsinline data-layout-ignore
+         data-start="0" data-duration="27.8667" data-media-start="0" data-track-index="3"
+         src="assets/aroll-i.mp4"></video>
+
+  <!-- the split arrives ON the lid shut, per the r2 frame note at 0.87 -->
+  <div id="splitPanel" class="clip" data-layout-ignore data-start="0.87" data-duration="26.9967"
+       data-track-index="4"><div id="splitGlow"></div></div>
+
+  <audio id="vo" class="clip" data-start="0" data-duration="27.8667" data-track-index="7"
+         data-volume="1.0" src="assets/aroll-audio.m4a"></audio>
+
+  <!-- ═══════ S1 · HOOK 0.00 → 3.64 ═══════
+       Frame 0 is the cover, so the eyebrow and the first title line are fully
+       composed at t=0. The lid shuts at 0.73: that is where the accent line,
+       the strike and the claim pill land, so the physical act and the graphic
+       are the same beat. Type sits y168-660, entirely in the wall above his
+       crown (y860 at t=0, y709 once the source punch-in settles). -->
+  <div class="ov clip" id="s1" data-layout-allow-overflow data-start="0" data-duration="3.64" data-track-index="10">
+    <div class="eyebrow" id="s1eye" style="top:96px">One brand, three outputs</div>
+    <div id="hookT1">Your AI keeps</div>
+    <div id="hookT2">ruining your brand</div>
+    <div id="hookStrike"></div>
+    <div id="hookScan"></div>
+    <div id="hookSweep"></div>
+    <div class="brk" id="bk0"><span class="bh"><i>Landing page</i></span>
+      <span class="bt">Built once.</span><span class="bl bl1"></span><span class="bl bl2"></span>
+      <span class="bb"></span><span class="bs"></span></div>
+    <div class="brk" id="bk1"><span class="bh"><i>Presentation</i></span>
+      <span class="bt">Q3 review.</span><span class="bl bl1"></span><span class="bl bl2"></span>
+      <span class="bb"></span><span class="bs"></span></div>
+    <div class="brk" id="bk2"><span class="bh"><i>Promo video</i></span>
+      <span class="bt">Same type.</span><span class="bl bl1"></span><span class="bl bl2"></span>
+      <span class="bb"></span><span class="bs"></span></div>
+  </div>
+
+  <!-- ═══════ S2 · THE THREE FILES 3.64 → 5.66 ═══════ -->
+  <div class="ov clip" id="s2" data-layout-allow-overflow data-start="3.64" data-duration="2.02" data-track-index="11">
+    <div class="eyebrow">Three simple markdown files</div>
+    <div class="fchip" id="fc0"><span class="ic">01</span><span class="fn">design.md</span><span class="fd">the rules</span></div>
+    <div class="fchip" id="fc1"><span class="ic">02</span><span class="fn">example.md</span><span class="fd">the finished page</span></div>
+    <div class="fchip" id="fc2"><span class="ic">03</span><span class="fn">skills/</span><span class="fd">how to build it</span></div>
+  </div>
+
+  <!-- ═══════ S3 · DESIGN.MD 5.66 → 11.02 ═══════
+       The file on screen is the real example from the README of
+       github.com/google-labs-code/design.md (Apache-2.0). Four token groups
+       highlight on the four spoken words: colors 8.42, typography 9.02,
+       rounded/spacing 9.48, the prose block 10.40. -->
+  <div class="ov clip" id="s3" data-layout-allow-overflow data-start="5.66" data-duration="5.36" data-track-index="12">
+    <div class="eyebrow">Layer one</div>
+    <div id="edCard">
+      <div id="edBar">
+        <span class="dot" style="background:#E5534B"></span>
+        <span class="dot" style="background:#E3B341"></span>
+        <span class="dot" style="background:#3FB950"></span>
+        <span id="edName">DESIGN.md</span>
+        <span id="edSpec">Google Labs · Apache-2.0</span>
+      </div>
+      <div id="edBody">
+        <div id="edCaret"></div>
+        <div class="grp" id="g0" style="top:86px;height:160px"></div>
+        <div class="grp" id="g1" style="top:246px;height:64px"></div>
+        <div class="grp" id="g2" style="top:310px;height:64px"></div>
+        <div class="grp" id="g3" style="top:404px;height:36px"></div>
+        <div class="ln" id="l0">---</div>
+        <div class="ln" id="l1"><span class="k">name</span>: <span class="v">Heritage</span></div>
+        <div class="ln" id="l2"><span class="k">colors</span>:</div>
+        <div class="ln" id="l3">  <span class="k">primary</span>: <span class="v">"#1A1C1E"</span></div>
+        <div class="ln" id="l4">  <span class="k">secondary</span>: <span class="v">"#6C7278"</span></div>
+        <div class="ln" id="l5">  <span class="k">tertiary</span>: <span class="v">"#B8422E"</span></div>
+        <div class="ln" id="l6">  <span class="k">neutral</span>: <span class="v">"#F7F5F2"</span></div>
+        <div class="ln" id="l7"><span class="k">typography</span>:</div>
+        <div class="ln" id="l8">  <span class="k">h1</span>: { Public Sans, <span class="v">3rem</span> }</div>
+        <div class="ln" id="l9"><span class="k">rounded</span>: { sm: <span class="v">4px</span>, md: <span class="v">8px</span> }</div>
+        <div class="ln" id="l10"><span class="k">spacing</span>: { sm: <span class="v">8px</span>, md: <span class="v">16px</span> }</div>
+        <div class="ln" id="l11">---</div>
+        <div class="ln" id="l12"><span class="c">## Overview  Architectural Minimalism</span></div>
+      </div>
+      <div id="swRow">
+        <span class="sw" id="sw0" style="background:#1A1C1E"><i>#1A1C1E</i></span>
+        <span class="sw" id="sw1" style="background:#6C7278"><i>#6C7278</i></span>
+        <span class="sw" id="sw2" style="background:#B8422E"><i>#B8422E</i></span>
+        <span class="sw" id="sw3" style="background:#F7F5F2"><i>#F7F5F2</i></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ S4 · THE FINISHED PAGE 11.02 → 13.70 ═══════
+       Built from the Heritage tokens, so the page IS the file rendered: ink
+       #1A1C1E headline, slate #6C7278 body, Boston Clay #B8422E button,
+       limestone #F7F5F2 ground, 8px radius, Space Grotesk label caps. -->
+  <div class="ov clip" id="s4" data-layout-allow-overflow data-start="11.02" data-duration="2.68" data-track-index="13">
+    <div class="eyebrow">Layer two</div>
+    <div id="pgFrame">
+      <div id="pgNav">
+        <span id="pgLogo">Heritage</span>
+        <span class="pgLink">Work</span><span class="pgLink">Studio</span><span class="pgLink">Journal</span>
+      </div>
+      <div id="pgH">Built once. Repeated exactly.</div>
+      <div id="pgP">Every surface inherits the same tokens, so nothing drifts between one page and the next.</div>
+      <span id="pgBtn">Start</span>
+      <span id="pgBtn2">Read</span>
+      <span id="pgArt"><b></b></span>
+    </div>
+    <span class="tokTag" id="tk0">primary #1A1C1E</span>
+    <span class="tokTag" id="tk1">tertiary #B8422E</span>
+  </div>
+
+  <!-- ═══════ S5 · THE SKILL LIBRARY 13.70 → 16.50 ═══════
+       Real SKILL.md entries from designmd.app/skills, a public catalog. -->
+  <div class="ov clip" id="s5" data-layout-allow-overflow data-start="13.7" data-duration="2.8" data-track-index="14">
+    <div class="eyebrow">Layer three</div>
+    <div id="skHead">A skill library</div>
+    <div id="skCount">104</div>
+    <div id="skList">
+      <div class="skRow" id="sk0" style="top:0px"><span class="sn">ultimate-design-system-master</span><span class="sd">tokens to components</span><span class="sf">SKILL.md</span></div>
+      <div class="skRow" id="sk1" style="top:92px"><span class="sn">frontend-design</span><span class="sd">distinctive interfaces</span><span class="sf">SKILL.md</span></div>
+      <div class="skRow" id="sk2" style="top:184px"><span class="sn">gsap-web-animation</span><span class="sd">motion that ships</span><span class="sf">SKILL.md</span></div>
+      <div class="skRow" id="sk3" style="top:276px"><span class="sn">landing-page-high-conversion</span><span class="sd">structure and copy</span><span class="sf">SKILL.md</span></div>
+      <div class="skRow" id="sk4" style="top:368px"><span class="sn">responsive-design</span><span class="sd">every breakpoint</span><span class="sf">SKILL.md</span></div>
+    </div>
+  </div>
+
+  <!-- ═══════ S6 · THAT IS IT 16.50 → 17.72 ═══════ -->
+  <div class="ov clip" id="s6" data-layout-allow-overflow data-start="16.5" data-duration="1.22" data-track-index="15">
+    <div class="lkCard" id="lk0"><span class="lg">01</span><span class="li">design.md</span><span class="ld">colors, type, voice</span></div>
+    <div class="lkCard" id="lk1"><span class="lg">02</span><span class="li">example.md</span><span class="ld">one finished page</span></div>
+    <div class="lkCard" id="lk2"><span class="lg">03</span><span class="li">skills/</span><span class="ld">how to build each asset</span></div>
+    <div id="lkSeal">Three files.</div>
+  </div>
+
+  <!-- ═══════ S7 · THE OUTPUTS 17.72 → 21.28 ═══════
+       Landing page 18.28, presentation 19.00, promo video 19.86, all three
+       rendered in the SAME Heritage tokens. "same brand" 20.90. -->
+  <div class="ov clip" id="s7" data-layout-allow-overflow data-start="17.72" data-duration="3.56" data-track-index="16">
+    <div class="eyebrow">One system, every format</div>
+    <div class="outCard" id="out0">
+      <span class="oh"><i>Landing page</i></span><span class="ot">Built once. Repeated exactly.</span>
+      <span class="ob"></span><span class="ob2"></span><span class="oc"></span><span class="oa"></span>
+    </div>
+    <div class="outCard" id="out1">
+      <span class="oh"><i>Presentation</i></span><span class="ot">Q3 review, one deck.</span>
+      <span class="ob"></span><span class="ob2"></span><span class="oc"></span><span class="oa"></span>
+    </div>
+    <div class="outCard" id="out2">
+      <span class="oh"><i>Promo video</i></span><span class="ot">Same type, same clay.</span>
+      <span class="ob"></span><span class="ob2"></span><span class="oc"></span><span class="oa"></span>
+    </div>
+    <div id="outSeal">the same brand, every time</div>
+  </div>
+
+  <!-- ═══════ S8 · THE CONTRAST 21.28 → 23.30 ═══════ -->
+  <div class="ov clip" id="s8" data-layout-allow-overflow data-start="21.28" data-duration="2.02" data-track-index="17">
+    <div class="vsCol vh" id="vsLh">Randomly generated</div>
+    <div class="vsCol vh" id="vsRh">Locked to a file</div>
+    <div class="vsTile" id="vl0" style="left:60px;top:248px"><span class="vb" style="background:#7C3AED"></span><span class="vt">a purple nobody chose</span></div>
+    <div class="vsTile" id="vl1" style="left:60px;top:382px"><span class="vb" style="background:#0EA5E9"></span><span class="vt">a different blue again</span></div>
+    <div class="vsTile" id="vl2" style="left:60px;top:516px"><span class="vb" style="background:#22C55E"></span><span class="vt">and now green</span></div>
+    <div class="vsTile" id="vr0" style="left:580px;top:248px"><span class="vb" style="background:#B8422E"></span><span class="vt">tertiary #B8422E</span></div>
+    <div class="vsTile" id="vr1" style="left:580px;top:382px"><span class="vb" style="background:#B8422E"></span><span class="vt">tertiary #B8422E</span></div>
+    <div class="vsTile" id="vr2" style="left:580px;top:516px"><span class="vb" style="background:#B8422E"></span><span class="vt">tertiary #B8422E</span></div>
+  </div>
+
+  <!-- ═══════ S9 · CTA 23.30 → 27.8667 ═══════ -->
+  <div class="ov clip" id="s9" data-layout-allow-overflow data-start="23.3" data-duration="4.5667" data-track-index="18">
+    <div class="eyebrow" id="s9eye">Comment to get the files</div>
+    <div id="ctaWord">DESIGN</div>
+    <div id="ctaSub">drop it below and I will send the breakdown</div>
+    <div id="ctaSrc">
+      <div class="srcRow" id="src0" style="top:0px"><span class="sq">G</span><span class="su">google-labs-code/design.md</span><span class="sm">Apache-2.0 · 26.8k</span></div>
+      <div class="srcRow" id="src1" style="top:124px"><span class="sq">D</span><span class="su">designmd.app</span><span class="sm">461 files, free</span></div>
+    </div>
+    <div id="ctaSer">Follow for more practical AI workflows</div>
+  </div>
+
+  <!-- ═══════ CAPTIONS ═══════ -->
+  <div id="capwrap" class="clip" data-layout-ignore data-start="0" data-duration="27.8667" data-track-index="20">
+    <div class="cap" id="c1" data-hidden></div>
+  </div>
+  <div class="cap clip" id="cap2" data-start="3.84" data-duration="1.72" data-track-index="21" style="left:130px">three markdown <em>files</em></div>
+  <div class="cap clip" id="cap3" data-start="6.44" data-duration="4.4" data-track-index="22" style="left:130px">your exact <em>colors, type and voice</em></div>
+  <div class="cap clip" id="cap4" data-start="12.08" data-duration="1.5" data-track-index="23" style="left:130px">one finished page <em>to copy</em></div>
+  <div class="cap clip ser" id="cap5" data-start="14.04" data-duration="2.3" data-track-index="24" style="left:130px">how to build each asset</div>
+  <div class="cap clip" id="cap7" data-start="18.28" data-duration="2.36" data-track-index="25" style="left:130px">page, deck, video, <em>one brand</em></div>
+  <div class="cap clip" id="cap8" data-start="21.96" data-duration="1.24" data-track-index="26" style="left:130px">instead of <em>randomly generated</em></div>
+
+  <!-- ═══════ TRANSITIONS · ink and clay, never paper on paper ═══════ -->
+  <div class="wipe clip" id="w1" data-layout-ignore data-start="3.44" data-duration="0.44" data-track-index="30"><i></i></div>
+  <div class="wipe clip clay" id="w2" data-layout-ignore data-start="5.46" data-duration="0.44" data-track-index="31"><i></i></div>
+  <div class="wipe clip" id="w3" data-layout-ignore data-start="10.82" data-duration="0.44" data-track-index="32"><i></i></div>
+  <div class="wipe clip clay" id="w4" data-layout-ignore data-start="13.5" data-duration="0.44" data-track-index="33"><i></i></div>
+  <div class="wipe clip" id="w5" data-layout-ignore data-start="16.3" data-duration="0.44" data-track-index="34"><i></i></div>
+  <div class="wipe clip clay" id="w6" data-layout-ignore data-start="17.52" data-duration="0.44" data-track-index="35"><i></i></div>
+  <div class="wipe clip" id="w7" data-layout-ignore data-start="21.08" data-duration="0.44" data-track-index="36"><i></i></div>
+  <div class="wipe clip clay" id="w8" data-layout-ignore data-start="23.1" data-duration="0.44" data-track-index="37"><i></i></div>
+
+  <div class="flash clip" id="f1" data-layout-ignore data-start="0.69" data-duration="0.13" data-track-index="40"></div>
+  <div class="flash clip" id="f2" data-layout-ignore data-start="16.66" data-duration="0.13" data-track-index="41"></div>
+
+  <!-- ═══════ SFX · his own saas pack, volumes 0.10-0.15 ═══════ -->
+  <audio id="sfx01" class="clip" data-start="0.60" data-duration="1.2" data-track-index="50" data-volume="0.15" src="assets/sfx/imp2.mp3"></audio>
+  <audio id="sfx02" class="clip" data-start="3.44" data-duration="1.0" data-track-index="51" data-volume="0.12" src="assets/sfx/wsh1.mp3"></audio>
+  <audio id="sfx03" class="clip" data-start="3.84" data-duration="0.8" data-track-index="52" data-volume="0.11" src="assets/sfx/s7_tap.mp3"></audio>
+  <audio id="sfx04" class="clip" data-start="4.34" data-duration="0.8" data-track-index="53" data-volume="0.11" src="assets/sfx/s15_click.mp3"></audio>
+  <audio id="sfx05" class="clip" data-start="4.82" data-duration="0.9" data-track-index="54" data-volume="0.12" src="assets/sfx/s10_tap_and_reveal.mp3"></audio>
+  <audio id="sfx06" class="clip" data-start="5.46" data-duration="1.0" data-track-index="55" data-volume="0.12" src="assets/sfx/wsh3.mp3"></audio>
+  <audio id="sfx07" class="clip" data-start="6.44" data-duration="1.4" data-track-index="56" data-volume="0.10" src="assets/sfx/s12_ui.mp3"></audio>
+  <audio id="sfx08" class="clip" data-start="8.42" data-duration="0.6" data-track-index="57" data-volume="0.11" src="assets/sfx/s1.mp3"></audio>
+  <audio id="sfx09" class="clip" data-start="9.02" data-duration="0.6" data-track-index="58" data-volume="0.11" src="assets/sfx/s2.mp3"></audio>
+  <audio id="sfx10" class="clip" data-start="9.48" data-duration="0.6" data-track-index="59" data-volume="0.11" src="assets/sfx/s3.mp3"></audio>
+  <audio id="sfx11" class="clip" data-start="10.40" data-duration="0.8" data-track-index="60" data-volume="0.12" src="assets/sfx/s8_reveal.mp3"></audio>
+  <audio id="sfx12" class="clip" data-start="10.82" data-duration="1.0" data-track-index="61" data-volume="0.12" src="assets/sfx/wsh4.mp3"></audio>
+  <audio id="sfx13" class="clip" data-start="12.08" data-duration="1.1" data-track-index="62" data-volume="0.12" src="assets/sfx/s17_reveal.mp3"></audio>
+  <audio id="sfx14" class="clip" data-start="13.50" data-duration="1.0" data-track-index="63" data-volume="0.12" src="assets/sfx/wsh5.mp3"></audio>
+  <audio id="sfx15" class="clip" data-start="14.04" data-duration="1.2" data-track-index="64" data-volume="0.11" src="assets/sfx/s9_scifi_gear.mp3"></audio>
+  <audio id="sfx16" class="clip" data-start="16.30" data-duration="1.0" data-track-index="65" data-volume="0.12" src="assets/sfx/rise2.mp3"></audio>
+  <audio id="sfx17" class="clip" data-start="16.70" data-duration="1.0" data-track-index="66" data-volume="0.14" src="assets/sfx/s16_counter_combo.mp3"></audio>
+  <audio id="sfx18" class="clip" data-start="17.52" data-duration="1.0" data-track-index="67" data-volume="0.12" src="assets/sfx/wsh6.mp3"></audio>
+  <audio id="sfx19" class="clip" data-start="18.28" data-duration="0.7" data-track-index="68" data-volume="0.11" src="assets/sfx/s4.mp3"></audio>
+  <audio id="sfx20" class="clip" data-start="19.00" data-duration="0.7" data-track-index="69" data-volume="0.11" src="assets/sfx/s5.mp3"></audio>
+  <audio id="sfx21" class="clip" data-start="19.86" data-duration="0.7" data-track-index="70" data-volume="0.11" src="assets/sfx/s6.mp3"></audio>
+  <audio id="sfx22" class="clip" data-start="20.90" data-duration="1.0" data-track-index="71" data-volume="0.13" src="assets/sfx/s13.mp3"></audio>
+  <audio id="sfx23" class="clip" data-start="21.08" data-duration="1.0" data-track-index="72" data-volume="0.12" src="assets/sfx/wsh7.mp3"></audio>
+  <audio id="sfx24" class="clip" data-start="21.96" data-duration="0.9" data-track-index="73" data-volume="0.11" src="assets/sfx/s14.mp3"></audio>
+  <audio id="sfx25" class="clip" data-start="23.10" data-duration="1.0" data-track-index="74" data-volume="0.12" src="assets/sfx/wsh1.mp3"></audio>
+  <audio id="sfx26" class="clip" data-start="23.50" data-duration="1.2" data-track-index="75" data-volume="0.13" src="assets/sfx/s11.mp3"></audio>
+  <audio id="sfx27" class="clip" data-start="25.70" data-duration="1.4" data-track-index="76" data-volume="0.13" src="assets/sfx/shine1.mp3"></audio>
+
+</div>
+
+<script>
+(function(){
+  const tl = gsap.timeline({paused:true});
+  const E = "power3.out";
+
+  /* ── S1 HOOK ──────────────────────────────────────────────────────────────
+     Frame 0 must be a composed cover, so the eyebrow and line 1 are simply
+     present. The lid shuts at 0.73: the clay line, the strike and the claim
+     pill all land there, so the physical act carries the graphic. */
+  /* r2 frame note at 0.87: "I want the animations and everything to start from
+     here when the client just closes their laptop. Until then, the client should be in the
+     exact full frame, and then only split screen should happen."
+     So frames 0-25 are pure full-frame footage of the lid closing, with nothing
+     over them at all. The cover is that image, which is a composed frame in its
+     own right. At 0.87 the panel drops and he slides down 170px: no zoom, same
+     framing, just lower in the composition. */
+  tl.fromTo("#splitPanel",{y:-830},{y:0,duration:0.30,ease:"power4.out"},0.87);
+  tl.fromTo("#fullVid",{y:0},{y:170,duration:0.34,ease:"power3.out"},0.87);
+
+  tl.fromTo("#s1eye",{autoAlpha:0},{autoAlpha:1,duration:0.20,ease:E},1.00);
+  tl.fromTo("#hookT1",{y:24,autoAlpha:0},{y:0,autoAlpha:1,duration:0.28,ease:"power4.out"},1.02);
+  tl.fromTo("#hookT2",{y:26,autoAlpha:0},{y:0,autoAlpha:1,duration:0.28,ease:"power4.out"},1.22);
+  tl.fromTo("#hookStrike",{scaleX:0},{scaleX:1,duration:0.28,ease:"power4.out"},1.30);
+
+  /* the specimen arrives correct: one brand, three outputs, all in register */
+  var ROW = "#bk0,#bk1,#bk2";
+  tl.fromTo("#bk0",{y:34,autoAlpha:0},{y:0,autoAlpha:1,duration:0.26,ease:"power4.out"},1.44);
+  tl.fromTo("#bk1",{y:34,autoAlpha:0},{y:0,autoAlpha:1,duration:0.26,ease:"power4.out"},1.50);
+  tl.fromTo("#bk2",{y:34,autoAlpha:0},{y:0,autoAlpha:1,duration:0.26,ease:"power4.out"},1.56);
+
+  /* an ink scan crosses all three IN REGISTER, so the system is seen working */
+  tl.fromTo("#hookScan",{x:-80,autoAlpha:0},{autoAlpha:1,duration:0.05,ease:"none"},1.62);
+  tl.to("#hookScan",{x:1100,duration:0.34,ease:"power1.inOut"},1.62);
+  tl.to("#hookScan",{autoAlpha:0,duration:0.06,ease:"power2.out"},1.96);
+  tl.set("#hookScan",{autoAlpha:0},3.64);
+  tl.to(ROW,{scale:1.038,duration:0.09,ease:"power2.out",transformOrigin:"50% 50%"},1.66);
+  tl.to(ROW,{scale:1,duration:0.13,ease:"power2.in",transformOrigin:"50% 50%"},1.75);
+
+  /* THE BREAK, now landing on the spoken word "ruining" (1.84-2.14). A clay
+     sweep crosses the row and each card snaps to a different brand as it passes.
+     No rotation, no drift: the grid holds and it is the CONTENT that goes wrong. */
+  tl.fromTo("#hookSweep",{x:-70,autoAlpha:0},{autoAlpha:1,duration:0.06,ease:"none"},1.82);
+  tl.to("#hookSweep",{x:1100,duration:0.40,ease:"power1.in"},1.82);
+  tl.to("#hookSweep",{autoAlpha:0,duration:0.08,ease:"power2.out"},2.22);
+  tl.set("#hookSweep",{autoAlpha:0},3.64);
+
+  [["#bk0","off0",1.86],["#bk1","off1",1.98],["#bk2","off2",2.10]].forEach(function(q){
+    tl.to(q[0],{className:"brk "+q[1],duration:0},q[2]);
+    tl.to(q[0],{scale:0.94,duration:0.07,ease:"power3.out",transformOrigin:"50% 50%"},q[2]);
+    tl.to(q[0],{scale:1,duration:0.22,ease:"power4.out",transformOrigin:"50% 50%"},q[2]+0.07);
+  });
+
+  /* it keeps happening, still perfectly aligned */
+  [["#bk1","off3",2.56],["#bk2","off4",2.92],["#bk0","off5",3.24]].forEach(function(q){
+    tl.to(q[0],{className:"brk "+q[1],duration:0},q[2]);
+    tl.to(q[0],{scale:0.965,duration:0.06,ease:"power3.out",transformOrigin:"50% 50%"},q[2]);
+    tl.to(q[0],{scale:1,duration:0.20,ease:"power4.out",transformOrigin:"50% 50%"},q[2]+0.06);
+  });
+
+  /* ── S2 THE THREE FILES · land on "three" / "simple" / "markdown" ───────── */
+  tl.from("#s2 .eyebrow",{y:14,autoAlpha:0,duration:0.24,ease:E},3.66);
+  /* r1 note 2, "animations are a bit off": v1 ran the SAME y-plus-fade entrance
+     on every element in the film, which is one carrier doing all nine beats.
+     Each beat now moves the way its content behaves. Files DROP onto the desk. */
+  [["#fc0",3.70,-1.1],["#fc1",4.16,0.8],["#fc2",4.62,-0.6]].forEach(function(p){
+    tl.fromTo(p[0],{y:-46,scale:1.06,rotation:p[2]*2.2,autoAlpha:0},
+                   {y:0,scale:1,rotation:p[2],autoAlpha:1,duration:0.30,ease:"power4.out",
+                    transformOrigin:"50% 50%"},p[1]);
+  });
+  tl.to("#fc0",{className:"fchip on",duration:0},3.84);
+  tl.to("#fc1",{className:"fchip on",duration:0},4.34);
+  tl.to("#fc2",{className:"fchip on",duration:0},4.82);
+
+  /* ── S3 DESIGN.MD ────────────────────────────────────────────────────────
+     The card is settled before the cut lands. Lines write in as a block, then
+     the four token groups light on the four spoken words. */
+  tl.fromTo("#edCard",{y:34,autoAlpha:0},{y:0,autoAlpha:1,duration:0.34,ease:E},5.68);
+  tl.from("#s3 .eyebrow",{y:14,autoAlpha:0,duration:0.24,ease:E},5.70);
+  for(var i=0;i<13;i++){
+    tl.from("#l"+i,{x:-14,autoAlpha:0,duration:0.14,ease:"power2.out"},5.80+i*0.034);
+    tl.to("#edCaret",{y:i*32,duration:0.034,ease:"none"},5.80+i*0.034);
+  }
+  tl.to("#edCaret",{autoAlpha:0,duration:0.18,ease:"power2.out"},6.26);
+  tl.set("#edCaret",{autoAlpha:0},6.44);
+  /* 5.4s is far too long to hold a still card */
+  tl.fromTo("#edCard",{scale:1},{scale:1.018,duration:4.6,ease:"none",transformOrigin:"50% 40%"},6.30);
+  tl.fromTo("#swRow .sw",{scaleY:0},{scaleY:1,duration:0.26,stagger:0.06,ease:"power4.out",transformOrigin:"50% 100%"},6.90);
+  // colors 8.42 · typography 9.02 · rounded+spacing 9.48 · the prose 10.40
+  tl.to("#g0",{className:"grp on",duration:0},8.42);
+  tl.to("#g0",{className:"grp",duration:0},9.00);
+  tl.to("#g1",{className:"grp on",duration:0},9.02);
+  tl.to("#g1",{className:"grp",duration:0},9.46);
+  tl.to("#g2",{className:"grp on",duration:0},9.48);
+  tl.to("#g2",{className:"grp",duration:0},10.38);
+  tl.to("#g3",{className:"grp on",duration:0},10.40);
+  tl.fromTo("#sw2",{scale:1},{scale:1.10,duration:0.24,ease:"power3.out",transformOrigin:"50% 50%"},9.48);
+
+  /* ── S4 THE FINISHED PAGE · the file, rendered ───────────────────────────── */
+  tl.fromTo("#pgFrame",{y:38,autoAlpha:0},{y:0,autoAlpha:1,duration:0.32,ease:E},11.04);
+  tl.fromTo("#pgFrame",{scale:1},{scale:1.022,duration:2.1,ease:"none",transformOrigin:"50% 40%"},11.42);
+  tl.from("#s4 .eyebrow",{y:14,autoAlpha:0,duration:0.24,ease:E},11.06);
+  tl.from("#pgNav",{y:-16,autoAlpha:0,duration:0.24,ease:E},11.06);
+  tl.fromTo("#pgH",{clipPath:"inset(0% 100% 0% 0%)"},{clipPath:"inset(0% 0% 0% 0%)",duration:0.34,ease:"power3.out"},11.12);
+  tl.from("#pgP",{y:18,autoAlpha:0,duration:0.26,ease:E},11.22);
+  tl.fromTo("#pgBtn",{scale:0.7,autoAlpha:0},{scale:1,autoAlpha:1,duration:0.26,ease:"power4.out",transformOrigin:"0% 50%"},11.30);
+  tl.fromTo("#pgBtn2",{scale:0.7,autoAlpha:0},{scale:1,autoAlpha:1,duration:0.26,ease:"power4.out",transformOrigin:"0% 50%"},11.36);
+  tl.from("#pgArt",{scaleY:0,autoAlpha:0,duration:0.30,ease:E,transformOrigin:"50% 0%"},11.16);
+  tl.fromTo("#tk0",{y:12,autoAlpha:0},{y:0,autoAlpha:1,duration:0.24,ease:E},12.42);
+  tl.fromTo("#tk1",{y:12,autoAlpha:0},{y:0,autoAlpha:1,duration:0.24,ease:E},12.62);
+
+  /* ── S5 THE SKILL LIBRARY ────────────────────────────────────────────────── */
+  tl.from("#s5 .eyebrow",{y:14,autoAlpha:0,duration:0.24,ease:E},13.72);
+  tl.from("#skHead",{y:24,autoAlpha:0,duration:0.30,ease:E},13.74);
+  tl.fromTo("#skCount",{scale:0.7,autoAlpha:0},{scale:1,autoAlpha:1,duration:0.32,ease:"power4.out",transformOrigin:"100% 50%"},13.86);
+    ["#sk0","#sk1","#sk2","#sk3","#sk4"].forEach(function(id,i){
+    tl.fromTo(id,{x:(i%2?46:-46),autoAlpha:0},{x:0,autoAlpha:1,duration:0.28,ease:"power4.out"},13.90+i*0.085);
+  });
+
+  /* ── S6 THREE FILES LOCK ─────────────────────────────────────────────────── */
+  tl.fromTo("#lk0",{y:40,autoAlpha:0},{y:0,autoAlpha:1,duration:0.26,ease:"power4.out"},16.52);
+  tl.fromTo("#lk1",{y:40,autoAlpha:0},{y:0,autoAlpha:1,duration:0.26,ease:"power4.out"},16.58);
+  tl.fromTo("#lk2",{y:40,autoAlpha:0},{y:0,autoAlpha:1,duration:0.26,ease:"power4.out"},16.64);
+  tl.fromTo("#lkSeal",{scale:0.82,autoAlpha:0},{scale:1,autoAlpha:1,duration:0.30,ease:"power4.out",transformOrigin:"50% 50%"},17.26);
+
+  /* ── S7 THE OUTPUTS · one per named format ───────────────────────────────── */
+  tl.from("#s7 .eyebrow",{y:14,autoAlpha:0,duration:0.24,ease:E},17.74);
+  tl.fromTo("#out0",{y:44,autoAlpha:0},{y:0,autoAlpha:1,duration:0.28,ease:"power4.out"},17.76);
+  tl.fromTo("#out1",{y:44,autoAlpha:0},{y:0,autoAlpha:1,duration:0.28,ease:"power4.out"},17.84);
+  tl.fromTo("#out2",{y:44,autoAlpha:0},{y:0,autoAlpha:1,duration:0.28,ease:"power4.out"},17.92);
+  tl.to("#out0",{className:"outCard on",duration:0},18.28);
+  tl.to("#out1",{className:"outCard on",duration:0},19.00);
+  tl.to("#out2",{className:"outCard on",duration:0},19.86);
+  /* the payoff of the hook: the same three come back INTO register, each one
+     redrawing its rules and its button on the word that names it */
+  [["#out0",18.28],["#out1",19.00],["#out2",19.86]].forEach(function(p){
+    tl.fromTo(p[0]+" .ob",{scaleX:0},{scaleX:1,duration:0.22,ease:"power3.out",transformOrigin:"0% 50%"},p[1]);
+    tl.fromTo(p[0]+" .ob2",{scaleX:0},{scaleX:1,duration:0.22,ease:"power3.out",transformOrigin:"0% 50%"},p[1]+0.06);
+    tl.fromTo(p[0]+" .oc",{scale:0.6,autoAlpha:0},{scale:1,autoAlpha:1,duration:0.24,ease:"power4.out",transformOrigin:"0% 50%"},p[1]+0.12);
+    tl.fromTo(p[0],{rotation:(p[1]>19.5?-1.6:1.4)},{rotation:0,duration:0.30,ease:"power3.out",transformOrigin:"50% 50%"},p[1]);
+  });
+  tl.fromTo("#outSeal",{y:20,autoAlpha:0},{y:0,autoAlpha:1,duration:0.30,ease:E},20.74);
+
+  /* ── S8 THE CONTRAST ─────────────────────────────────────────────────────── */
+  tl.from("#vsLh",{y:14,autoAlpha:0,duration:0.24,ease:E},21.30);
+  tl.from("#vsRh",{y:14,autoAlpha:0,duration:0.24,ease:E},21.36);
+  tl.fromTo("#vl0",{x:-26,scale:0.94,autoAlpha:0},{x:0,scale:1,autoAlpha:1,duration:0.24,ease:"power4.out",transformOrigin:"0% 50%"},21.42);
+  tl.fromTo("#vl1",{x:-26,scale:0.94,autoAlpha:0},{x:0,scale:1,autoAlpha:1,duration:0.24,ease:"power4.out",transformOrigin:"0% 50%"},21.54);
+  tl.fromTo("#vl2",{x:-26,scale:0.94,autoAlpha:0},{x:0,scale:1,autoAlpha:1,duration:0.24,ease:"power4.out",transformOrigin:"0% 50%"},21.66);
+  tl.fromTo("#vr0",{x:26,autoAlpha:0},{x:0,autoAlpha:1,duration:0.24,ease:E},22.10);
+  tl.fromTo("#vr1",{x:26,autoAlpha:0},{x:0,autoAlpha:1,duration:0.24,ease:E},22.22);
+  tl.fromTo("#vr2",{x:26,autoAlpha:0},{x:0,autoAlpha:1,duration:0.24,ease:E},22.34);
+
+  /* ── S9 CTA · exits are allowed here, it is the final scene ──────────────── */
+  tl.from("#s9eye",{y:14,autoAlpha:0,duration:0.24,ease:E},23.32);
+  tl.fromTo("#ctaWord",{scale:0.78,autoAlpha:0},{scale:1,autoAlpha:1,duration:0.34,ease:"power4.out",transformOrigin:"50% 50%"},23.40);
+  tl.from("#ctaSub",{y:18,autoAlpha:0,duration:0.28,ease:E},23.72);
+  tl.fromTo("#src0",{x:-30,autoAlpha:0},{x:0,autoAlpha:1,duration:0.28,ease:E},24.30);
+  tl.fromTo("#src1",{x:-30,autoAlpha:0},{x:0,autoAlpha:1,duration:0.28,ease:E},24.52);
+  tl.from("#ctaSer",{y:20,autoAlpha:0,duration:0.32,ease:E},25.02);
+  tl.fromTo("#ctaWord",{scale:1},{scale:1.045,duration:0.30,ease:"power3.out",transformOrigin:"50% 50%"},25.70);
+  tl.to("#ctaWord",{scale:1,duration:0.34,ease:"power2.out",transformOrigin:"50% 50%"},26.00);
+
+  /* ── CAPTIONS ────────────────────────────────────────────────────────────── */
+  [["#cap2",3.86],["#cap3",6.46],["#cap4",12.10],["#cap5",14.06],
+   ["#cap7",18.30],["#cap8",21.98]].forEach(function(p){
+    tl.from(p[0],{y:16,autoAlpha:0,duration:0.22,ease:E},p[1]);
+  });
+
+  /* ── TRANSITIONS ─────────────────────────────────────────────────────────
+     Each band runs symmetrically around the cut so the panel covers the whole
+     canvas on the exact swap frame; wipe colour is ink or clay, never paper,
+     because a paper wipe on a paper ground is an invisible cut. */
+  [["#w1",3.44],["#w2",5.46],["#w3",10.82],["#w4",13.50],
+   ["#w5",16.30],["#w6",17.52],["#w7",21.08],["#w8",23.10]].forEach(function(p){
+    tl.fromTo(p[0]+" i",{xPercent:-118},{xPercent:0,duration:0.20,ease:"power2.in"},p[1]);
+    tl.to(p[0]+" i",{xPercent:118,duration:0.24,ease:"power2.out"},p[1]+0.20);
+  });
+
+  [["#f1",0.69],["#f2",16.66]].forEach(function(p){
+    tl.fromTo(p[0],{opacity:0.42},{opacity:0,duration:0.13,ease:"power2.out"},p[1]);
+  });
+
+  window.__timelines = window.__timelines || {};
+  window.__timelines["main"] = tl;
+})();
+</script>
+</body>
+</html>

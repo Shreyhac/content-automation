@@ -59,10 +59,24 @@ main{min-height:calc(100vh - 118px)}
 .stg.run .dot{background:var(--lime);animation:pulse 1s infinite}
 .stg.done .dot{background:var(--paper)}
 @keyframes pulse{50%{opacity:.25}}
-.stg .lab{font-family:var(--mono);font-size:13px;letter-spacing:.04em;color:var(--paper-faint)}
+.stg .lab{font-family:var(--mono);font-size:13px;letter-spacing:.04em;color:var(--paper-faint);
+  display:flex;flex-direction:column;gap:4px;min-width:0;flex:1 1 auto}
 .stg.run .lab{color:var(--lime)}
 .stg.done .lab{color:var(--paper)}
-.stg .t{margin-left:auto;font-family:var(--mono);font-size:12px;color:var(--paper-faint)}
+.stg .t{margin-left:auto;flex:0 0 auto;font-family:var(--mono);font-size:12px;color:var(--paper-faint)}
+/* The measured note is the proof the edit is real, so it reads at full brightness. */
+.stg .nte{font-family:var(--mono);font-size:11px;letter-spacing:.02em;color:var(--paper-dim);
+  overflow-wrap:anywhere}
+.stg.done .nte{color:var(--lime)}
+.stg.fail .dot{background:var(--red)}
+.stg.fail .lab{color:var(--red)}
+.stg.fail .nte{color:var(--red)}
+.stg.skip{opacity:.5}
+.stg.skip .dot{background:var(--paper-faint)}
+.uprow{display:flex;flex-direction:column;gap:8px}
+.uprow .kicker{margin:0}
+#upfill{display:block;height:100%;width:0;background:var(--paper);transition:width .2s linear}
+#modetag,#revmode,#donemode{align-self:flex-start;border-color:var(--lime);color:var(--lime)}
 
 /* REVIEW */
 .revgrid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:20px;align-items:start}

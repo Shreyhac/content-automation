@@ -60,8 +60,8 @@ straddling a caption boundary can never match.
 ### Sourcing
 
 `library/sfx/house/` is the licensed house pack (impacts, risers in `rizer/`, clicks and keyboard
-in `Click/`, wooshes in `Wooshes/`, a soft kit for paper worlds). `library/sfx/saas/` is gaurav's
-own supplied pack.
+in `Click/`, wooshes in `Wooshes/`, a soft kit for paper worlds). `library/sfx/saas/` is the
+`paper-split` client's own supplied pack.
 
 **Look in the library before the internet.** Most of it is still uncurated. Where it genuinely has
 no equivalent, Mixkit is curl-open: category pages carry
@@ -95,7 +95,7 @@ bed with 17 files and 236 placements, and it was correct in the way that matters
   rotation can satisfy the cap globally and break it locally.
 - Rotate four to five samples per gesture class.
 - When the owner names a sample as weird, **retire it, do not re-time it**.
-- **When the owner supplies a pack, he expects to hear it.** Seed it into the loudest act-opener
+- **When the owner supplies a pack, they expect to hear it.** Seed it into the loudest act-opener
   hits and let it carry the majority of placements (55% on one film, 80% on another). Fold it in
   by class-matched **substitution**, taking over existing cues from the most-repeated file in the
   same class, never by inventing new beats.
@@ -111,8 +111,8 @@ by the house range.
 | Context | Band |
 |---|---|
 | House default | 0.16 to 0.34 |
-| Gaurav / thepmfguy | 0.10 to 0.19, and the bottom half under a quiet VO |
-| Nader, after three rounds | median 0.060, ceiling 0.096, bed 0.055 |
+| `paper-split` | 0.10 to 0.19, and the bottom half under a quiet VO |
+| `longform-chunked`, after three rounds | median 0.060, ceiling 0.096, bed 0.055 |
 
 **The ratified trajectory is halving per complaint.** 0.20 ("too loud") to 0.10 ("still very
 high") to 0.060. When an owner says loud, halve it; do not trim it.
@@ -133,7 +133,7 @@ When a sound complaint survives a fix, stop editing cues and scan the **whole mi
 Transient-onset scan the delivered mix, subtract every onset that matches the VO's own consonants,
 and what remains names the offender.
 
-demi2's "typing sfx" ran four rounds this way. Round 3's offender was the **music**: the chosen bed
+The fast-cut-ad demo film's "typing sfx" ran four rounds this way. Round 3's offender was the **music**: the chosen bed
 carried a metronomic **0.465s** percussion tick through the whole back half, with no SFX cue
 involved at all, identified because its clicks fell on a strict **129 BPM** grid while the innocent
 ones matched the VO's consonants 1:1. The replacement was picked by the same measurement, **30
@@ -142,10 +142,11 @@ offender was the click-attack reveal cues, 2ms attack.
 
 Classify by measured envelope, never by filename or intent: audible duration plus attack time
 (<= 0.13s and <= 50ms) splits a library objectively into tick against sustained, and it correctly
-predicted which cue sat at the timestamp he flagged.
+predicted which cue sat at the timestamp the owner flagged.
 
 **And know when to stop measuring.** Round 5's five notes landed on the five surviving whoosh and
-impact cues, the ones every acoustic measure said were not clicks: he meant the whole category. See
+impact cues, the ones every acoustic measure said were not clicks: the owner meant the whole
+category. See
 `docs/03-quality-bar.md`.
 
 ### An audio-only change is a remux, not a re-render
@@ -227,7 +228,7 @@ as "signal present", so no envelope check can see it.
 ### "The audio cuts weird here" is usually a script fault
 
 Transcribe ±1.6s of the join in isolation before touching an encode. Both of vid62-short's audio
-notes were clean at signal level: one cut his sentence mid-list, the other opened a beat on a
+notes were clean at signal level: one cut the presenter's sentence mid-list, the other opened a beat on a
 dangling "And" bridging topics 68s apart. The fixes were editorial, and they traded against each
 other (+3.7s and −2.8s).
 

@@ -53,12 +53,15 @@ WHAT IS NOT DERIVED, AND WHY GUESSING IS WORSE THAN A TODO
         safe-zone rule).
   face rules / crown        which inset means `card` and which means `split` is
         readable off the FACE literal, but the CROWN is not: `text_must_clear_y`
-        is a measurement of HIS HEAD in THIS take, from Vision over the frames
+        is a measurement of THE PRESENTER'S HEAD in THIS take, from Vision over
+        the frames
         (tools/vision/, playbooks/face-geometry.md). vid67's 660 is the worst
         crown across 176 samples, not a layout constant. A guessed crown is a
-        gate that passes text printed on his forehead.
-  text_forbidden_rects      same class: the rect his face occupies in a state.
-  face_windows              a whitelist of the windows his face MAY paint in.
+        gate that passes text printed on the presenter's forehead.
+  text_forbidden_rects      same class: the rect the presenter's face occupies
+        in a state.
+  face_windows              a whitelist of the windows the presenter's face MAY
+        paint in.
         Derived from the composition it would list exactly the windows the
         composition already has, so it could never disagree with it.
   videos_painting           per state. Derivable only as "what happens to paint",
@@ -201,7 +204,8 @@ def find_face(js):
     A composition in this house names its face states in one object literal and
     hard-cuts between them. Read the literal for the NAMES and the observed
     inset values; the rules that map an inset to a name stay a TODO, because the
-    crown that hangs off each state is a measurement of his head, not of the CSS.
+    crown that hangs off each state is a measurement of the presenter's head,
+    not of the CSS.
     """
     el = None
     m = re.search(r'put\(\s*"#([\w-]+)"\s*,\s*\{\s*clipPath', js)
@@ -551,7 +555,8 @@ def build(project, document, transcript, gap, snap_tol):
             ("rules", TODO)])
         cfg["_face_TODO"] = (
             "`rules` maps the clip-path inset to a state NAME, `default` is the state when "
-            "no rule matches, `off_state` names the state where his face is not on screen "
+            "no rule matches, `off_state` names the state where the presenter's face is not "
+            "on screen "
             "at all (guard.py skips the face whitelist there). The observed insets are in "
             "_face_observed above. Form: "
             "{\"state\": \"split\", \"when\": {\"top\": [\">=\", 610]}}.")
@@ -569,19 +574,23 @@ def build(project, document, transcript, gap, snap_tol):
     cfg["states"] = states
     cfg["_states_TODO"] = {
         "text_must_clear_y": (
-            "the WORST-CASE crown of his head in this state, in stage space: no text may "
-            "run past it. It is a measurement of HIS HEAD in THIS take, over every frame "
+            "the WORST-CASE crown of the presenter's head in this state, in stage space: no "
+            "text may run past it. It is a measurement of THE PRESENTER'S HEAD in THIS "
+            "take, over every frame "
             "of the take, not a layout constant. Measure with tools/vision/ and "
             "playbooks/face-geometry.md, and measure the WINDOW the state covers, not the "
-            "whole take: an 11-sample average missed him leaning in at the CTA. A guessed "
-            "crown is a gate that passes text printed on his forehead. vid67's is 660, "
+            "whole take: an 11-sample average missed the presenter leaning in at the CTA. A "
+            "guessed crown is a gate that passes text printed on the presenter's "
+            "forehead. vid67's is 660, "
             "which is 40px below its y620 seam and came off 176 Vision samples."),
         "text_forbidden_rects": (
-            "add this key instead of a crown when his face occupies a RECT rather than a "
+            "add this key instead of a crown when the presenter's face occupies a RECT "
+            "rather than a "
             "half of the frame, as in card mode. [[x0,y0,x1,y1], ...], stage space. Same "
             "rule: hit-test the real crop at the candidate numbers, do not model it."),
         "text_must_stay_left_of_x": (
-            "the split seam, for a vertical split. Text crossing it lands on him."),
+            "the split seam, for a vertical split. Text crossing it lands on the "
+            "presenter."),
         "ink_zone": (
             "[x0,y0,x1,y1], the rectangle the GRAPHICS are supposed to own in this state. "
             "This is the one value that cannot be derived even in principle: a parser "
@@ -590,7 +599,8 @@ def build(project, document, transcript, gap, snap_tol):
             "beat it exists to fail. vid61 shipped a beat that was one element over blank "
             "paper past lint, validate and every safe-zone rule. DELETE this key for a "
             "state whose picture is full-frame video: ink is summed per element and "
-            "overlapping elements double count, so a zone over his face measured 212.9% "
+            "overlapping elements double count, so a zone over the presenter's face "
+            "measured 212.9% "
             "covered on vid67 and the floor can never fail. A key that cannot fail is "
             "worse than no key, because it reads as a check."),
         "min_ink_frac": (
@@ -616,13 +626,15 @@ def build(project, document, transcript, gap, snap_tol):
 
     cfg["face_windows"] = TODO
     cfg["_face_windows_TODO"] = (
-        "[[t0,t1], ...], the windows his face MAY paint in. A WHITELIST, deliberately: a "
+        "[[t0,t1], ...], the windows the presenter's face MAY paint in. A WHITELIST, "
+        "deliberately: a "
         "gate that enumerates the known-bad spans cannot catch what its detector missed, "
         "and a gaze detector missed two real down-looks three times running on thresholds "
         "alone. A missing window costs a beat of face; a missing blacklist entry ships the "
         "defect. Derived from the composition this list would be exactly what the "
         "composition already does, so it could never disagree with it. Write it from the "
-        "SHOT PLAN, or from watching the take. If his face is genuinely on screen for the "
+        "SHOT PLAN, or from watching the take. If the presenter's face is genuinely on "
+        "screen for the "
         "whole film, say so with one window covering the duration and record WHY here.")
 
     cfg["void"] = OrderedDict([("after_t", 0.0), ("min_ink_frac", 0.14)])

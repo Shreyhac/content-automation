@@ -58,7 +58,7 @@ this film genuinely has no such constraint.
 
 Deleting a key is a legitimate answer and often the right one. Leaving a wide value is not:
 see the wrong-value table below, where a crown of 1600 passes a film with captions printed
-across his forehead.
+across the presenter's forehead.
 
 `guard.example.json` is a **key reference**, not a config: it mixes vid66 and vid67 numbers
 so every key appears once, which means it describes no film. `guard.hf67.json` is a real,
@@ -80,7 +80,7 @@ blanket-exempted a whole scene's duration, hiding 15.8s of genuine staleness.
 | `caption_replay` | `{"array": "__CAPS", "target": "cap"}`. See the note below: without it every caption rule is inert. |
 | `face` | `element` (the clip-path carrier), ordered `rules` mapping inset numbers to a state name, `default`, `off_state`. |
 | `states` | per face state: `text_must_clear_y`, `text_forbidden_rects`, `text_must_stay_left_of_x`, `videos_painting`, `ink_zone`, `min_ink_frac`. |
-| `face_windows` | the windows his face MAY paint in. A whitelist, see below. |
+| `face_windows` | the windows the presenter's face MAY paint in. A whitelist, see below. |
 | `void` | `after_t` (skip the hook) and the fallback `min_ink_frac`. |
 | `contrast` | `bright` (150), `max_bright_frac` (0.35), `min_area`. |
 | `stylesheets` | every stylesheet the staleness hash covers. Anything the page loads that is missing here fails. |
@@ -132,10 +132,10 @@ the script prints.
 | `OCCLUDED` | text that is positioned correctly and never paints | the vid56 short shipped with **no captions for 27 of its 43 seconds**. `.cs` carried no `z-index`, computing to auto (0), under a full-bleed `<video>` at 2. Every gate passed: safe zones check coordinates, WCAG contrast is computed from declared colours. |
 | `NOPROBE` | a hit test that returned `null` | **null is not a pass.** A scaled-down viewport puts the coordinates outside it and every probe returns null, reading as a clean run. The probe drops the stage to `scale(1)` and sizes the viewport to the stage for exactly this reason. |
 | `TOP` `BAND` `LEFT` `RAIL` | the Instagram safe zones | a caption box widened from 890 to 940 walked straight back into "every caption ran 50px into the right rail". Left 70 + 890 = 960, and the rail starts at 960. |
-| `ONCROWN` `ONFACE` `ONSPLIT` | graphics on the presenter | 180 frame-hits of text on his face across 23 elements on one film: a rail across his chin, caveats across his mouth, the CTA on his chest. The gate that enforced this ran **only while the face was carded**, so full-bleed was unchecked. Give every state its own rule. |
+| `ONCROWN` `ONFACE` `ONSPLIT` | graphics on the presenter | 180 frame-hits of text on the presenter's face across 23 elements on one film: a rail across the chin, caveats across the mouth, the CTA on the chest. The gate that enforced this ran **only while the face was carded**, so full-bleed was unchecked. Give every state its own rule. |
 | `TXTTXT` | two graphics colliding | every gate checked graphics against the face, the card and the band. Text on text was unguarded, and a panel printed on top of a caption for an entire hook. Ancestor and descendant pairs are excluded by DOM path; rotated boxes are skipped, because an axis-aligned rect is not where their ink is. |
 | `VOID` | a beat that is one element over blank paper | passes lint, passes validate, passes every safe-zone rule, and reads as a hole. Ink coverage under the floor in the graphics zone is the only thing that catches it. |
-| `CONTRA` | text unreadable over the picture | `validate` compares text to its **CSS** background; over an A-roll the ground is his room. 22 bare-text elements hid there. Contrast is **skipped, and the skip is counted and printed**, on any beat where a full-frame cover is up: a wipe sheet at mid-travel legitimately owns the whole frame, and seventeen WCAG failures on one film all landed at exactly `duration/2`, the midpoint of a wipe. Measured as the **fraction of area brighter than 150, never the mean**: white type on a black screen averages dark while still colliding, and a mean rated one title fine at a measured bright-fraction of 59.6%. A background counts as a ground only at **alpha >= 0.8**: a gradient at .22 is not one. |
+| `CONTRA` | text unreadable over the picture | `validate` compares text to its **CSS** background; over an A-roll the ground is the presenter's room. 22 bare-text elements hid there. Contrast is **skipped, and the skip is counted and printed**, on any beat where a full-frame cover is up: a wipe sheet at mid-travel legitimately owns the whole frame, and seventeen WCAG failures on one film all landed at exactly `duration/2`, the midpoint of a wipe. Measured as the **fraction of area brighter than 150, never the mean**: white type on a black screen averages dark while still colliding, and a mean rated one title fine at a measured bright-fraction of 59.6%. A background counts as a ground only at **alpha >= 0.8**: a gradient at .22 is not one. |
 | `VIDWIN` | a `<video>` painted outside its own window | seven of nine dashboard placements rendered dead grey, on the film whose brief was "more screen recordings". `data-start`/`data-duration` is real to the renderer even when the DOM reveals by opacity. |
 | `VIDSET` | the wrong clips painting in a state | the band track must show in SPLIT and be hidden in FULL, and nothing structural checks that. |
 | `FACEWIN` | the face painting outside a declared window | see below. |
@@ -147,13 +147,13 @@ the script prints.
 
 ### `face_windows` is a whitelist, deliberately
 
-List the windows his face MAY paint in; everywhere else is forbidden. A gate that
+List the windows the presenter's face MAY paint in; everywhere else is forbidden. A gate that
 enumerates the known-bad spans cannot catch what its detector missed, and a gaze detector
 missed two real down-looks three times running on thresholds alone. **A missing whitelist
 window costs a beat of face. A missing blacklist entry ships the defect.** Choose which
 way the gate fails. Two windows on that film carried documented overrides found by eye:
-the cover frame, and his sign-off, where the classifier was confident enough to cut the
-presenter out of his own goodbye.
+the cover frame, and the sign-off, where the classifier was confident enough to cut the
+presenter out of their own goodbye.
 
 ### `allow` entries are audited
 
@@ -171,7 +171,7 @@ caption cues, two `<video>` tracks). The finished article is `guard.hf67.json`.
 ### 1. Derive
 
 ```
-$ python3 tools/gates/derive_config.py ~/Desktop/shreyansh\ claude/hf67
+$ python3 tools/gates/derive_config.py ~/Desktop/reel-factory/hf67
 wrote .../hf67/guard.json
 derived: timeline=vid67 stage=stage 1080x1920, 37 beats (20 cuts via cut(), 1 data-starts,
   0 from beat map none, 16 interior, 0 snapped to onsets from 144 words), 37 element ids,
@@ -204,18 +204,18 @@ composition**, `window.__CAPS = CAPS;`, not a config value.
 |---|---|---|
 | `face.rules` | `[{"state":"split","when":{"top":[">=",610]}}]` | the derived `_face_observed` block lists the two clips the composition uses, `inset(0px…)` and `inset(620px…)`. The threshold goes **between** them, not on either, so a one-pixel rounding cannot flip the state. |
 | `face.default` | `full` | the state with no rule. |
-| `face.off_state` | `none` | a name no state has: vid67 never cuts his face out, so no beat should be exempt from the whitelist. |
-| `states.split.text_must_clear_y` | `660` | Vision over all 176 samples of the take (`vid67/facebox.csv`): raw crown y280 to y375, picture pushed down 380, so worst crown 660, which is 40px below the y620 seam. **Not** derivable: it is a measurement of his head in this take. |
-| `states.full.text_must_clear_y` | deleted | in full-bleed there is no band above him, and the film's captions sit at y1246 under his chin. The constraint that matters in this state is `videos_painting`. |
+| `face.off_state` | `none` | a name no state has: vid67 never cuts the presenter's face out, so no beat should be exempt from the whitelist. |
+| `states.split.text_must_clear_y` | `660` | Vision over all 176 samples of the take (`vid67/facebox.csv`): raw crown y280 to y375, picture pushed down 380, so worst crown 660, which is 40px below the y620 seam. **Not** derivable: it is a measurement of the presenter's head in this take. |
+| `states.full.text_must_clear_y` | deleted | in full-bleed there is no band above the presenter, and the film's captions sit at y1246 under the chin. The constraint that matters in this state is `videos_painting`. |
 | `states.*.ink_zone`, `min_ink_frac` | both deleted | see below: measured, they cannot fail on this film. |
 | `states.split.videos_painting` | `["aroll","vband"]` | the band track shows on split beats. |
 | `states.full.videos_painting` | `["aroll"]` | and is dark on full beats. Nothing structural checks this. |
-| `face_windows` | `[[0.0, 35.234]]` | one window covering the film, **recorded as a decision**: he is on screen for every frame, under the band on split beats and whole-frame on full. Written down so the next operator does not read it as an omission. |
+| `face_windows` | `[[0.0, 35.234]]` | one window covering the film, **recorded as a decision**: the presenter is on screen for every frame, under the band on split beats and whole-frame on full. Written down so the next operator does not read it as an omission. |
 
 ### 3. Run it
 
 ```
-$ python3 tools/gates/guard.py tools/gates/guard.hf67.json --project ~/Desktop/shreyansh\ claude/hf67
+$ python3 tools/gates/guard.py tools/gates/guard.hf67.json --project ~/Desktop/reel-factory/hf67
 coverage: 41 beats, 204 painting elements, 45 with text, 45 hit tests (0 returned null),
   41 contrast measurements, 82 <video> reads, 0 <img> reads, 2 timed elements (0 unmanaged)
 face states seen: full x7, split x34
@@ -252,9 +252,9 @@ the reason the TODO refusal exists.
 | Wrong value | What the gate does |
 |---|---|
 | `stage_w/stage_h` set to the root's `2160x3840` instead of the stage's `1080x1920` | **77 problems**, all false: `cap text to x1405 in the rail`, `cap runs to y1238 past the crown at 660`, `cap text to y2630 > 1600`. Every coordinate is doubled. Loud, and a beginner reads it as a broken film and starts moving elements. |
-| `states.split.text_must_clear_y` set to `1600`, a safe-looking wide guess | **`PASS`.** The captions run to y619 and the gate has no opinion. This is a film where a caption at y1500 would print across his mouth and ship. A wide crown is not a lenient check, it is no check. |
+| `states.split.text_must_clear_y` set to `1600`, a safe-looking wide guess | **`PASS`.** The captions run to y619 and the gate has no opinion. This is a film where a caption at y1500 would print across the presenter's mouth and ship. A wide crown is not a lenient check, it is no check. |
 | the same crown set to `540`, a guess at the seam | **34 false `ONCROWN`**, one per split beat: `cap runs to y619, past the worst-case crown at 540`. Tightening past the measurement is not "safer", it just trains you to ignore the gate. |
-| `ink_zone` invented over his face in `full`, `[60,700,1020,1400]` with the house floor 0.14 | **`PASS`, and it can never do anything else.** Ink is summed per element and overlapping elements double count, so that zone measures **212.9%** covered, and the split band measures **241.3%**. On a film whose picture is full-frame video the ink floor is structurally inert, which is why both keys are deleted rather than filled. |
+| `ink_zone` invented over the presenter's face in `full`, `[60,700,1020,1400]` with the house floor 0.14 | **`PASS`, and it can never do anything else.** Ink is summed per element and overlapping elements double count, so that zone measures **212.9%** covered, and the split band measures **241.3%**. On a film whose picture is full-frame video the ink floor is structurally inert, which is why both keys are deleted rather than filled. |
 | `ink_zone` set to a token `[0,0,40,40]` with floor `0.01` | **`PASS`.** The trivially-passing config, exactly what the refusal exists to prevent someone shipping. |
 
 The two `PASS` rows are the whole argument. A wrong number that fails is a bad afternoon.
@@ -277,8 +277,8 @@ This port was proved that way against a shipped film, `hf67`:
   tests, 0 null, 41 contrast measurements, 82 `<video>` reads.
 - with the vid56 `z-index` defect replanted on the caption wrapper and a nonexistent
   `<img>` added: exit 1 with `ASSET`, `PAGEERR`, `IMG0`, 39 `OCCLUDED` and 3 `CONTRA`.
-- with an `<svg class="clip" data-start="15.35" data-duration="2.0">` planted (the demi2
-  defect in shape): `TIMEDLEAK` at 0.0, 10.0 and 30.0 and **silence at 16.0**, inside the
+- with an `<svg class="clip" data-start="15.35" data-duration="2.0">` planted (the
+  fast-cut-ad demo film's defect in shape): `TIMEDLEAK` at 0.0, 10.0 and 30.0 and **silence at 16.0**, inside the
   window. Coverage went from `2 timed elements (0 unmanaged)` to `3 timed (1 unmanaged)`.
 - with a splice planted that ate one `</div>` and the `#cap` element: `DOMBAL` (10 opens
   against 9 closes), `IDGONE` for `cap`, and `PROBEFAIL` on the beat where the film's own

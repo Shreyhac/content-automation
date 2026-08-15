@@ -23,8 +23,8 @@ Where to get it, fastest first:
 3. **The supplied hook clip.** If the owner supplies generated footage, sample it. A Kling clip of
    an amber serum going into a robot supplied the palette, the metaphor and the story, and made
    the whole reel cohere.
-4. **What is physically in the raw footage.** One client A-roll had his own site on an ultrawide
-   behind his head for 70 seconds, so the theme had to be sampled from it or every designed scene
+4. **What is physically in the raw footage.** One client A-roll had the client's own site on an
+   ultrawide behind their head for 70 seconds, so the theme had to be sampled from it or every designed scene
    would clash with the in-frame screen. Check the footage before researching externally.
 
 **Audit whatever you sample against WCAG.** Brands ship text colours that fail on their own panel
@@ -107,8 +107,8 @@ Per project, not per house. The pairings that have shipped:
 
 | Stack | Where it belongs |
 |---|---|
-| Clash Display + Satoshi + Geist Mono | Gaurav's paper world (current) |
-| Rethink Sans + DM Sans + Geist Mono + rationed Fraunces italic | Nader's long-form (current) |
+| Clash Display + Satoshi + Geist Mono | `paper-split`'s paper world (current) |
+| Rethink Sans + DM Sans + Geist Mono + rationed Fraunces italic | `longform-chunked` (current) |
 | Space Grotesk + Instrument Serif italic + Geist Mono | Music and audio subjects |
 | Inter 400 to 800 + SF Mono chips | Tech launch subjects. A swashy display serif reads as rubbish here. |
 | Fraunces + Poppins + coral/amber | The paper listicle family |

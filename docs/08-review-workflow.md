@@ -53,7 +53,7 @@ root.
   When a delivery "didn't change", check the chain in order: **disk hash, then served bytes (a
   `curl` range request plus `cmp`), then browser cache.**
 - **A markup drawn over the client's own face is placement approval.** One note's box spanned the
-  presenter's chin. He had already priced in the overlap, so honouring the drawn geometry beat
+  presenter's chin. The client had already priced in the overlap, so honouring the drawn geometry beat
   re-deriving a "safer" placement nobody asked for.
 - **Pre-existing faults are not this round's scope.** A collision that is identical in the already
   delivered cut gets flagged, not silently fixed. Re-cutting an approved frame nobody asked about
@@ -172,7 +172,7 @@ copies-then-deletes a working file.
   same footage: "same setup, different take" reads as an error. Read the filename out of the
   composition and diff a frame against it. Never reason from the folder name.
 - **Verify a claimed defect against the master before assuming it is your encode.** A client
-  reported repeated audio; the master had the same words, and what he was hearing was the cut
+  reported repeated audio; the master had the same words, and what they were hearing was the cut
   tightening a halting phrase. Transcribe ±1.6s of the join in isolation first. See
   `docs/05-audio-and-sfx.md`.
 - **Diagnose before theorizing.** A "won't open" report got an untested codec theory stated as

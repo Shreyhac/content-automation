@@ -9,8 +9,8 @@ Read the two or three the job actually needs, not all of them.
 |---|---|
 | `face-geometry.md` | Any build with a face in it. Measuring the head and solving a crop, band or card. |
 | `face-card-device.md` | The owner asks for "the split screen" or names a prior video's face treatment. |
-| `paper-split-band.md` | Building for gaurav, or any 9:16 where the face must stay on screen continuously. |
-| `gaze-detection.md` | Nader, or any creator who reads from notes. |
+| `paper-split-band.md` | Building for paper-split, or any 9:16 where the face must stay on screen continuously. |
+| `gaze-detection.md` | longform-chunked, or any creator who reads from notes. |
 | `scripting-and-research.md` | Before a topic is agreed or a script is written. Read it before scoping anything. |
 | `short-from-longform.md` | "Make a short of this" from a finished film. |
 | `longform-chunking.md` | Anything over about 60 seconds, built chunked from the start. |

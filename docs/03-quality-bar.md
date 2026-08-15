@@ -6,8 +6,8 @@ This is the job, not scope creep.
 
 Two halves to the bar. The first is **measured**: resolution, bitrate, held time, void area,
 colour against the master. Those are arithmetic and there is no argument about them. The second is
-the **rejection taxonomy**: the owner will not itemise a fix list that solves the problem, he
-describes a feeling, and almost every rejection this system has seen falls into one of five
+the **rejection taxonomy**: the owner will not itemise a fix list that solves the problem, they
+describe a feeling, and almost every rejection this system has seen falls into one of five
 classes, each with a known fix that is structural rather than cosmetic. Diagnosing the class
 correctly is most of the work.
 
@@ -116,7 +116,7 @@ The structural rule:
 Supporting facts, each learned the expensive way:
 
 - **Above the chin is the face.** The chin is the head's lower bound, so clear space is only ever
-  below it. A stack placed at y1000 to y1346 "on his chest" was on his nose and lower lip.
+  below it. A stack placed at y1000 to y1346 "on the chest" was on the nose and lower lip.
 - **A tight 16:9 close-up has no usable space in a 9:16 crop at all.** If the chin sits near the
   bottom of the source frame, a cover crop puts it inside the UI band and the scale that clears
   the band puts it where captions start. The answer is a face **band** with graphics in their own
@@ -169,8 +169,8 @@ terminal. Which is why the theme decision goes through a real mock, below.
 
 ## The delivery contract is measured, not assumed
 
-He judges the delivered file against the one his camera produced, and he has asked for it in those
-words more than once: *"is this video rendered in the same file size that I gave you the a roll
+The creator judges the delivered file against the one their camera produced, and has asked for it
+in those words more than once: *"is this video rendered in the same file size that I gave you the a roll
 as"*, then *"make sure that the final file is rendered in the exact size of the A-roll that I gave"*.
 
 ### A 4K container carrying a 1080p face shipped three times
@@ -196,12 +196,12 @@ disagrees with itself between samples, fix the experiment before believing eithe
 
 ### `-q high` is not high
 
-vid60 shipped at 2160x3840 from a 2160x3840 master, asset chain correct, and he still said "it is
-very much compressed."
+vid60 shipped at 2160x3840 from a 2160x3840 master, asset chain correct, and the note back was
+still "it is very much compressed."
 
 | | Resolution | Bitrate | Size |
 |---|---|---|---|
-| His A-roll master | 2160x3840 | 28.0 Mbps | 102 MB |
+| The A-roll master | 2160x3840 | 28.0 Mbps | 102 MB |
 | Delivered at `-q high` | 2160x3840 | **15.5 Mbps** | 57 MB |
 | Re-render at `--crf 12` | 2160x3840 | 28.3 Mbps | 103 MB |
 
@@ -224,14 +224,15 @@ vid60's 28 Mbps master; vid61's is 36.25.
 Measure the master's bitrate first, then pick the number for it specifically, then verify the
 delivered file with `ffprobe`. See `docs/06-delivery.md` for the commands.
 
-### Never grade his A-roll
+### Never grade the creator's A-roll
 
-His words: *"I really don't want to touch my A-roll at any given cost."* Caught three times,
+The verbatim rule: *"I really don't want to touch my A-roll at any given cost."* Caught three times,
 vid49, vid54 and vid55, twice from a grade applied out of habit because the measured stats invited
 it.
 
 **The transcode is a codec change and nothing else.** No `colorbalance`, no `eq`, no saturation
-touch, no `scale` when the master is already 9:16, and no `loudnorm` on a mix he made himself.
+touch, no `scale` when the master is already 9:16, and no `loudnorm` on a mix the creator made
+themselves.
 
 **The renderer shifts colour on its own, 3 to 7%**, so a grade on top is a shift nobody can
 account for. Isolated on vid57 by measuring the face band only (y520 to y1300): master and the
@@ -269,15 +270,16 @@ in-bounds and contrast-safe while two thirds of it is blank.**
 Only a contact sheet of every beat shows it, and it is worth a full shoot round **before**
 rendering.
 
-The fix that generalises: **the scene's structure arrives on the cut, its content arrives on his
-words.** The scene opens on a node already reading `CODING AGENT` and rewrites it to `DESIGNER`;
+The fix that generalises: **the scene's structure arrives on the cut, its content arrives on the
+spoken words.** The scene opens on a node already reading `CODING AGENT` and rewrites it to `DESIGNER`;
 artboard slots open empty and dashed and fill later; a repo card lands as a skeleton (bar, mark,
 rule, `README.md`) and fills in. **An empty slot is composed. An absent slot is a hole.** And a
 placeholder sits **behind** its replacement rather than being removed, which keeps the no-exit-tween
 rule intact.
 
 The contact sheet has to be generated from the clip list, not from hand-picked timestamps. A
-spliced-out grid scene on demi2 played as bare footage for **three delivered versions** because the
+spliced-out grid scene on the fast-cut-ad demo film played as bare footage for **three delivered
+versions** because the
 sheets sampled around 9.x and never inside it. Tile every composition element's window at least
 once, and verify a timed element is absent **outside** its window too.
 
@@ -300,7 +302,7 @@ changes while its picture does) and report runs with no change.
 A held frame can be deliberate, so this is not a hard fail. **The point is that the decision gets
 made on purpose instead of discovered by the client.** Staging arrivals on actual word onsets is
 what fixes it, and doing that on vid58 also surfaced that the "420+" figure was on screen 4.5
-seconds before he says the number.
+seconds before the presenter says the number.
 
 Two gate traps worth knowing: `borderColor` and `boxShadow` tweens **register as nothing**, because
 the fingerprint is id, rect, opacity and transform. And a guard that fingerprints scene *wrappers*
@@ -320,11 +322,12 @@ replicated. See `docs/07-troubleshooting.md`.
 
 ### The reserved bottom band must be lit, not black
 
-He sent back a frame with "What the fuck is this?". Measured on the delivered file: content stopped
+The owner sent back a frame with "What the fuck is this?". Measured on the delivered file: content stopped
 at y1530 and the bottom **390px, 20% of the frame, averaged 13/255**, with a pure-black seam at
 y1000 to y1040 where the face band's feather ran to solid.
 
-He reviews the exported 9:16 file in a player, where an unlit reserved zone reads as a broken black
+The owner reviews the exported 9:16 file in a player, where an unlit reserved zone reads as a broken
+black
 bar. **Reserving a zone means keeping text out of it, never leaving it black.** A wide shallow
 stage lift along the floor took the band from 13.4 to 28.5 mean and softened the seam to 7.0.
 
@@ -332,7 +335,7 @@ stage lift along the floor took the band from 13.4 to 28.5 mean and softened the
 
 ## Rebuild the UI, do not screenshot it
 
-His note on vid54, on real screenshots that had already replaced a mock: *"cannot be just a
+The note on vid54, on real screenshots that had already replaced a mock: *"cannot be just a
 screenshot... rebuilt exactly how it is being shown, with proper zoom-ins and zoom-outs, and actual
 typing... looks very vague."*
 
@@ -357,10 +360,10 @@ perspective transform looks worse than no attempt: delete it rather than ship it
 
 ---
 
-## Graphics are not the default. Showing him is.
+## Graphics are not the default. Showing the presenter is.
 
-His note, and he said explicitly that it generalises to every video, not just the beat he wrote it
-on: *"No need to show any animation here when Nader says [the line]... just the A-roll should be
+The note, stated explicitly to generalise to every video and not just the beat it was written
+on: *"No need to show any animation here when [the presenter] says [the line]... just the A-roll should be
 shown. Any animation, error, just A-roll with captions should be there. At the last line, CTA."*
 
 What the beat had been doing: the 4.6s closer, the line where the presenter makes the direct ask,
@@ -368,19 +371,19 @@ was graphics-only for its whole duration with no face at all. Rebuilt, the first
 A-roll with the caption low and the only motion a slow push on the picture itself (scale 1 to
 1.02), and **the CTA arrives ON the last line** rather than owning the whole beat.
 
-**Reach for an animated overlay when it is carrying information that cannot come from him
-speaking**: a number, a comparison, a mechanism. Never to fill a beat, and never to replace him at
-the moment he makes the ask. Audit every closing and CTA beat in every project against this rather
+**Reach for an animated overlay when it is carrying information that cannot come from the
+presenter speaking**: a number, a comparison, a mechanism. Never to fill a beat, and never to
+replace the presenter at the moment they make the ask. Audit every closing and CTA beat in every project against this rather
 than waiting for the note.
 
-**The precondition is that showing him is worth doing.** When the take itself is unusable for a
-span (he is reading from notes: eyeOpen 0.45 to 0.13 across 32 consecutive samples), the answer is
+**The precondition is that showing the presenter is worth doing.** When the take itself is unusable
+for a span (the presenter is reading from notes: eyeOpen 0.45 to 0.13 across 32 consecutive samples), the answer is
 to take the picture off and let the graphics own the frame, **not to shrink the problem**. An
 unwatchable shot at a smaller size is still an unwatchable shot.
 
 And check the exclusion is real. One graphics-only beat existed because a gaze scan excluded 2.4s;
 the underlying data showed `eyeOpen` dipping to 0.12 to 0.26 for two to four samples twice and
-recovering immediately, with the frames showing him square to camera. **They were blinks**, and
+recovering immediately, with the frames showing the presenter square to camera. **They were blinks**, and
 `min_sustain`/`pad` turned two blink clusters into one exclusion. A face-safety false positive
 silently removes the presenter from a beat and nothing downstream flags that as a defect.
 
@@ -388,15 +391,16 @@ silently removes the presenter from a beat and nothing downstream flags that as 
 
 ## When the same complaint survives a fix, remove the whole category
 
-demi2's "typing sfx" note survived **three** evidence-based fixes across three rounds. Round 2
+The fast-cut-ad demo film's "typing sfx" note survived **three** evidence-based fixes across three
+rounds. Round 2
 measured the click and tick family by envelope and removed it. Round 3 transient-scanned the mixed
 bed and found a metronomic 0.465s percussion tick baked into the **music**, on a strict 129 BPM
 grid, and swapped the bed. Round 4 removed the two remaining click-attack reveal cues (2ms attack).
 Each fix was correctly diagnosed and verified.
 
 Round 5's five timestamped notes (14.32, 17.31, 19.03, 21.43, 33.85) landed exactly on the five
-surviving whoosh and impact cues, the ones every acoustic measure said were **not** clicks. He was
-naming a sound **category**: any added effect at all. The film is now voice and music only.
+surviving whoosh and impact cues, the ones every acoustic measure said were **not** clicks. The
+client was naming a sound **category**: any added effect at all. The film is now voice and music only.
 
 **When the same complaint survives two evidence-based fixes, stop refining the classifier and
 remove the whole class.** A measurement-based classifier can converge on the wrong category
@@ -427,7 +431,7 @@ into `HISTORY.md` with its date rather than into the grammar as law.
   scale before a single frame was rendered. Cost of learning in mocks: minutes. In renders: hours.
 - **Mock REAL frames, never ASCII.** An ASCII box inside a question is not a mock: it conveys
   structure and not look, and look is the entire thing being judged. vid63's dark terminal theme
-  was approved from an ASCII preview and rejected thirty seconds after he watched the render, as
+  was approved from an ASCII preview and rejected thirty seconds after the owner watched the render, as
   "very shitty and vibe coded and very very weird". Building the three-way mock sheet after the
   rejection cost 20 minutes, and it would have cost the same before. It works: the round-2 theme
   mock sheet drew **zero** notes on the theme. This applies to any whole-film decision, theme, hook
@@ -446,9 +450,9 @@ into `HISTORY.md` with its date rather than into the grammar as law.
   A round-one review that finds bugs you could have found is a round spent on nothing.
 - **Read every literal on-screen string as a viewer before the delivery render.** Three of vid62's
   eyebrows went through lint, validate, the safe-zone gate and a full 67-frame shoot as build
-  notes: "One beat of price, at the end" sat over the CTA for four seconds, and "His own Incogni
-  account" and "What he would tell a friend" were third person about the man whose face was in the
-  same frame. List every eyebrow, chip, stamp, source pill and button string and read the list on
+  notes: "One beat of price, at the end" sat over the CTA for four seconds, and "Their own Incogni
+  account" and "What they would tell a friend" were third person about the person whose face was in
+  the same frame. List every eyebrow, chip, stamp, source pill and button string and read the list on
   its own, out of context. Anything describing the edit is a build note that escaped; anything in
   the third person about the person on screen gets recast as a label.
 - **Two failed passes on a decorative element means cut it, not tune it.** Negative space beats a
@@ -464,13 +468,13 @@ line the top of this page draws.
 **The measured half: `tools/qa/benchmark.py` and `tools/qa/benchmarks.json`.**
 
 ```bash
-python3 tools/qa/benchmark.py out/vid68-final.mp4 --creator shreyansh \
+python3 tools/qa/benchmark.py out/vid68-final.mp4 --creator card-reel \
     --master /path/to/camera-master.mp4 \
     --srt out/vid68-final.srt --caption-pack out/vid68-caption-pack.md \
     --composition hf68/index.html
 ```
 
-It measures the DELIVERED FILE, which is the only artefact he ever sees, against the numbers the
+It measures the DELIVERED FILE, which is the only artefact the owner ever sees, against the numbers the
 sections above were written from: the master's resolution and data rate, integrated loudness and
 true peak, frozen runs and their longest block, the reserved band's mean luma, frame 0's ink
 coverage, face presence and the chin against y1600, and the em dash across the composition, the
@@ -491,4 +495,4 @@ The five rejection classes above are diagnoses, and a new operator has never see
 produces one. 09 turns them into a sequence with an artefact and a stop condition per pass, ordered
 by how often each complaint recurs, so round 1 of a new operator's film is about the film rather
 than about defects that were already findable. It ends where this page does: the protocol replaces
-round 1 and round 2, and nothing replaces showing him the cut.
+round 1 and round 2, and nothing replaces showing the owner the cut.

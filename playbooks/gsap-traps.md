@@ -131,9 +131,9 @@ state): use `fromTo()` with the keyframe array in the *to* vars instead.
 
 With `immediateRender:false`, a hidden **parent** does not cascade its hidden state to a child's
 own computed style. A row's numeral child computed `opacity:1` the instant the row arrived, so
-"60" and "90" were on screen a full second before he said either number, then snapped to zero and
-re-entered on the word. Staging belongs in CSS **on the element that animates**, never assumed
-from its parent: this is the same fault as the "late children" section above, found again a
+"60" and "90" were on screen a full second before the presenter said either number, then snapped to
+zero and re-entered on the word. Staging belongs in CSS **on the element that animates**, never
+assumed from its parent: this is the same fault as the "late children" section above, found again a
 chunk later, 75ms under a 0.5s stillness detector's window (a near-miss is a reason to trust the
 detector, not loosen it).
 

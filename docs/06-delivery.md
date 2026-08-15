@@ -12,7 +12,7 @@ HF_DE_STALL_MS=420000 FFMPEG_ENCODE_TIMEOUT_MS=3600000 PRODUCER_ENABLE_CHUNKED_E
 ```
 
 **Set the delivery bitrate at render time, not in a re-encode.** `-q high` alone gives about
-6 Mbps at 1080 and **15.5 Mbps at 4K, roughly half what his phone writes**; pushing that through a
+6 Mbps at 1080 and **15.5 Mbps at 4K, roughly half what the creator's phone writes**; pushing that through a
 second lossy pass to raise it is worse than asking for it up front. `--video-bitrate` and `--crf`
 are mutually exclusive.
 
@@ -39,7 +39,8 @@ renders at 1080p, delivers a quarter of the pixels, and looks like a success.
 
 Delivered numbers on record, for calibration: vid59 38.4 Mbps against a 43.9 Mbps master (round 1
 shipped 26.7); vid60 v5 28.3 Mbps against 28.0; vid61 36.8 Mbps against 36.25; vid62 37.18 against
-32.78; vid67 38.28 against 33.15; demi2 75.1 Mbps against sources running 52.0 / 64.7 / 99.9 min,
+32.78; vid67 38.28 against 33.15; the fast-cut-ad demo 75.1 Mbps against sources running
+52.0 / 64.7 / 99.9 min,
 median and max. **The number to aim at comes from the source in front of you.**
 
 Worker counts are machine-dependent. On the 8GB machine this system was built on, `--workers 2`
@@ -94,7 +95,7 @@ the value from a previous project:
 **This is the one colour fault that breaks the never-grade rule without anyone applying a grade.**
 The A-roll has no filter on it, nobody touched it, and it still ships shifted, because a single
 imported B-roll clip changed the output colour space for everything. `docs/03-quality-bar.md` says
-never grade his footage; this is how it happens by accident. `ffprobe` the colour tags of every
+never grade the creator's footage; this is how it happens by accident. `ffprobe` the colour tags of every
 non-generated clip at intake, not at delivery.
 
 One 10-bit HEVC B-roll clip tagged `bt2020nc`/`arib-std-b67` (HLG) made HyperFrames auto-detect and
@@ -119,14 +120,14 @@ stage. A second, distinct effect measured on another project: delivered files ta
 range) against `pc` (full range) source/asset show a further **range squeeze** (R−12/G−6/B−2 in
 one measurement) with zero grading filters applied anywhere in the chain. **Always measure a crop
 of pure, ungraphic'd source footage** (a face band with no cards/text on it) when comparing colour
-across pipeline stages: a full composed frame samples your own graphics, not his footage, and
+across pipeline stages: a full composed frame samples your own graphics, not the creator's footage, and
 will report numbers that look catastrophic and mean nothing.
 
 ---
 
 ## 3. Match the original file size (both Instagram creators)
 
-**Standing rule for `shreyansharora05` and `thepmfguy`/gaurav.** A delivered file at a perfectly
+**Standing rule for both Instagram creators, the `card-reel` and `paper-split` templates.** A delivered file at a perfectly
 healthy 8.4 Mbps looked "too small" next to the 108MB raw A-roll when compared side by side in
 WhatsApp. The stated belief is "no views for low file size videos." Whether or not the platform
 weighs it, this is a hard delivery requirement.
@@ -249,9 +250,9 @@ out/
 **Verify each of these with `ls` and `ffprobe` on the real path.** Spotlight indexing is disabled
 on this machine (`mdutil -s /System/Volumes/Data` reports "Indexing disabled"), so Finder Recents
 and `mdfind` will never surface a file written since it was turned off: `mdfind -name "vid66"`
-returns nothing for files that exist and decode fine. Hand him the folder with `open <dir>` rather
-than telling him to scroll a Spotlight view. Re-enabling needs his password and a full reindex that
-grinds the disk, so flag it as his call rather than running it.
+returns nothing for files that exist and decode fine. Hand the owner the folder with `open <dir>`
+rather than telling them to scroll a Spotlight view. Re-enabling needs the owner's password and a
+full reindex that grinds the disk, so flag it as their call rather than running it.
 
 ### Instagram caption practice: no hashtags
 
@@ -259,8 +260,8 @@ This changed and the old guidance in this system was wrong. Researched 2026-08-1
 
 - **No hashtags at all.** Mosseri, July 2026: hashtags are a *context* signal, not distribution,
   and Instagram removed hashtag-following in December 2024. An early pass cut 15 tags to 4 on the
-  "still useful for context" line and he pushed back twice, *"you just said hashtags are not
-  relevant then why to use them"*, and he was right. The keywords are already in the caption body,
+  "still useful for context" line and the owner pushed back twice, *"you just said hashtags are not
+  relevant then why to use them"*, and that was right. The keywords are already in the caption body,
   so `#claudecode` under a caption whose first sentence says "Claude Code" repeats a signal rather
   than adding one. **Default to none**, and justify any topic tag against what the body already
   says.
@@ -275,7 +276,7 @@ This changed and the old guidance in this system was wrong. Researched 2026-08-1
   Keep the mechanic and phrase it as a real deliverable: "like if you agree" phrasing trips the
   engagement-bait classifier. And the CTA converts on topic strength, not on the mechanic, see
   `playbooks/scripting-and-research.md`.
-- **His own first comment should be a sentence, not an emoji.** Multi-word comments and reply
+- **The creator's own first comment should be a sentence, not an emoji.** Multi-word comments and reply
   threads weigh more. Reply inside the first hour.
 
 Caveat on all of the above: it is secondhand reporting of Mosseri plus agency blogs, not a Meta
@@ -284,23 +285,23 @@ before treating it as current.
 
 ### The caption pack is paste-ready only
 
-His words on a pack that opened with a researched "what changed and why" section, a character-count
+The verbatim note on a pack that opened with a researched "what changed and why" section, a character-count
 analysis of the preview cutoff, posting tips and a sources list: *"in the md file just give
 captions or any other stuff that needs to be there on my video, no other jargon please."*
 
-**It is a clipboard, not a report.** He opens it on his phone while posting, and anything he cannot
-paste is in his way. The file contains only paste-ready blocks:
+**It is a clipboard, not a report.** The creator opens it on a phone while posting, and anything
+that cannot be pasted is in the way. The file contains only paste-ready blocks:
 
 - two or three caption options
 - the comment trigger
 - bracketed meta keywords
-- his own first comment
+- the creator's own first comment
 
 No preambles, no rationale, no character counts, no source links, no emojis unless asked. The
 research still happens and still shapes the writing; it goes in the chat message or in
 `vidNN-breakdown.md`.
 
-Two things that do belong in the pack because they are facts he needs at posting time: **say so if
+Two things that do belong in the pack because they are facts needed at posting time: **say so if
 the video is a paid placement** (YouTube needs the paid-promotion flag), and **credit any CC BY
 assets used**. No em dashes.
 
@@ -308,7 +309,7 @@ assets used**. No em dashes.
 
 Any time the script's CTA is "comment X and I'll send you Y", the payload `.docx` ships **alongside
 the caption pack, at first delivery, without being asked**. On vid66 the on-screen CTA was "comment
-APPLE and I'll send you the skill", the video and caption pack were delivered, and he had to ask
+APPLE and I'll send you the skill", the video and caption pack were delivered, and the owner had to ask
 "is the shareable doc ready for this?" before it existed. Treating it as optional makes the CTA a
 promise with nothing behind it.
 
@@ -362,7 +363,7 @@ Two channels, and they are not the same reviewer:
 | Channel | Who | How notes arrive |
 |---|---|---|
 | Local | The owner | `./rr out/vidNN-final.mp4`, then "Send to editor" writes `vidNN-feedback-roundN.md` |
-| Hosted | The client (Nader, gaurav) | `./rr share out/vidNN-final.mp4 --name "<client>"` prints one private link; `./rr pull vidNN` brings notes and markup frames in as `source: "client"` |
+| Hosted | The client (`longform-chunked`, `paper-split`) | `./rr share out/vidNN-final.mp4 --name "<client>"` prints one private link; `./rr pull vidNN` brings notes and markup frames in as `source: "client"` |
 
 Rules that cost real rework when skipped:
 
@@ -374,8 +375,8 @@ Rules that cost real rework when skipped:
   written at.
 - **Write `status` and `reply` back for every note you address**, then push. Both render on the
   card, so the next round opens with the old notes answered. **A note left `open` reads as
-  ignored**. That is how two Nader notes on vid46 sat unanswered, see
-  `creators/nader/HISTORY.md`.
+  ignored**. That is how two client notes on a `longform-chunked` film sat unanswered, see
+  `templates/longform-chunked/HISTORY.md`.
 - Re-sharing a new render stacks as v2 on the **same** link, so the reviewer can wipe the old cut
   against the new one. Never hand-edit an existing `-feedback-roundN.md`.
 - **`rr share` caps at 2 GiB**, which is about 46 Mbps on a six-minute film. Over that, the
@@ -394,5 +395,5 @@ Rules that cost real rework when skipped:
 
 ## 9. Close the loop
 
-Update `creators/<creator>/HISTORY.md` with what each review round actually changed, and promote
+Update `templates/<creator>/HISTORY.md` with what each review round actually changed, and promote
 anything reusable into `playbooks/`. A lesson that stays in a chat log gets paid for twice.

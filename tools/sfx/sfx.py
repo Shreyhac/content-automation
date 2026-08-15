@@ -10,12 +10,12 @@ use as many as possible ... reduce the volume of ALL the SFX a bit, it's too lou
 Round 1 measured 236 placements over what looked like 17 files, but boom.mp3 and
 cboom.mp3 were byte-identical and so were riser.mp3 and riser2.mp3, so it was 15
 distinct sounds, and boom alone carried 48 hits. Top four distinct sounds were 55%
-of every transient in the film. His "two or three" was a fair description.
+of every transient in the film. The owner's "two or three" was a fair description.
 
 So this file is the single source of truth for the bed, and it ENFORCES the budget
 rather than trusting the author:
 
-  * thud / riser / riser2 are not in the pool at all, he named them
+  * thud / riser / riser2 are not in the pool at all, the owner named them
   * no single file may exceed CAP_SHARE of all placements
   * median volume must land at/below MEDIAN_MAX, ceiling at CEIL_MAX
   * sustained beds (>1.5s) capped at BED_MAX
