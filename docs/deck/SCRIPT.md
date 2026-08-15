@@ -139,25 +139,33 @@ If a judge is going to poke a hole, it is here. Saying it first removes the hole
 
 ## Slide 8 &middot; Reel Review: stop describing video in words
 
-**S** (about 40 seconds, this is your slide, you are the one who leaves the notes)
+**S** (about 40 seconds. This is your slide, you are the one who leaves these notes.)
 
-> This is the part I actually use every day.
+> These three are real notes off real rounds on my own films. Not a mockup of the
+> feature, the actual frames.
 >
-> When a cut comes back wrong, I do not type a paragraph. I scrub to the frame, drag a
-> box over the problem, and type one line. The frame with my drawing baked into it is
-> what the editor sees, so there is no interpreting what I meant.
+> This one, ten point six seconds, I drew a box round the caption and typed
+> **"this kind of text is overlapping at a lot of places"**. Three point nine
+> seconds, **"only head is visible, looks weird"**. Two point six, **"logo as
+> well is overlapping"**.
 >
-> Those notes export as the brief for the next round. When it goes to a client, one
-> private link, and a re-render stacks as v2 under the same link so they can wipe the
-> old cut against the new one instead of comparing from memory.
+> That is the whole interaction. I do not write a paragraph describing where the
+> problem is. I point at it. The paused frame with my drawing baked in is what the
+> editor gets, so there is nothing to interpret.
 >
-> And the order is enforced: fix, reply to every note, push, and only then share. Send
-> the new cut first and every note you just addressed still looks ignored.
+> Those notes export as the brief for the next round. For a client it is one private
+> link, and a re-render stacks as v2 under the same link so they wipe the old cut
+> against the new one instead of comparing from memory.
 
-**SID** can add one line if there is time:
+If a judge only remembers one feature, you want it to be this one. Point at the red
+boxes while you read the notes out.
+
+**SID** adds one line if there is time:
 
 > Coordinates are stored normalised, so a note left on a laptop lands in exactly the
 > right place on a phone.
+
+---
 
 ## Slide 9 &middot; Clone it. Run it.
 
