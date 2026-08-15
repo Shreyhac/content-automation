@@ -1,0 +1,18 @@
+# Backend service dependencies.
+#
+# The pipeline also shells out to binaries that are NOT installable from here:
+#   ffmpeg / ffprobe   every stage
+#   node 18+ / npx     hyperframes gates and render
+#   whisper            word-level transcripts  (pip install openai-whisper)
+#   swift              tools/vision/*.swift, macOS only
+# Run `bash tools/check-env.sh` from the repo root, or GET /api/capabilities
+# on a running server, to see which of those this host actually has.
+
+fastapi>=0.115
+uvicorn[standard]>=0.30
+python-multipart>=0.0.9
+anthropic>=0.69
+
+# Used by the pageerror gate (docs/01-pipeline.md stage 6). Without it the gate
+# reports skipped rather than failing the job.
+playwright>=1.44
