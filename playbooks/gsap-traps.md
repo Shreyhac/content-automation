@@ -292,3 +292,44 @@ detector, not loosen it).
   paths before animating their strokes.
 - **A curved flight path with no MotionPathPlugin**: tween `x` with `ease:'none'` and `y`
   separately (out then in). Two tweens, one visible arc.
+
+---
+
+## Three lint failures worth knowing before you write the tween, not after
+
+All three pass a browser preview and fail `npx hyperframes lint`. Writing them the right way the
+first time saves a round.
+
+### `letterSpacing` is not animatable here
+
+A tween on `letterSpacing` reflows text, so glyph positions snap to integer device pixels. Under
+the seek-by-frame capture engine an ease-out tail then stutters. This is tempting precisely for
+the "settle" read a short composed intro wants (`12px -> 6px` looks like something locking into
+place).
+
+**Do the settle with a transform instead.** `scaleX` on the element from a `0% 50%` origin reads
+almost identically and interpolates sub-pixel. Where the spread genuinely matters, split to
+per-character elements and animate each glyph's `x`; a uniform `scale` is not the same effect.
+
+### `Math.random()` inside a WebGL setup reshuffles every frame
+
+The capture engine seeks frame by frame, so anything sampling `Math.random()` at build time gets a
+different answer on every seek and the cloud boils. Use a seeded PRNG (mulberry32 is four lines)
+so the same frame number always produces the same geometry.
+
+### An exit that lands exactly on a clip boundary needs a hard kill
+
+`tl.to(el,{opacity:0}, t)` finishing at the next clip's `data-start` is not enough: non-linear
+seeking can land after the fade and restore stale visibility. Follow every boundary exit with an
+explicit `tl.set(el,{opacity:0}, <boundary>)`.
+
+## A full-frame WebGL canvas silently outranks your scene text
+
+`#glWrap` sits at `z-index:19` so the sigil can read over the designed ground; `.scene` sits at
+`z-index:10`. Any text in a scene that shares time with the canvas is therefore *underneath* it,
+even though the canvas is `alpha:true` and looks empty there.
+
+`inspect` reports this as `text_occluded ... inside #gl`, at info level, which is easy to scroll
+past. It is a real bug: the intended hybrid is a **DOM bezel around a WebGL core**, so the crisp
+CSS ring, ticks and labels must sit above the canvas. Lift the scenes that share time with the
+canvas above it rather than lowering the canvas, which would put it under the ambient ground.

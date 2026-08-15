@@ -60,3 +60,6 @@ package-lock.json
 ._*
 .Spotlight-V100
 .Trashes
+
+# vision model binaries: fetched on demand, URLs in measure_head.py
+tools/vision/models/

@@ -4,6 +4,60 @@ Newest first.
 
 ---
 
+## vid64, idempotency keys (2026-08-15)
+
+1407 frames, 46.9s. First take edited off macOS, which forced the Vision port.
+
+### The take did not match his own profile
+
+Measured with `tools/vision/measure_head.py` over 234 stills: **crown 419, chin 1290, head about
+800px, centre-x drifting 400 to 557**. vid42 documented the same man in the same room at crown y45
+with a 940 to 975px head. Nothing in the footage announces the difference; both are tight vertical
+close-ups against a plain wall.
+
+That matters beyond the constants. **Rule 4 ("no headroom means no top lockup") has a measured
+premise, and on this take the premise was false**: 419px of headroom and 630px of clear space
+below the chin. A hard rule whose justification is a number stops applying when the number moves,
+and the profile will not tell you. Re-measure, then re-check which written rules still hold.
+
+Solved fresh: card `inset(1000px 260.1px 240px 259.9px round 32px)`, video scale .58 at y812,
+crown landing y1055 and chin y1560, clear of the y1600 band. Face share about 26% across a 1.4s
+open plus four card beats.
+
+### vid42's file carries retired grammar
+
+Its line 1205 runs a `scale 1 -> 1.05` push across the face intro. Rule 8 (vid57, *"make it
+stagnant"*) retired that globally, and scaffolding from the reference build copies it straight
+back in. **The reference build is not self-describing: check every device in it against the rules
+written after it shipped.**
+
+### Frame QA found ten defects a clean gate run did not
+
+lint, validate, inspect and the pageerror check were all at zero before the first render. Reading
+36 beat frames as images then found:
+
+- the three.js sigil sized by eye, swamping the frame and burying its own DOM bezel. The camera
+  arithmetic is the fix: vFOV 32 at z=9 shows 5.16 world units over 1920px, so 1 unit is 372px and
+  a radius-1.85 shell renders 1376px. Hold the sigil to about 0.78 of its bezel.
+- two collisions born from group moves, which `inspect` samples straight past: a capsule flying
+  into a panel and covering its title, and a second landing on top of a stamp so it read
+  "Not pr(2nd)essed".
+- tap rings written as if they were children of the device panel; they are siblings, so they
+  rendered at frame-absolute coordinates in the top-left corner.
+- three beats where a display lockup and the caption under it stated the same words.
+- the counters beat top-hung with a dead bottom two thirds and no caption at all.
+
+**A clean gate run says the file is well formed, not that the film is right.**
+
+### Delivery
+
+Grain layer (deterministic, frame-indexed PRNG, z below the face card) took the encode from 70.5MB
+to 101MB and killed the gradient banding. Two-pass loudnorm landed exactly -14.0 LUFS / -1.0 dBTP.
+**The file-size rule was NOT met**: 107MB delivered against a 208MB 4K raw. The composition is
+wrapped for native 2160x3840 per `docs/06-delivery.md` and gates clean, but was not rendered.
+
+---
+
 ## vid42, ElevenLabs Vocals (2026-07-28)
 
 1053 frames. **Twelve render rounds across three structures.** The same launch as gaurav's vid35,

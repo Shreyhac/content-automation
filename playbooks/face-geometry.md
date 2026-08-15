@@ -74,9 +74,9 @@ background run against each edge:
 
 | band | free left | free right | background |
 |---|---|---|---|
-| y0–300 | 0–58 | 118–220 | 26% |
-| y700–1000 | 52–84 | 0–11 | 8% |
-| **y1000–1600** | **0** | **0** | **0%** |
+| y0-300 | 0-58 | 118-220 | 26% |
+| y700-1000 | 52-84 | 0-11 | 8% |
+| **y1000-1600** | **0** | **0** | **0%** |
 
 A take where he held a prop through the whole shot had **zero usable graphics zone** below y1000,
 because head, prop and gesturing hand filled the full width. That killed a full-bleed hook before
@@ -95,7 +95,7 @@ a gesturing hand: the face box is not a body box. Two tools that build a subject
   of its pixels in motion** from his hand; the replacement, placed against the real reach, had
   0.0%.
 - **`fullbleed_guard`** (same technique, applied to graphic-zone gutters): a face contour measured
-  x1409–2407; his real reach, shoulders and gesturing hands, was **x1168 to x2704**. Every panel
+  x1409-2407; his real reach, shoulders and gesturing hands, was **x1168 to x2704**. Every panel
   in the film had been placed over him.
 
 The fix is never a narrower graphic in the same place; it is a graphic placed above or beside the
@@ -105,7 +105,7 @@ zone his body actually works in.
 
 A global chin p97 measurement is real and still the wrong veto for a specific shot. Twice:
 
-- A whole-take chin p97 at y1575/y1730 (of 2160), 25–62px of "clearance" that reads as a
+- A whole-take chin p97 at y1575/y1730 (of 2160), 25-62px of "clearance" that reads as a
   coincidence rather than a margin, correctly ruled out a full-bleed **band** across the whole
   film.
 - Measured on the **one beat actually being cut** instead, chin p97 came in far higher (y1541 →
@@ -127,7 +127,7 @@ leans in to make the ask.**
 
 A geometry heuristic can fail the same way from the tooling side: a skin-mask + width-collapse
 solver built to automate exactly this measurement locked onto his glasses (which break the skin
-run) and returned a confidently wrong "chin y424–492". **A heuristic that returns a number is not
+run) and returned a confidently wrong "chin y424-492". **A heuristic that returns a number is not
 the same as a heuristic that returns the right number: sanity-check it against one hand-read
 frame before trusting it across an entire take.**
 
@@ -256,3 +256,37 @@ where the head is.
 - **One `<video>` per face window** in a chunked build, each with its own `data-start` and
   `data-media-start`. Watch that extra wraps carrying their transform in CSS need the geometry
   change made in two places.
+
+---
+
+## Measuring off macOS (`tools/vision/measure_head.py`)
+
+`crown.swift` and `facebox.swift` need Apple's Vision framework, so on any other host the whole
+"measure, never estimate" discipline collapses to guessing. `measure_head.py` is the port:
+MediaPipe selfie segmentation for the crown, the face mesh for the chin and centre-x, the same
+`>= 8 foreground px` run rule, the same normalised columns.
+
+Two failure modes, and both hand you a **plausible CSV rather than an error**:
+
+- **Polarity is inverted.** The selfie segmenter labels the person `0` and the background `255`.
+  Read the obvious way round, every frame reports `crownY 0.0` and a head spanning the full frame
+  width. That looks like a tight close-up, which is exactly the framing this creator usually has,
+  so it survives a glance at the numbers.
+- **`numpy_view()` is `(H, W, 1)`.** Squeeze the channel dimension or every row index is wrong.
+
+**The check that catches both in one look: draw the crown line, the chin line and the centre-x
+onto a single frame and read it as an image.** Verify the crown sits on hair and not on the top of
+the frame. A CSV cannot tell you the mask was inverted; one overlay can.
+
+## A creator's "usual" framing is not a constant either
+
+vid42 documented this creator at crown y45, head 940 to 975px, no headroom at all, and the whole
+"no top lockup" rule follows from that. The very next take measured **crown 419, chin 1290, head
+~800px**: 419px of headroom and 630px of clear space under the chin, from the same person in the
+same room.
+
+Nothing about the take announced this. Both are tight vertical close-ups of one man against a
+plain wall; only the measurement separates them. So the rule is stronger than "re-derive per
+creator": **re-derive per take, and re-check which written rules still have a premise.** A hard
+rule whose premise is a number ("no headroom means no top lockup") is only in force while that
+number holds, and the profile will not tell you it has stopped holding.
