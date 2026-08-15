@@ -50,7 +50,8 @@ body{overflow-x:hidden}
 @media(max-width:560px){.g3,.g4,.g5,.g2{grid-template-columns:1fr}}
 
 .pad{padding:clamp(16px,2vw,26px)}
-.num{font-family:var(--display);font-size:clamp(34px,5.2vw,74px);line-height:.9;color:var(--lime)}
+.num{font-family:var(--display);font-size:clamp(30px,4.4vw,64px);line-height:.92;color:var(--lime);font-variant-numeric:tabular-nums}
+.stat{border-top:1px solid var(--hair);padding-top:14px}
 .lbl{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--paper-faint);margin-top:8px}
 img{border-radius:2px}
 .shot{border:1px solid var(--ink-3);width:100%;display:block}
@@ -98,6 +99,60 @@ pre{font-family:var(--mono);font-size:12.5px;line-height:1.7;color:var(--paper-d
     background:var(--ink-2);border:1px solid var(--ink-3);padding:16px 18px;overflow-x:auto;margin:0}
 pre b{color:var(--lime);font-weight:400}
 
+/* ── texture ──────────────────────────────────────────────────────────────
+   Flat #0d0d0d on a projector reads as a dead panel. A fixed grain plate plus
+   one slow lime bloom gives the ground something to catch light on. Both are
+   pointer-events:none and sit under everything. */
+body::before{
+  content:"";position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.035;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/></filter><rect width='140' height='140' filter='url(%23n)'/></svg>");
+}
+body::after{
+  content:"";position:fixed;z-index:0;pointer-events:none;
+  width:52vw;height:52vw;left:58%;top:8%;border-radius:50%;
+  transform:translate3d(0,calc(var(--bloom,0px) * -1),0);
+  background:radial-gradient(circle,rgba(205,255,0,.075),transparent 66%);
+  filter:blur(30px);transition:transform 1.1s var(--ease),opacity 1.1s var(--ease);
+}
+.wrap{position:relative;z-index:2}
+
+/* ── depth on the reveal ─────────────────────────────────────────────────── */
+.rise{opacity:0;transform:translateY(30px) scale(.985)}
+.in .rise{opacity:1;transform:none;transition:opacity .75s var(--ease),transform .85s var(--ease)}
+.in .rise:nth-child(2){transition-delay:.06s}
+.in .rise:nth-child(3){transition-delay:.12s}
+.in .rise:nth-child(4){transition-delay:.18s}
+.in .rise:nth-child(5){transition-delay:.24s}
+
+/* cards lift and pick up the accent */
+.card{transition:border-color .3s var(--ease),transform .3s var(--ease),background .3s var(--ease)}
+.card:hover{border-color:rgba(205,255,0,.4);transform:translateY(-3px);background:#17170f}
+
+/* screenshots get a frame and a parallax offset driven from JS */
+.shot{transition:transform .5s var(--ease),border-color .35s var(--ease)}
+.shot:hover{border-color:rgba(243,241,234,.34)}
+figure,.rise>img{will-change:transform}
+
+/* the spine line fills as the slide enters, instead of just sitting there */
+.spine::before{background:linear-gradient(var(--lime) 0%,var(--lime) var(--fill,0%),var(--hair) var(--fill,0%))}
+.in .spine::before{transition:--fill 1.4s var(--ease)}
+@property --fill{syntax:'<percentage>';inherits:true;initial-value:0%}
+.in .spine{--fill:100%}
+.step::before{transition:background .4s var(--ease),box-shadow .4s var(--ease),transform .4s var(--ease)}
+.step:hover::before{transform:scale(1.35)}
+
+/* headline gets a faint lime underline that draws in */
+.d2::after,.d1::after{content:"";display:block;height:2px;width:0;background:var(--lime);margin-top:14px;opacity:.55}
+.in .d2::after,.in .d1::after{width:clamp(60px,9vw,132px);transition:width .9s .25s var(--ease)}
+
+/* the progress rail gets a glow so it reads on a washed-out projector */
+.rail{box-shadow:0 0 14px rgba(205,255,0,.55)}
+.dots b:hover{background:var(--paper-dim);transform:scale(1.3)}
+
+/* numbers tick with a slight lift */
+.num{transition:transform .3s var(--ease)}
+.num:hover{transform:translateY(-2px)}
+
 /* Short viewports. 1366x768 is a very common projector, and at that height five
    slides ran past the fold. Type and rhythm scale to the HEIGHT here, not just
    the width, because a deck is read on whatever is plugged in at the venue. */
@@ -142,11 +197,11 @@ pre b{color:var(--lime);font-weight:400}
       Hand it a raw talking-head take. Get back a finished, posting-ready vertical reel.
       Change anything by drawing a box on the frame.
     </p>
-    <div class="grid g4 rise" style="margin-top:clamp(32px,5vh,64px);max-width:840px">
-      <div><div class="num" data-count="434738">0</div><div class="lbl">views, 4 reels</div></div>
-      <div><div class="num" data-count="15400" data-suffix="+">0</div><div class="lbl">saves</div></div>
-      <div><div class="num" data-count="9800" data-suffix="+">0</div><div class="lbl">sends</div></div>
-      <div><div class="num" data-count="67">0</div><div class="lbl">reels shipped</div></div>
+    <div class="grid g4 rise" style="margin-top:clamp(28px,4.4vh,56px);max-width:1000px;gap:clamp(18px,2.6vw,44px)">
+      <div class="stat"><div class="num" data-count="434738">0</div><div class="lbl">views, 4 reels</div></div>
+      <div class="stat"><div class="num" data-count="15400" data-suffix="+">0</div><div class="lbl">saves</div></div>
+      <div class="stat"><div class="num" data-count="9800" data-suffix="+">0</div><div class="lbl">sends</div></div>
+      <div class="stat"><div class="num" data-count="67">0</div><div class="lbl">reels shipped</div></div>
     </div>
   </div>
 </section>
@@ -436,6 +491,38 @@ node web/server.js          <span style="color:#6f6f68"># localhost:8787</span>
     rail.style.width=(max>0?(scrollY/max)*100:0)+'%';
   }
   addEventListener('scroll',sync,{passive:true}); addEventListener('resize',sync); sync();
+
+  /* Parallax + a bloom that follows the reading position.
+     Ported from the scroll section of libraries.md (Lenis, ScrollTrigger)
+     rather than installed: one rAF loop, transform only, no layout reads in
+     the write phase. Disabled entirely under prefers-reduced-motion. */
+  try{
+    if(!reduce){
+      var plx=[].slice.call(document.querySelectorAll('.shot'));
+      var bloomY=0, targetY=0, ticking=false;
+      function frame(){
+        ticking=false;
+        var vh=innerHeight;
+        plx.forEach(function(el){
+          var r=el.getBoundingClientRect();
+          if(r.bottom<-200||r.top>vh+200)return;
+          var mid=(r.top+r.height/2-vh/2)/vh;      // -1 above, +1 below
+          el.style.transform='translate3d(0,'+(mid*-16).toFixed(2)+'px,0)';
+        });
+        bloomY+=(targetY-bloomY)*0.08;             // lerp, Lenis style
+        document.body.style.setProperty('--bloom',bloomY.toFixed(1)+'px');
+        var after=document.body;
+        after.style.cssText=after.style.cssText;   // no-op, keeps Safari honest
+        if(Math.abs(targetY-bloomY)>0.4)req();
+      }
+      function req(){ if(!ticking){ticking=true;requestAnimationFrame(frame);} }
+      addEventListener('scroll',function(){
+        targetY=scrollY*0.14; req();
+      },{passive:true});
+      addEventListener('resize',req);
+      req();
+    }
+  }catch(e){}
 
   /* Keyboard, because this gets presented. */
   addEventListener('keydown',function(e){

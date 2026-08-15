@@ -137,22 +137,27 @@ If a judge is going to poke a hole, it is here. Saying it first removes the hole
 
 ---
 
-## Slide 8 &middot; Can a cloner hit this quality?
+## Slide 8 &middot; Reel Review: stop describing video in words
 
-**SID** (about 25 seconds)
+**S** (about 40 seconds, this is your slide, you are the one who leaves the notes)
 
-> Honestly: most of it, and we are specific about the gap.
+> This is the part I actually use every day.
 >
-> Everything measured travels. The geometry, the safe zones, the gates, the delivery
-> contract, the four template systems, every recorded failure. That is arithmetic,
-> not taste, and it is all in the repo.
+> When a cut comes back wrong, I do not type a paragraph. I scrub to the frame, drag a
+> box over the problem, and type one line. The frame with my drawing baked into it is
+> what the editor sees, so there is no interpreting what I meant.
 >
-> What does not travel is the review loop. These reels took three to twelve rounds
-> each against a real person's reactions. There is a self review protocol that makes
-> the agent run that review on itself before delivering, and it closes most of the
-> gap. Not all of it.
+> Those notes export as the brief for the next round. When it goes to a client, one
+> private link, and a re-render stacks as v2 under the same link so they can wipe the
+> old cut against the new one instead of comparing from memory.
+>
+> And the order is enforced: fix, reply to every note, push, and only then share. Send
+> the new cut first and every note you just addressed still looks ignored.
 
----
+**SID** can add one line if there is time:
+
+> Coordinates are stored normalised, so a note left on a laptop lands in exactly the
+> right place on a phone.
 
 ## Slide 9 &middot; Clone it. Run it.
 
