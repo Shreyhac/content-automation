@@ -7,6 +7,10 @@ Not a concept. Four reels built by this system have done **434,738 views, 15.4K 
 sends** on [@shreyansharora05](https://www.instagram.com/shreyansharora05/). Insight screenshots
 below, reels linked, all publicly checkable.
 
+**[Open the pitch deck](https://shreyhac.github.io/content-automation/deck/)** &nbsp;&middot;&nbsp;
+**[Landing page](https://shreyhac.github.io/content-automation/)** &nbsp;&middot;&nbsp;
+[@shreyansharora05](https://www.instagram.com/shreyansharora05/)
+
 **The editor is your terminal. The web app is the intake and review surface.**
 
 ```bash
@@ -205,6 +209,9 @@ tools/
   sfx/ chunking/     Sound beds, long-form chunked rendering.
   generative/        Voice cloning, AI plates, drift measurement, licensed music.
 docs/                The method, in eight numbered stages, plus a self-review protocol.
+  deck/              The pitch deck. Open docs/deck/index.html, or view it live at
+                     shreyhac.github.io/content-automation/deck/ . Arrow keys or scroll.
+  proof/             Instagram insight screenshots behind the numbers above.
 playbooks/           One file per technique. Every rule carries the failure that produced it.
 reference-builds/    Eight shipped compositions, code only.
 reference-cuts/      Fifteen 720p proxies of finished films. The bar, watchable.
