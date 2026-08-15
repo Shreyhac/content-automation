@@ -3,7 +3,7 @@
 
 The reference changes its caption 1-4 words at a time, roughly every 0.4s, and
 that sticker rhythm is part of the edit being copied — a phrase-bar engine would
-be a different film. Chunks are built from HIS word onsets so every change lands
+be a different film. Chunks are built from THE TAKE'S word onsets so every change lands
 on a word, never on a timer.
 
 Rules that come from past rounds:
@@ -11,7 +11,7 @@ Rules that come from past rounds:
   - a chunk never straddles a scene cut: the cut gets a fresh caption, so the
     picture and the words change together
   - max 4 words and max 26 characters, so the pill stays one line at 44px in a
-    1080-wide stage (a wrapped pill grows downward into his crown)
+    1080-wide stage (a wrapped pill grows downward into the presenter's crown)
   - a chunk never starts a new sentence mid-pill: "to start. This" reads as one
     thought and is two
 """

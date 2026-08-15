@@ -16,7 +16,7 @@ NCAP  = CAPS.count("],")
 DUR   = 35.233333
 FPS   = 30
 
-# ── geometry, solved from HIS landmarks (vid67/facebox.csv, 176 samples) ────
+# ── geometry, solved from the presenter's landmarks (vid67/facebox.csv, 176) ──
 BAND   = 620     # B-roll band height
 SHIFT  = 380     # how far the picture drops in SPLIT
 CROWN  = 280     # worst-case (highest) crown in the source
@@ -67,9 +67,9 @@ HTML = f'''<!doctype html>
 @font-face{{font-family:'Fraunces';src:url('assets/fonts/fraunces-italic.woff2')format('woff2');font-style:italic;font-weight:900;font-display:block}}
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   vid67 · Dr Alvaro Cintas' `DbqcQUgxlyC` rebuilt shot for shot on his A-roll
+   vid67 · Dr Alvaro Cintas' `DbqcQUgxlyC` rebuilt shot for shot on the creator's A-roll
 
-   HIS INSTRUCTION  "can you do the exact same editing for me? You can use the
+   THE INSTRUCTION  "can you do the exact same editing for me? You can use the
    exact same visuals from the creator's video as well."
 
    So there are no invented graphics here. This is the reference's shot list,
@@ -86,7 +86,7 @@ HTML = f'''<!doctype html>
      ANTHROPIC_API_KEY · the run FAILS on screen ("insufficient credit balance")
      under a VO saying it deployed · the spec page reads PLANNED . NOT LAUNCHED ·
      the meeting notes belong to a third party · the inbox is a real person's.
-   3 are his face full-bleed, exactly where the reference plays its own.
+   3 are the presenter's face full-bleed, exactly where the reference plays its own.
 
    ── THE CROPS ────────────────────────────────────────────────────────────
    The reference burns its captions into the picture at y924-975 (measured), so
@@ -95,19 +95,19 @@ HTML = f'''<!doctype html>
    The reference is 1080x1920, so lifted footage carries half this composition's
    detail; the 6 rebuilds are the only shots at true resolution.
 
-   ── THE GEOMETRY IS HIS, NOT THE REFERENCE'S ─────────────────────────────
+   ── THE GEOMETRY IS THE TAKE'S, NOT THE REFERENCE'S ──────────────────────
    Measured over all 176 samples of the take (vid67/facebox.csv, Vision):
      crown y{CROWN}-375 · chin y1003-{CHIN} · head {CHIN-CROWN}px worst case
-   The reference seams at y955 because Cintas sits further from his lens. Here
+   The reference seams at y955 because Cintas sits further from the lens. Here
    that would bury the chin. Solved instead:
      seam y{BAND} · picture pushed down {SHIFT} · worst crown y{CROWN+SHIFT} ({CROWN+SHIFT-BAND}px below the
      seam) · worst chin y{CHIN+SHIFT} ({1600-CHIN-SHIFT}px above Instagram's bottom band)
 
-   LAYOUTS   SPLIT  B-roll y0-{BAND} full width · his face below, scale 1, +{SHIFT}y
-             FULL   his face full-bleed, untouched
+   LAYOUTS   SPLIT  B-roll y0-{BAND} full width · the presenter's face below, scale 1, +{SHIFT}y
+             FULL   the presenter's face full-bleed, untouched
    CAPTIONS  1-4 words on a dark pill, {NCAP} of them, every change on a word
              onset. On SPLIT the pill sits in the band's lower edge, which is
-             where the reference puts its own; on FULL it drops below his chin.
+             where the reference puts its own; on FULL it drops below the presenter's chin.
    TRANSITIONS  hard cuts. The reference has none and neither does this. No CSS
              transform ever animates on a box containing a <video> — that is
              what deadlocked the capture engine on vid66b.

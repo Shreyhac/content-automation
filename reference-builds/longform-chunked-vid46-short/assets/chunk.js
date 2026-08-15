@@ -179,9 +179,9 @@ window.shortKit = function (tl, T0) {
   /* ---------------------------------------------------------------------------
      THE FACE — ONE PICTURE, TWO STATES, AND THE MOVE BETWEEN THEM.
 
-     v1 changed the face's placement five times by CUTS and his head changed size
-     every time he appeared; the owner called the A-roll cuts weird. v3 adopts
-     vid39's answer, which he asked for by name: the face never cuts between sizes,
+     v1 changed the face's placement five times by CUTS and the presenter's head changed size
+     every time the presenter appeared; the owner called the A-roll cuts weird. v3 adopts
+     vid39's answer, which the client asked for by name: the face never cuts between sizes,
      it MOVES between them. #faceScene's clip-path and #faceCam's transform tween
      together over one third of a second, so the shrink reads as camera operation.
 

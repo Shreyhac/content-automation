@@ -168,7 +168,7 @@ just the clicky ones?"
 ### On-screen copy is not build notes
 
 vid62 short shipped three eyebrows through every gate as notes-to-self ("One beat of price, at the
-end") and as third-person narration about the man in frame ("What he would tell a friend").
+end") and as third-person narration about the presenter in frame ("What he would tell a friend").
 **Read every literal on-screen string as a viewer before the delivery render.** No gate has an
 opinion about what the words mean.
 

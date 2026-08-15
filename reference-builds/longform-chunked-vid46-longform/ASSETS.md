@@ -22,7 +22,7 @@ Architecture: `playbooks/longform-chunking.md`. Full design notes: `design.md` i
 | `assets/field.js` | The recurring three.js object: a single 750-instance plate field with six named layouts, used at four points across four minutes. **The one device the client named as good, twice. Do not redesign it.** |
 | `c1/index.html` | The specimen chunk. |
 | `card-transforms.json` | The per-window solved face-card transforms. Never hand-typed; written by `tools/chunking/inject_windows.py`. |
-| `face-safe-windows.json` | The gaze map: 24 windows where his face may be shown. |
+| `face-safe-windows.json` | The gaze map: 24 windows where the presenter's face may be shown. |
 | `words.json` | The word stream the whole film is anchored to. |
 | `design.md` | The full design spec. |
 

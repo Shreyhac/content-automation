@@ -20,7 +20,7 @@
      x0-60  crop buffer / x>960, y900-1600 like-comment rail: no text.
    Text column is therefore x72..940. Anything wider is marked and justified.
 
-   THE A-ROLL. The source is 3840x2160 and he already fills 79% of its height, so
+   THE A-ROLL. The source is 3840x2160 and the presenter already fills 79% of its height, so
    NO full-bleed treatment of it leaves room for graphics or captions (the full
    argument is on .aroll below). v2 therefore gives the face a 1080x1000 BAND at
    y0 and the graphics their own zone under it. There is exactly ONE placement in
@@ -116,8 +116,8 @@ html,body{margin:0;padding:0;background:var(--ink);}
 /* ============================================================================
    THE A-ROLL — ONE PICTURE, TWO STATES.  v3, vid39's device.
 
-   v1 changed the face's placement five times by CUTS and his head changed size
-   every time he appeared. v2 answered that with one fixed band. v3 keeps the
+   v1 changed the face's placement five times by CUTS and the presenter's head changed size
+   every time the presenter appeared. v2 answered that with one fixed band. v3 keeps the
    discipline but adopts the grammar the owner asked for by name: the face is one
    video with two designed states, and it only ever moves between them as a
    VISIBLE TWEEN (clip-path and scale together, 0.34s), never as a cut.
@@ -145,9 +145,9 @@ html,body{margin:0;padding:0;background:var(--ink);}
   transform-origin:0 0;will-change:transform;}
 #faceCam video{position:absolute;left:0;top:0;width:1080px;height:1210px;display:block;}
 
-/* The crop puts fragments of the "incogni" wordmark on the TV behind his head -
+/* The crop puts fragments of the "incogni" wordmark on the TV behind the presenter's head -
    partial letters read as broken type, so they get pushed down into ambient light
-   shapes. Radial and centred on his face, i.e. a lighting device, not a box. */
+   shapes. Radial and centred on the presenter's face, i.e. a lighting device, not a box. */
 #faceCam .lift{position:absolute;inset:0;
   background:radial-gradient(74% 64% at 50% 40%,
     rgba(4,4,9,0) 40%, rgba(4,4,9,.13) 70%, rgba(4,4,9,.32) 90%, rgba(4,4,9,.44) 100%);}
@@ -156,7 +156,7 @@ html,body{margin:0;padding:0;background:var(--ink);}
    line. The first v2 render ended it on a hard horizontal cut because a radial only
    reaches the centre of the frame and sliced the chair and wall off at both edges.
    The ramp starts at y1050, 79px below the lowest chin measured in the hero block,
-   so it can never eat his jaw. Faded out in CARD mode, where the border does the job. */
+   so it can never eat the presenter's jaw. Faded out in CARD mode, where the border does the job. */
 #faceCam .grade{position:absolute;left:0;bottom:0;width:1080px;height:160px;
   background:linear-gradient(to bottom, rgba(6,6,10,0) 0%, rgba(6,6,10,.50) 44%,
     rgba(6,6,10,.92) 80%, rgba(6,6,10,1) 100%);}
@@ -408,7 +408,7 @@ html,body{margin:0;padding:0;background:var(--ink);}
      LOW (default) y1396-1560: clear of the UI band and of the GFX zone.
      HIGH (.hi, SPLIT beats) y690-826: in the gap between the graphics and the face
      card, which is where vid39 puts them on its split beats. Without this the
-     caption would print on his jaw, which is the exact defect v1 was rejected for.
+     caption would print on the presenter's jaw, which is the exact defect v1 was rejected for.
      Two lines max either way. */
 .cap{position:absolute;left:72px;width:936px;top:1396px;text-align:center;
   font-family:'DMSans',sans-serif;font-weight:800;font-size:58px;line-height:1.2;

@@ -11,13 +11,13 @@ Carried over from hf46/sfx.py, including the budget it ENFORCES rather than trus
   * median volume at/below MEDIAN_MAX, ceiling at CEIL_MAX, sustained beds at BED_MAX
   * the OWNER'S OWN PACK must be at least OWNER_MIN of placements
 
-The last rule is the one that took three rounds to learn: when he supplies a pack he
-expects it to DOMINATE, not garnish. His files are the `s*` names (simp/srise/stick/
+The last rule is the one that took three rounds to learn: when the client supplies a pack they
+expect it to DOMINATE, not garnish. The client's files are the `s*` names (simp/srise/stick/
 sui/sclick/sgear/srev/stap/swsh/scount/sacc), 17 of them, peak-normalised by
 curate_saas_sfx.sh so one volume number means one loudness across the whole pool.
 
-Volumes are the film's round-3 levels (median 0.060) and no higher: his trajectory
-across three rounds was 0.20 -> 0.10 -> 0.060, halving every time he said "loud".
+Volumes are the film's round-3 levels (median 0.060) and no higher: the client's trajectory
+across three rounds was 0.20 -> 0.10 -> 0.060, halving every time the client said "loud".
 
 Every cue is (time, file, volume, duration). Times are LOCAL to the chunk.
 """
@@ -101,7 +101,7 @@ S2 = [
     (0.000, "wsh3",   0.056, 0.55),
     (0.460, "stap1",  0.050, 0.40),
     (0.820, "sacc1",  0.050, 0.40),
-    (2.260, "sui1",   0.046, 0.35),   # "a VPN?" — the slab he names lights
+    (2.260, "sui1",   0.046, 0.35),   # "a VPN?" — the slab the presenter names lights
 
     # b7 · the strikes land on the slabs already there, then the one flash cut
     (3.787, "tick1",  0.044, 0.30),

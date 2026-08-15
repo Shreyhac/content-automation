@@ -72,6 +72,6 @@ The delivered final and the project were archived off the working repo on 2026-0
 `out-finals/vid50-final.mp4`. Verified present and readable on 2026-08-15, which is where the
 frame count and bitrate above were measured.
 
-The A-roll master is his own recording and is not in the archive under this project. Treat the
+The A-roll master is the creator's own recording and is not in the archive under this project. Treat the
 A-roll as unrecoverable for a re-render: this build is here to be read and scaffolded from, not
 re-rendered as-is.

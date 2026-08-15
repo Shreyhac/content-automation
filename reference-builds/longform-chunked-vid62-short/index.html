@@ -37,18 +37,18 @@
        y1920     reserved, LIT, never occupied
 
      ...and when the picture is OFF — five spans where hf62/camera-windows.json
-     says he is reading — the LOW STAGE takes the picture's own rect, y838-1574.
+     says the presenter is reading — the LOW STAGE takes the picture's own rect, y838-1574.
      It is never the whole frame, so the caption band above it is never uncovered
      and never has to move.
 
-     BAND AND CARD SHARE ONE CAMERA and differ only by clip-path, so his head is
+     BAND AND CARD SHARE ONE CAMERA and differ only by clip-path, so the presenter's head is
      the same size in both and the change between them is a WIDEN, not a resize.
 
      THERE IS NO FULL-BLEED CLOSE. vid59's short had one and vid58's client note
-     asked for one, and solve_short62.py rules it out on THIS take's numbers: his
+     asked for one, and solve_short62.py rules it out on THIS take's numbers: the presenter's
      head measures 1371x1110 source px, so a 1215px-wide 9:16 window holds 91% of
-     his face before he moves, and over b9 he sways 274px — solved full-bleed his
-     contour ran x-13..1153 of 1080, both cheeks outside the frame. Cropping his
+     the presenter's face before the presenter moves, and over b9 the presenter sways 274px — solved full-bleed the presenter's
+     contour ran x-13..1153 of 1080, both cheeks outside the frame. Cropping the presenter's
      head is the defect this client has raised most often. The close is a BAND.
 
      SAFE ZONES, re-audited by safe_zones.py against these numbers:
@@ -64,7 +64,7 @@
     overflow:hidden;font-family:'DMSans',system-ui,sans-serif;
     -webkit-font-smoothing:antialiased;}
 
-  /* THE GROUND. gS and gF keep the reserved band LIT: he judges the exported 9:16
+  /* THE GROUND. gS and gF keep the reserved band LIT: the client judges the exported 9:16
      file, not the Instagram-with-UI view, and an unlit reserved band reads as a
      broken black bar rather than as space held back on purpose. */
   #bg{position:absolute;inset:0;z-index:0;overflow:hidden;background:var(--ink);}
@@ -105,18 +105,18 @@
   #faceCam video{position:absolute;left:0;top:0;width:1080px;height:760px;
     display:block;}
 
-  /* The set puts a big lit "incogni" wordmark on the TV behind his head and the
+  /* The set puts a big lit "incogni" wordmark on the TV behind the presenter's head and the
      band crop cuts it into fragments — "ncog", "coa", "inco". Partial letters read
      as broken type rather than as branding. This is a LIGHTING device centred on
-     his face: it pushes the fragments and the practical lamps at both edges down
-     into ambient and leaves his face untouched. It is NOT a grade — his footage is
+     the presenter's face: it pushes the fragments and the practical lamps at both edges down
+     into ambient and leaves the presenter's face untouched. It is NOT a grade — the presenter's footage is
      baked with no curve, no eq and no saturation touch anywhere. */
   #faceCam .lift{position:absolute;inset:0;
     background:radial-gradient(37% 72% at 50% 52%,
       rgba(4,4,9,0) 28%, rgba(4,4,9,.34) 54%, rgba(4,4,9,.74) 78%,
       rgba(4,4,9,.93) 100%);}
   /* the wall above the TV is the brightest thing in frame and the band's top edge
-     cuts across it; fades out well above his crown at bake row 34 */
+     cuts across it; fades out well above the presenter's crown at bake row 34 */
   #faceCam .wall{position:absolute;left:0;top:0;width:1080px;height:34px;
     background:linear-gradient(180deg, rgba(6,6,10,.92) 0%, rgba(6,6,10,.55) 45%,
       rgba(6,6,10,0) 100%);}
@@ -124,8 +124,8 @@
   /* b9 · THE CLOSE — a full-WIDTH picture, its own bake (1440x2160 of the source
      scaled to 1080x1620), lower edge landing on the same y1574 floor every other
      beat uses. Not a 9:16 crop: solve_short62.py measures that one cutting 43px off
-     each cheek with his worst chin at y1601, and not the first pass's s=0.75
-     either, which left only 44px between his face and the screen edge at his
+     each cheek with the presenter's worst chin at y1601, and not the first pass's s=0.75
+     either, which left only 44px between the presenter's face and the screen edge at the presenter's
      widest lean. 1588x2160 of the source -> 1080x1468 at y106..1574. */
   #closeScene{position:absolute;left:0;top:0;width:1080px;height:1920px;z-index:3;
     visibility:hidden;opacity:0;}
@@ -136,7 +136,7 @@
       rgba(4,4,9,0) 40%, rgba(4,4,9,.18) 66%, rgba(4,4,9,.52) 88%,
       rgba(4,4,9,.74) 100%);}
   /* the caption sits ON the picture here, so it gets a feathered seat, low enough
-     that it never reaches his jaw (worst chin y1305) and high enough to clear the
+     that it never reaches the presenter's jaw (worst chin y1305) and high enough to clear the
      UI band */
   #closePool{position:absolute;left:-140px;top:1310px;width:1360px;height:300px;
     z-index:4;visibility:hidden;opacity:0;pointer-events:none;
@@ -157,7 +157,7 @@
 
   /* ==========================================================================
      CUT DEVICES. Seven skewed band wipes, one per hard picture cut, and exactly
-     ONE flash — at the b7/b8 join, where he runs straight from "…from the
+     ONE flash — at the b7/b8 join, where the presenter runs straight from "…from the
      internet." into "You can use the code" with 0.22s between them and a wipe
      would announce an edit the ear does not hear.
      ========================================================================== */
@@ -173,7 +173,7 @@
   /* ==========================================================================
      SCENES. Confined to the zone by CLASS rather than by each element's own
      coordinates, so the rail margin is impossible to forget and nothing can drift
-     down onto his crown at y838.
+     down onto the presenter's crown at y838.
      ========================================================================== */
   .scene{position:absolute;left:70px;right:120px;top:150px;bottom:1280px;z-index:6;
     visibility:hidden;opacity:0;}
@@ -190,7 +190,7 @@
   /* ---- the browser chrome, ported from hf62/assets/vid62.css at the short's own
      scale. Real captures and rebuilt UI both sit in this and are never full-bleed:
      a raw capture in a vertical frame reads as a screenshot pasted in, and the
-     chrome is what says "this is a page, and this one is his account". ---- */
+     chrome is what says "this is a page, and this one is the presenter's account". ---- */
   .brow{position:absolute;border-radius:18px;overflow:hidden;background:#0F1320;
     border:2px solid rgba(255,255,255,.11);
     box-shadow:0 30px 74px rgba(0,0,0,.68), 0 0 0 1px rgba(255,255,255,.03) inset;}
@@ -213,13 +213,13 @@
   #brow5 video{top:-176px;}
 
   /* ---- b1 · THE SEARCH. Round 1 opened straight on a people-search result page
-     and the note was "show google searchbox here with the data searching" — his
+     and the note was "show google searchbox here with the data searching" — the presenter's
      line is "type your own name into GOOGLE", so the frame does that first and the
      broker record is what the search LEADS TO, which is also the true sequence.
 
      The mark itself is not drawn. A sponsored placement reproducing another
      company's wordmark is a different kind of claim, and it is not needed: the
-     chrome says google.com, the layout is the search page's, and his own voice
+     chrome says google.com, the layout is the search page's, and the presenter's own voice
      names it. ---- */
   #goog{position:absolute;left:0;top:44px;width:890px;height:446px;}
   #goog .win{background:#FFFFFF;}
@@ -261,7 +261,7 @@
     box-shadow:0 0 0 6px rgba(26,115,232,.14);}
 
   /* ---- b2-b3 · THE PEOPLE-SEARCH RESULT the search leads to, rebuilt rather than
-     screenshotted so it can fill in on his words. The site is deliberately
+     screenshotted so it can fill in on the presenter's words. The site is deliberately
      generic — naming a real broker beside "sold to anyone with a credit card"
      would be a claim about that company this film has not verified.
      Same device and the same copy as the long-form's c1, at the short's scale. -- */
@@ -310,7 +310,7 @@
        and not for 15px */
   #pg .row .v{margin-top:3px;font-family:'DMSans',sans-serif;font-weight:700;
     font-size:28px;color:#16202F;}
-  /* the value is a REDACTION until he names it, then it prints. The bars carry
+  /* the value is a REDACTION until the presenter names it, then it prints. The bars carry
      weight and rhythm rather than a claim. */
   #pg .row .v{visibility:hidden;opacity:0;}
   #pg .row .v .rd{display:inline-block;height:21px;border-radius:4px;
@@ -318,7 +318,7 @@
   #pg .row .sl{position:absolute;left:0;bottom:8px;height:21px;
     border-radius:4px;border:2px dashed #C3CBD8;}
   /* the LOW half of the same document, in the picture's rect once the picture
-     comes off at 9.59 — his sentence keeps going ("maybe a list of your relatives,
+     comes off at 9.59 — the presenter's sentence keeps going ("maybe a list of your relatives,
      and possibly your age") and the two remaining fields land at full size rather
      than the rect sitting empty for four seconds. */
   #lowRec .doc{position:absolute;left:70px;top:0;width:890px;height:700px;
@@ -367,11 +367,11 @@
   .bcard{position:absolute;left:0;width:890px;border-radius:20px;overflow:hidden;
     border:3px solid rgba(142,172,255,.30);
     box-shadow:0 30px 70px rgba(0,0,0,.7), inset 0 2px 0 rgba(142,172,255,.12);}
-  /* THE LIFT ON THIS LINE IS FOR STOCK AND SCREEN RECORDINGS ONLY. His A-roll is
+  /* THE LIFT ON THIS LINE IS FOR STOCK AND SCREEN RECORDINGS ONLY. The presenter's A-roll is
      #faceCam video and carries no filter, no eq and no curve anywhere in this file
-     or in the bake — "never grade his A-roll" is about HIS footage, and the way to
+     or in the bake — "never grade the presenter's A-roll" is about THE PRESENTER'S footage, and the way to
      keep that true while still fixing a dark stock plate is to put the correction
-     on a selector that cannot reach him. */
+     on a selector that cannot reach the presenter. */
   .bcard video{position:absolute;left:0;top:0;width:100%;height:100%;
     object-fit:cover;display:block;
     filter:brightness(1.14) contrast(1.07) saturate(1.04);}
@@ -456,7 +456,7 @@
     object-fit:cover;object-position:50% 0;display:block;
     filter:brightness(1.10) contrast(1.05);}
 
-  /* b8 · the CTA card that takes the picture's rect while he reads the offer */
+  /* b8 · the CTA card that takes the picture's rect while the presenter reads the offer */
   #ctaCard{position:absolute;left:150px;top:112px;width:780px;height:400px;
     border-radius:26px;border:3px solid rgba(142,172,255,.34);
     background:linear-gradient(180deg,rgba(27,32,58,.92),rgba(11,12,20,.92));
@@ -521,7 +521,7 @@
     <div class="grain"></div><div class="vig"></div>
   </div>
 
-  <!-- EIGHT BAKED CLIPS, ONE CAMERA. b6 has none: he reads for the whole beat. -->
+  <!-- EIGHT BAKED CLIPS, ONE CAMERA. b6 has none: the presenter reads for the whole beat. -->
   <div id="faceScene">
     <div id="faceCam">
       <video id="f1" src="assets/b1.mp4" data-start="0.000000"         data-duration="6.089417" data-track-index="0" muted playsinline></video>
@@ -644,7 +644,7 @@
       Privacy Rights Clearinghouse + EFF, Apr 2025</div>
   </div>
 
-  <!-- ============ b5a · HIS OWN REQUEST LOG ============ -->
+  <!-- ============ b5a · THE PRESENTER'S OWN REQUEST LOG ============ -->
   <div id="s5a" class="scene">
     <div class="eb">A real Incogni account</div>
     <div class="brow" id="brow5" style="top:52px;width:890px;height:410px;">
@@ -681,7 +681,7 @@
       <div class="n">3</div><div class="t">You choose what gets removed</div></div>
   </div>
 
-  <!-- ============ b7 · THE RECOMMENDATION · his beat ============ -->
+  <!-- ============ b7 · THE RECOMMENDATION · the presenter's beat ============ -->
   <div id="s7" class="scene">
     <div class="eb">The recommendation</div>
     <div class="ctr stg" id="mk7" style="top:56px;">
@@ -876,8 +876,8 @@ function hide(sel, t) { put(sel, { autoAlpha: 0 }, t); }
    THE FACE STATE MACHINE.
 
    THERE ARE NOW TWO "OFF" STATES, AND THAT IS ROUND 2'S MAIN REPAIR. The client
-   marked two transitions as glitchy and his drawings show the same thing both
-   times: a full-bleed strip of his neck sliding out past an empty card frame. The
+   marked two transitions as glitchy and the client's drawings show the same thing both
+   times: a full-bleed strip of the presenter's neck sliding out past an empty card frame. The
    single `off` state collapsed to inset(1574 0 346 0) — left and right insets
    animating 260 -> 0 — so leaving a CARD, the picture WIDENED to full frame on its
    way down. A card has to collapse inside its own edges.
@@ -898,7 +898,7 @@ function faceSet(state, t) {
   put("#picEdge", { opacity: 1 }, t);
 }
 /* Used ONLY for a move INSIDE a beat. At a hard cut the state is SET, not tweened:
-   round 1 tweened it across every cut, so the wipe cleared while his picture was
+   round 1 tweened it across every cut, so the wipe cleared while the presenter's picture was
    still growing into place and the client marked two of those "weird transition".
    A wipe exists to hide a swap; if the swap outlives the wipe it is not hidden. */
 function faceTo(state, t, dur) {
@@ -969,7 +969,7 @@ function lowIn(sel, t) {
 
 /* ============================ FRAME 0 ============================
    The cover: the search page composed with an empty box, the caption in the middle
-   band, his picture already in the BAND. */
+   band, the presenter's picture already in the BAND. */
 faceSet("band", 0);
 faceClip(0, "#f1");
 show("#faceScene", 0);
@@ -982,9 +982,9 @@ hide("#lowScan", 0); hide("#lowCode", 0);
 hide("#closeScene", 0); hide("#closePool", 0);
 put("#gline", { width: "0ch" }, 0);
 
-/* ---- b1 · 0.000-6.089 · BAND. He says "type your own name into Google", so the
+/* ---- b1 · 0.000-6.089 · BAND. The presenter says "type your own name into Google", so the
    frame types it into Google — the mark is not drawn, the chrome and the layout
-   carry it. Two runs with a real pause between them, because that is what he
+   carry it. Two runs with a real pause between them, because that is what the presenter
    describes: the name first, the city after it. ---- */
 tl.to("#gline", { width: "16ch", duration: 0.92, ease: "none" }, 1.46);
 tl.to("#gline", { width: "24ch", duration: 0.58, ease: "none" }, 3.72);
@@ -1003,7 +1003,7 @@ tl.fromTo("#gpick", { opacity: 0, scale: 1.04 },
           { opacity: 1, scale: 1, duration: 0.30, ease: "power2.out",
             transformOrigin: "50% 50%" }, 5.86);
 
-/* ---- 6.089 · b2 · BAND. The result opens, and the fields he names print. ---- */
+/* ---- 6.089 · b2 · BAND. The result opens, and the fields the presenter names print. ---- */
 wipe(B.b2);
 faceClip(B.b2, "#f2");
 faceSet("band", B.b2);
@@ -1024,8 +1024,8 @@ function printRow(row, t) {
 printRow("#rw1", 7.93);       /* "your HOME ADDRESS," */
 printRow("#rw2", 9.15);       /* "your PHONE NUMBER," */
 
-/* 9.589 · he drops his eyes for the rest of the sentence, so the picture comes off
-   and the SAME document opens at full size in the rect it vacates — his sentence is
+/* 9.589 · the presenter drops their eyes for the rest of the sentence, so the picture comes off
+   and the SAME document opens at full size in the rect it vacates — the presenter's sentence is
    still going ("maybe a list of your relatives, and possibly your age") and those
    two fields land there rather than the rect sitting empty for four seconds. */
 faceTo("bandOff", OFF.b2, 0.22);
@@ -1044,13 +1044,13 @@ printLow("#lr3", 11.29);      /* "a list of your RELATIVES," */
 printLow("#lr4", 13.19);      /* "and possibly your AGE." */
 
 /* ---- 13.555 · b3 · BAND. Round 1 played this beat as a CARD and the client's note
-   was "this is not centered aligned": measured, his face sat +55px right of the
-   card's centre for the whole beat. Re-centred on the median he clips the card edge
+   was "this is not centered aligned": measured, the presenter's face sat +55px right of the
+   card's centre for the whole beat. Re-centred on the median the presenter clips the card edge
    at one lean, so the beat plays as a BAND, where the same centring leaves 250px
    either side. ---- */
 wipe(B.b3);
 faceClip(B.b3, "#f3");
-faceSet("bandOff", B.b3);          /* he is still reading for another 0.6s */
+faceSet("bandOff", B.b3);          /* the presenter is still reading for another 0.6s */
 tl.to("#brow1 .url", { color: "#C9D6FF", backgroundColor: "rgba(53,85,255,.22)",
                        duration: 0.30, ease: "power2.out" }, 14.30);
 accent("#pg .hdr .lg", 14.30, 1.06, "0% 50%");   /* "a DATA BROKER SITE" */
@@ -1083,7 +1083,7 @@ tl.fromTo("#bcArch video", { scale: 1 },
           { scale: 1.08, duration: 4.20, ease: "none" }, B.b4);
 bring("#bcArch .stamp", 21.15, 10);   /* "…CLEARINGHOUSE," */
 
-/* 22.225 · the picture comes off for the rest of the beat — he reads the source and
+/* 22.225 · the picture comes off for the rest of the beat — the presenter reads the source and
    the figure. The tile field takes the picture's rect. */
 faceTo("bandOff", OFF.b4, 0.22);
 lowIn("#lowGrid", OFF.b4);
@@ -1103,7 +1103,7 @@ accent("#fig750 .n", 26.83, 1.05, "0% 50%");   /* "UNIQUE data broker groups" */
 bring("#srcPRC", 28.63, 10);                    /* "REGISTERED across the US" */
 tl.to("#tileCap", { color: "#8EACFF", duration: 0.30, ease: "power2.out" }, 28.63);
 
-/* ---- 30.697 · b5 · CARD. His own account, then what it covers. ---- */
+/* ---- 30.697 · b5 · CARD. The presenter's own account, then what it covers. ---- */
 wipe(B.b5);
 faceClip(B.b5, "#f5");
 faceSet("card", B.b5);
@@ -1138,10 +1138,10 @@ hide("#panScan", 42.251166); show("#panResub", 42.251166);
 bring("#sp3", 43.87, 14, 0.36);    /* "YOU CHOOSE what gets removed" */
 accent("#sp3 .n", 45.43, 1.12, "50% 50%");   /* "in a CLICK or two" */
 
-/* ---- 46.004 · b7 · BAND. His beat, and it now opens on a complete sentence —
+/* ---- 46.004 · b7 · BAND. The presenter's beat, and it now opens on a complete sentence —
    round 1 started it on "And on that specific outcome", a dangling connective
    bridging two topics 68 seconds apart in the source, and the client marked the
-   join. The zone stays quiet: a direct recommendation is his to carry. ---- */
+   join. The zone stays quiet: a direct recommendation is the presenter's to carry. ---- */
 wipe(B.b7);
 faceClip(B.b7, "#f7");
 faceSet("band", B.b7);
@@ -1153,7 +1153,7 @@ bring("#rc1", 47.42, 12, 0.32);    /* "RECOMMEND" */
 bring("#rc2", 48.38, 12, 0.32);    /* "who's LOOKING to" */
 bring("#rc3", 49.28, 12, 0.32);    /* "REMOVE their data" */
 
-/* ---- 50.717 · b8 · CARD. One flash: he runs straight into this sentence with
+/* ---- 50.717 · b8 · CARD. One flash: the presenter runs straight into this sentence with
    0.22s between them. ---- */
 flash(B.b8);
 faceClip(B.b8, "#f8");
@@ -1163,16 +1163,16 @@ settle("#s8", B.b8);
 bring("#codeBig", 51.60, 16, 0.36);   /* "the code CODEWORD" */
 accent("#codeBig", 51.60, 1.05, "50% 50%");
 bring("#chip60", 52.32, 12, 0.34);    /* "for 60% off" */
-/* 53.027 · he reads the rest of the offer off the page — the picture comes off
+/* 53.027 · the presenter reads the rest of the offer off the page — the picture comes off
    inside its own card and the lockup completes in the rect. */
 faceTo("cardOff", OFF.b8, 0.22);
 lowIn("#lowCode", OFF.b8);
 bring("#ctaCard .s", 54.10, 10, 0.36);  /* "…Incogni's annual plan" */
 
-/* ---- 54.888 · b9 · THE CLOSE, FULL FRAME. The client asked for his A-roll in
+/* ---- 54.888 · b9 · THE CLOSE, FULL FRAME. The client asked for the presenter's A-roll in
    full screen here. It is its own bake — 1440x2160 of the source scaled to
    1080x1620, full width, whole head, lower edge on the same y1574 floor — because
-   a true 9:16 crop measures 43px of cheek outside the frame on both sides with his
+   a true 9:16 crop measures 43px of cheek outside the frame on both sides with the presenter's
    worst chin at y1601. Nothing over it but the caption, on a feathered pool. ---- */
 wipe(B.b9);
 hide("#s8", B.b9);

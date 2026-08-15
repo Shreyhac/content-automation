@@ -53,7 +53,7 @@ video.shot{position:absolute;inset:0;width:1080px;height:1920px;object-fit:cover
 #td2{left:853px;top:1131px;background:#F2994A;box-shadow:0 0 20px rgba(242,153,74,.85)}
 #td3{left:853px;top:751px;background:#6FCF97;box-shadow:0 0 20px rgba(111,207,151,.85)}
 
-/* ── split screen (his call, final): him below, the tool UIs above ── */
+/* ── split screen (the client's call, final): the presenter below, the tool UIs above ── */
 #splitwrap{position:absolute;left:0;top:960px;width:1080px;height:960px;overflow:hidden;z-index:12}
 #splitwrap video{position:absolute;left:0;top:-380px;width:1080px;height:1920px;object-fit:cover}
 #toolpane{position:absolute;left:0;top:0;width:1080px;height:960px;z-index:13;
@@ -102,7 +102,7 @@ video.shot{position:absolute;inset:0;width:1080px;height:1920px;object-fit:cover
   font-size:24px;color:var(--ink);padding:12px 14px;font-weight:600}
 .hub .hi{border-color:#E8843C;box-shadow:0 0 0 3px rgba(232,132,60,.25)}
 
-/* ── grid scene (block C) — a scrim over his footage, not a void ── */
+/* ── grid scene (block C) — a scrim over the presenter's footage, not a void ── */
 #grid{position:absolute;inset:0;z-index:25;background:
    radial-gradient(1100px 900px at 50% 34%, rgba(36,108,224,.30), transparent 68%),
    rgba(4,1,32,.80);
@@ -117,7 +117,7 @@ video.shot{position:absolute;inset:0;width:1080px;height:1920px;object-fit:cover
 
 /* ── the "sits on top" row (block G) — CHEST band (round-1 note) ── */
 #stack{position:absolute;inset:0;z-index:20;pointer-events:none}
-/* round 3: the hierarchy — Client clear of his chin, connector lines, row lower */
+/* round 3: the hierarchy — Client clear of the presenter's chin, connector lines, row lower */
 #dtile{position:absolute;left:435px;top:920px;width:210px;height:210px;border-radius:47px;
   overflow:hidden;box-shadow:0 14px 40px rgba(0,0,0,.45)}
 #dtile img{width:100%;height:100%;display:block}
@@ -133,7 +133,7 @@ video.shot{position:absolute;inset:0;width:1080px;height:1920px;object-fit:cover
   display:flex;align-items:center;justify-content:center}
 #srow .sc img{width:62px;height:62px;object-fit:contain}
 
-/* ── the Client app (block F) — the REAL dark chrome over his footage ── */
+/* ── the Client app (block F) — the REAL dark chrome over the presenter's footage ── */
 #ui{position:absolute;inset:0;z-index:25}
 #win{position:absolute;left:70px;top:330px;width:940px;height:1180px;border-radius:30px;
   background:var(--appbg);overflow:hidden;border:1.5px solid var(--appline);
@@ -196,7 +196,7 @@ video.shot{position:absolute;inset:0;width:1080px;height:1920px;object-fit:cover
 
 /* (round 6: endcard styles removed — the client outro clip is the CTA) */
 
-/* ── the CTA pill on his last line ─────────────────────────────── */
+/* ── the CTA pill on the presenter's last line ─────────────────────────────── */
 #ctapill{position:absolute;left:50%;top:1130px;transform:translateX(-50%);z-index:29;
   background:var(--blue);color:#fff;font-size:40px;font-weight:600;padding:22px 44px;
   border-radius:999px;white-space:nowrap;box-shadow:0 0 66px rgba(36,108,224,.6)}
@@ -207,7 +207,7 @@ video.shot{position:absolute;inset:0;width:1080px;height:1920px;object-fit:cover
 
 <!-- ══ FOOTAGE — native framing throughout, no crop alternation ═══ -->
 
-<!-- (round 3: hook is back on the A-roll per his markup; the blurred working
+<!-- (round 3: hook is back on the A-roll per the client's markup; the blurred working
      footage moved to the context beat — see b1d at the END of the video stack,
      where DOM order lets it paint over ar_a3) -->
 
@@ -230,7 +230,7 @@ video.shot{position:absolute;inset:0;width:1080px;height:1920px;object-fit:cover
      darkens its top third under the Viktor pill -->
 
 
-<!-- the split (final): him cropped into the bottom pane; non-timed wrapper
+<!-- the split (final): the presenter cropped into the bottom pane; non-timed wrapper
      because video may not nest in a timed div -->
 <div id="splitwrap">
   
@@ -238,7 +238,7 @@ video.shot{position:absolute;inset:0;width:1080px;height:1920px;object-fit:cover
 <!-- round 6: the client's official outro replaces the built endcard -->
 
 
-<!-- (round 4: floating hook chips removed on his note — clean face + caption) -->
+<!-- (round 4: floating hook chips removed on the client's note — clean face + caption) -->
 
 <!-- ══ CHIPS — four land in the darkened band over the hands b-roll ══ -->
 
@@ -246,13 +246,13 @@ video.shot{position:absolute;inset:0;width:1080px;height:1920px;object-fit:cover
 <!-- ══ SPLIT TOP PANE — the six tools' UIs swiping one by one ═════ -->
 
 
-<!-- ══ GRID SCENE — over his footage, dimmed, not a void ══════════ -->
+<!-- ══ GRID SCENE — over the presenter's footage, dimmed, not a void ══════════ -->
 
 
 <!-- ══ BLOCK D — connected tools, context flowing between them ═══ -->
 
 
-<!-- ══ CLIENT APP — the real dark chrome, over his blurred footage ══ -->
+<!-- ══ CLIENT APP — the real dark chrome, over the presenter's blurred footage ══ -->
 
 
 
@@ -328,7 +328,7 @@ chipAt.forEach((t, i) => {
 /* ── split pane: the six tools' UIs swipe one by one ──────────
    FLAT literal statements, not a forEach: the chunk emitter can only rebase
    literal positions, and these live in c2 whose clock starts at 4.7667. */
-/* round 12: the SPLIT is back (his note) — soft sequential swipes, one card
+/* round 12: the SPLIT is back (the client's note) — soft sequential swipes, one card
    visible at a time, ChatGPT holds to the end of the beat */
 
 
@@ -396,7 +396,7 @@ chipAt.forEach((t, i) => {
 
 
 
-/* the sentence types with his voice: "reply to John" 22.38, "and update…" 22.98 */
+/* the sentence types with the presenter's voice: "reply to John" 22.38, "and update…" 22.98 */
 const ASK = "Reply to John and update the HubSpot deal";
 
 

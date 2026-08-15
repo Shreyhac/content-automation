@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""vid62 short — one band bake, one close bake, solved from his own crown and chin.
+"""vid62 short — one band bake, one close bake, solved from the presenter's own crown and chin.
 
 WHAT IS THE SAME AS vid59's SOLVER
 ----------------------------------
 The format is the client's, and it has not changed: animations on TOP (y150-640),
-captions in the MIDDLE (y674-826), his picture on the BOTTOM (y838-1574) in a BAND
-or a CARD that share ONE camera and differ only by clip-path, so his head is the
+captions in the MIDDLE (y674-826), the presenter's picture on the BOTTOM (y838-1574) in a BAND
+or a CARD that share ONE camera and differ only by clip-path, so the presenter's head is the
 same size in both and a state change is a widen rather than a resize. The close is
 its own shot with its own bake.
 
@@ -18,10 +18,10 @@ WHAT IS DIFFERENT, AND WHY IT MATTERS MORE HERE
    facebox.csv were measured on — so cut_to_raw() is identity and is absent rather
    than written as a no-op.
 
-2. THE CROP IS SOLVED OVER THE SPAN HE IS ACTUALLY ON SCREEN, NOT THE BEAT.
-   Five of the nine beats show him for only part of their runtime, because
-   hf62/camera-windows.json says he is reading for the rest and the client's note
-   (four times on the long-form) is that the picture comes off when he reads. A
+2. THE CROP IS SOLVED OVER THE SPAN THE PRESENTER IS ACTUALLY ON SCREEN, NOT THE BEAT.
+   Five of the nine beats show the presenter for only part of their runtime, because
+   hf62/camera-windows.json says the presenter is reading for the rest and the client's note
+   (four times on the long-form) is that the picture comes off when the presenter reads. A
    median head position taken over a whole beat is a median over frames the viewer
    never sees — the general form of [[feedback_measure_the_window_not_the_take]],
    which cost vid59 a beat that had to move from CARD to BAND after the fact.
@@ -105,8 +105,8 @@ def main():
     shown = [b for b in beats if b["vis"]]
     band = [b for b in shown if b["state"] in ("BAND", "CARD")]
 
-    # ONE scale across every band/card beat: his head cannot change size from one
-    # band beat to the next. Solved over the union of the spans he is visible in.
+    # ONE scale across every band/card beat: the presenter's head cannot change size from one
+    # band beat to the next. Solved over the union of the spans the presenter is visible in.
     all_cr, all_ch = [], []
     for b in band:
         all_cr += samples(b["vis"], crown)
@@ -132,33 +132,33 @@ def main():
     # ruled out here by THIS take's own measurements rather than by preference, and
     # the reason is the framing of the take, not the beat:
     #
-    #   his head measures 1371 source px tall and 1110 wide (63% of frame height) —
+    #   the presenter's head measures 1371 source px tall and 1110 wide (63% of frame height) —
     #   this is a tighter shot than vid59's. A 9:16 window of a 16:9 frame is 1215px
-    #   wide, so his face alone occupies 91% of it before he moves at all, and over
-    #   b9 he sways 274px. Solved full-bleed, his contour ran x-13..1154 of 1080:
-    #   BOTH cheeks outside the frame in the same beat, and his chin landed at y1574
+    #   wide, so the presenter's face alone occupies 91% of it before the presenter moves at all, and over
+    #   b9 the presenter sways 274px. Solved full-bleed, the presenter's contour ran x-13..1154 of 1080:
+    #   BOTH cheeks outside the frame in the same beat, and the presenter's chin landed at y1574
     #   with the caption band opening at y1490.
     #
-    # Cropping his head is the single defect this client has raised most often
+    # Cropping the presenter's head is the single defect this client has raised most often
     # (three rounds on the long-form), so the close plays as a BAND on the same
     # camera as every other beat, bare of new animation, with a slow push. The
     # numbers are printed here so the next production does not re-derive them.
     # ---- CLOSEW: the full-frame close, as a full-WIDTH picture --------------------
-    # The client asked for his A-roll "in full screen" on the closing beat. A true
+    # The client asked for the presenter's A-roll "in full screen" on the closing beat. A true
     # 9:16 crop of a 16:9 frame is 1215px wide and, measured on THIS beat with the
-    # crop centred as well as it can be, his face contour runs x-43..1123 of 0..1080
-    # — 43px of cheek outside the frame on BOTH sides — with his worst chin at y1601,
+    # crop centred as well as it can be, the presenter's face contour runs x-43..1123 of 0..1080
+    # — 43px of cheek outside the frame on BOTH sides — with the presenter's worst chin at y1601,
     # one pixel inside the Instagram UI band, and no room left for a caption.
     #
     # So "full screen" is built as a full-WIDTH picture instead: a 1440x2160 crop
     # (the source's whole height) scaled to 1080x1620. It fills the frame edge to
-    # edge horizontally, shows his entire head, and leaves a caption band under his
+    # edge horizontally, shows the presenter's entire head, and leaves a caption band under the presenter's
     # chin and above y1600. Its lower edge lands on y1574 — the same picture floor
     # every other beat uses — so the close reads as the band opening up rather than
     # as a different rig.
-    # s=0.68 rather than 0.75: at 0.75 the crop is 1440 wide and his face SPAN over
-    # this beat — head width plus 640px of sway — is 1312, leaving 44px at his worst
-    # frame. Read on the render that is not a crop but it is a wander: he drifts into
+    # s=0.68 rather than 0.75: at 0.75 the crop is 1440 wide and the presenter's face SPAN over
+    # this beat — head width plus 640px of sway — is 1312, leaving 44px at the presenter's worst
+    # frame. Read on the render that is not a crop but it is a wander: the presenter drifts into
     # the frame edge and the close reads tighter than every other beat in the cut.
     # 0.68 gives 1588 of source width, ~94px of margin at both extremes, and a
     # picture 1080x1469 whose top lands at y105 and whose bottom lands on the same
@@ -167,7 +167,7 @@ def main():
     # BOTH bake dimensions have to be EVEN or libx264 refuses the yuv420p chroma
     # plane: 2160*0.68 is 1469 and the first bake exited 187 on it. Rounded to 1470,
     # which makes the vertical scale 0.68056 against 0.68009 horizontal — a 0.07%
-    # anamorphic difference, four hundredths of a pixel across his face.
+    # anamorphic difference, four hundredths of a pixel across the presenter's face.
     CW_W = int(round(CAN_W / S_CLOSEW / 2)) * 2          # 1588
     PH_W = int(round(SRC_H * S_CLOSEW / 2)) * 2          # 1470
     CH_W = SRC_H
@@ -179,7 +179,7 @@ def main():
     c_ch, c_lr = samples(cl["vis"], chin), samples(cl["vis"], hlr)
     print("  CLOSE        RULED OUT by measurement, not preference: at s=%.4f a "
           "full-bleed" % S_CLOSE_HYP)
-    print("               crop puts his contour at x%d..%d of 0..1080 and his worst "
+    print("               crop puts the presenter's contour at x%d..%d of 0..1080 and the presenter's worst "
           "chin at y%d"
           % (round((min(v[0] for v in c_lr) - (st.median([(v[0] + v[1]) / 2
                                                           for v in c_lr]) - CW / 2))
@@ -227,8 +227,8 @@ def main():
         pic_top = TY_W if close else PIC[0]
 
         if close:
-            # full width, centred on the MIDPOINT OF HIS EXTREMES: with no card edge
-            # to read him against, what the eye notices is how near he comes to the
+            # full width, centred on the MIDPOINT OF THE PRESENTER'S EXTREMES: with no card edge
+            # to read the presenter against, what the eye notices is how near the presenter comes to the
             # screen edge, and that is what this value balances.
             mid_w = (min(v[0] for v in lr) + max(v[1] for v in lr)) / 2.0
             cx0 = max(0, min(SRC_W - CW_W, int(round(mid_w - CW_W / 2.0))))
@@ -236,16 +236,16 @@ def main():
             to_can = lambda v: v * (PH_W / float(SRC_H)) + TY_W
             to_can_x = lambda v: (v - cx0) * S_CLOSEW
         else:
-            # A CARD is 560 wide and his face contour measures ~468 at this scale, so
+            # A CARD is 560 wide and the presenter's face contour measures ~468 at this scale, so
             # the whole horizontal slack is 92px — 46 a side against a 40px margin.
-            # Centring the crop on his MEDIAN head centre spends that slack on
-            # whichever side he happens to sit for most of the beat: b3 came out at
+            # Centring the crop on the presenter's MEDIAN head centre spends that slack on
+            # whichever side the presenter happens to sit for most of the beat: b3 came out at
             # x252-720 against a card at x260-820 and failed on the left while
             # leaving 100px unused on the right. So a card centres on the MIDPOINT OF
-            # HIS EXTREMES, which is the value that maximises the smaller margin —
+            # THE PRESENTER'S EXTREMES, which is the value that maximises the smaller margin —
             # the constraint FACE_MARGIN actually states. Bands keep the median,
             # because a full-width rect has margin to spare and the median is what
-            # keeps his head near the canvas centre where the eye expects it.
+            # keeps the presenter's head near the canvas centre where the eye expects it.
             if b["state"] == "CARD":
                 mid = (min(v[0] for v in lr) + max(v[1] for v in lr)) / 2.0
                 aim = mid * S - (CARD_X[0] + CARD_X[1]) / 2.0
@@ -269,7 +269,7 @@ def main():
             f.append("!! CHIN IN THE UI BAND")
         if c_crown < pic_top + (0 if close else 20):
             f.append("CROWN %d above picture top %d" % (c_crown, pic_top))
-        # RESID is a PROXY for "does his face leave the rect", and on a full-width
+        # RESID is a PROXY for "does the presenter's face leave the rect", and on a full-width
         # close the rect is the whole frame, so the thing it stands in for is measured
         # directly by FACE_MARGIN below and the proxy has nothing left to say. b9
         # sways 231px and still keeps 264px of margin either side. Same reasoning

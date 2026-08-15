@@ -18,11 +18,11 @@ sections, chat cards holding 5-10s, drifting dot constellations, small caption p
    product is introduced, holds top-centre through the dock + entire b-roll section, fades
    out 20.55. Navy pill, white client glyph + wordmark.
 2. **True crossfades where an underlay exists** (a fade with NOTHING under it is a
-   black dip, and a fade over his face ghosts, both banned):
-   - hands b-roll fades in over him (2.84)
+   black dip, and a fade over the presenter's face ghosts, both banned):
+   - hands b-roll fades in over the presenter (2.84)
    - constellation dissolves (14.15) → blurred b-roll holds → dock2 fades in over
      it (14.4667), needs ar_a3 and b1d re-cut with tails to sit under the fades
-   - grid already fades; split arrives AT the cut (fading the pane ghosts his face
+   - grid already fades; split arrives AT the cut (fading the pane ghosts the presenter's face
      through the cream, learned round 7/12)
 3. B-roll holds keep their hard cuts (screen-evidence beats, approved; no source
    tails exist for real crossfades there).

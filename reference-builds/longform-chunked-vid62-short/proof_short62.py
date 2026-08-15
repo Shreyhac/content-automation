@@ -6,7 +6,7 @@ This is the step that catches a solve that is arithmetically clean and wrong on
 screen. It is deliberately not a render: it uses the baked files themselves, so what
 it shows is the pixels the composition will place, in the rect it will place them in.
 
-For each beat it picks the two frames where his face contour is furthest LEFT and
+For each beat it picks the two frames where the presenter's face contour is furthest LEFT and
 furthest RIGHT (from vid62/facebox.csv over the beat's visible spans), because a
 constant crop is only ever wrong at the extremes, plus the beat's own first frame,
 which is what a viewer sees on the cut.

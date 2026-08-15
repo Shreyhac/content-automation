@@ -30,7 +30,7 @@
   ],
   "slot": 1.04,
   "cropY": 0,
-  "note": "his face, as the reference plays it",
+  "note": "the presenter's face, as the reference plays it",
   "src": null
  },
  {
@@ -203,7 +203,7 @@
   ],
   "slot": 0.66,
   "cropY": 0,
-  "note": "his face \u2014 the segment the first cut missed",
+  "note": "the presenter's face \u2014 the segment the first cut missed",
   "src": null
  },
  {
@@ -339,7 +339,7 @@
   ],
   "slot": 3.413,
   "cropY": 0,
-  "note": "his face + the CTA",
+  "note": "the presenter's face + the CTA",
   "src": null
  }
 ]

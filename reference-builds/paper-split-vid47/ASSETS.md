@@ -77,7 +77,7 @@ the wrong way costs a round each time. Check the sign against the artefact.
 
 ## SFX, `assets/sfx/` (23 distinct files)
 
-**80% of triggers come from the creator's own supplied pack**, `library/sfx/saas/`. He expects to
+**80% of triggers come from the creator's own supplied pack**, `library/sfx/saas/`. They expect to
 hear it. The remaining risers and impacts come from `library/sfx/house/` where the saas library has
 no equivalent (`imp2`, `rise2`, `shine1`, `tick3`, `wsh1`, `wsh3`).
 
@@ -96,7 +96,7 @@ means the same thing everywhere. See `docs/05-audio-and-sfx.md`.
 | `assets/three.min.js` | `library/vendor/three.min.js`. UMD build, **never an ES module**: a module defers and the capture engine reads `window.__timelines` synchronously, producing a dead page. |
 | `assets/field.js` | Ships in this build. The three.js field, re-lit for paper: pale ceramic body `0xE6E2D8`, metalness .04, roughness .72, ambient 2.35, state colour on the deep green. |
 
-The canvas is clipped to `inset(150px 0 1010px 0)` permanently so it can never drift onto his face.
+The canvas is clipped to `inset(150px 0 1010px 0)` permanently so it can never drift onto the presenter's face.
 
 ---
 

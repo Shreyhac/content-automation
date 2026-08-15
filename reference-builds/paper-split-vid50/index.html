@@ -42,7 +42,7 @@
 
   /* ══════════ THE SPLIT · re-solved for THIS head ══════════
      Vision over 56 frames: crown y709, chin y1088, head 379px, cx 497 on the
-     1080x1920 straight scale. He sits HIGH, so hf47's band top of y1080 is
+     1080x1920 straight scale. The presenter sits HIGH, so hf47's band top of y1080 is
      unreachable: crown_out <= 1418s and chin_out <= 1560 cap crown at y1016.
      Chosen s=0.690 -> the band is a TRANSFORM on the full-frame element, not a
      crop: scale 1.379 (=1080/783), translate(-145px, 2px), origin 0 0.
@@ -61,8 +61,8 @@
   /* r2 note: "The client's frame is a bit zoomed. No need to zoom their frame. Just
      keep the original frame." The band was a scale(1.379) blow-up of the A-roll.
      It is now scale 1.0 with NO zoom at all: the split is simply a paper panel
-     laid over the top of the untransformed video, and he slides down 170px when
-     it arrives so his head clears the panel edge. Same framing, same size, just
+     laid over the top of the untransformed video, and the picture slides down 170px when
+     it arrives so the head clears the panel edge. Same framing, same size, just
      positioned lower in the composition.
      Crown min across the take is y696; +170 = 866, clearing the panel at y820
      by 46px. Chin max 1126 +170 = 1296, far above the y1600 UI band. */
@@ -84,8 +84,8 @@
      art, so "ruining your brand" changed contrast mid-word. It is now on a paper
      panel, in the same world as the rest of the film, and the beat is an EVENT:
      three brand outputs that break apart on the lid shut.
-     Panel bottom is y690 because the source punch-in lifts his crown from
-     y860 to y696 across the first 1.5s; anything deeper eats his forehead. */
+     Panel bottom is y690 because the source punch-in lifts the crown from
+     y860 to y696 across the first 1.5s; anything deeper eats the forehead. */
 
   /* the specimen: one brand rendered three ways, which then desyncs */
   .brk{position:absolute;top:470px;width:300px;height:266px;border-radius:16px;
@@ -353,7 +353,7 @@
        Frame 0 is the cover, so the eyebrow and the first title line are fully
        composed at t=0. The lid shuts at 0.73: that is where the accent line,
        the strike and the claim pill land, so the physical act and the graphic
-       are the same beat. Type sits y168-660, entirely in the wall above his
+       are the same beat. Type sits y168-660, entirely in the wall above the
        crown (y860 at t=0, y709 once the source punch-in settles). -->
   <div class="ov clip" id="s1" data-layout-allow-overflow data-start="0" data-duration="3.64" data-track-index="10">
     <div class="eyebrow" id="s1eye" style="top:96px">One brand, three outputs</div>
@@ -537,7 +537,7 @@
   <div class="flash clip" id="f1" data-layout-ignore data-start="0.69" data-duration="0.13" data-track-index="40"></div>
   <div class="flash clip" id="f2" data-layout-ignore data-start="16.66" data-duration="0.13" data-track-index="41"></div>
 
-  <!-- ═══════ SFX · his own saas pack, volumes 0.10-0.15 ═══════ -->
+  <!-- ═══════ SFX · the creator's own saas pack, volumes 0.10-0.15 ═══════ -->
   <audio id="sfx01" class="clip" data-start="0.60" data-duration="1.2" data-track-index="50" data-volume="0.15" src="assets/sfx/imp2.mp3"></audio>
   <audio id="sfx02" class="clip" data-start="3.44" data-duration="1.0" data-track-index="51" data-volume="0.12" src="assets/sfx/wsh1.mp3"></audio>
   <audio id="sfx03" class="clip" data-start="3.84" data-duration="0.8" data-track-index="52" data-volume="0.11" src="assets/sfx/s7_tap.mp3"></audio>
@@ -582,7 +582,7 @@
      exact full frame, and then only split screen should happen."
      So frames 0-25 are pure full-frame footage of the lid closing, with nothing
      over them at all. The cover is that image, which is a composed frame in its
-     own right. At 0.87 the panel drops and he slides down 170px: no zoom, same
+     own right. At 0.87 the panel drops and the picture slides down 170px: no zoom, same
      framing, just lower in the composition. */
   tl.fromTo("#splitPanel",{y:-830},{y:0,duration:0.30,ease:"power4.out"},0.87);
   tl.fromTo("#fullVid",{y:0},{y:170,duration:0.34,ease:"power3.out"},0.87);

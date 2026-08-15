@@ -20,16 +20,16 @@ wrong side of it.
 
 ONE BAKE, TWO STATES — unchanged from vid59
 -------------------------------------------
-BAND and CARD are the same 1080x760 bake at s=0.42446 (solved from his own crown and
-chin over the spans he is VISIBLE in), placed by one transform and differing only by
-clip-path, so his head is the same size in both and the change between them is a
+BAND and CARD are the same 1080x760 bake at s=0.42446 (solved from the presenter's own crown and
+chin over the spans the presenter is VISIBLE in), placed by one transform and differing only by
+clip-path, so the presenter's head is the same size in both and the change between them is a
 widen. There is no CLOSE bake: solve_short62.py rules a full-bleed 9:16 crop out on
 this take's own numbers and prints them.
 
-b6 gets no clip at all — the picture is off for the whole beat because he is reading
+b6 gets no clip at all — the picture is off for the whole beat because the presenter is reading
 for the whole beat — so it is absent here rather than baked and hidden.
 
-NO GRADE. No curve, no eq, no saturation touch. His footage ships as shot.
+NO GRADE. No curve, no eq, no saturation touch. The presenter's footage ships as shot.
 """
 import json, os, subprocess
 

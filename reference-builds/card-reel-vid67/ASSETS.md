@@ -32,8 +32,8 @@ the transcode in the project is the only copy.
 33.15 Mbps, exactly as recorded above.
 
 Transcoded at **native 2160x3840**, codec change only, no scale filter: h264 crf 14, which measured
-43.23 Mbps. A 1080x1920 transcode here would have shipped a 4K container carrying 1080p of his
-face.
+43.23 Mbps. A 1080x1920 transcode here would have shipped a 4K container carrying 1080p of the
+presenter's face.
 
 **Face geometry, measured over all 176 samples of the take** (`vid67/facebox.csv`, Apple Vision,
 in 1080x1920 stage space): crown y280 to y375, chin y1003 to y1166, **886px head worst case**.
@@ -49,7 +49,7 @@ Seam at **y620**, picture pushed down **380**. That puts the worst crown at y660
 below the seam, and the worst chin at **y1546**, 54px above Instagram's y1600 band. Delivered chin
 maximum measured **1548.7**.
 
-The reference seams at y955 because Cintas sits further from his lens. Copying that number would
+The reference seams at y955 because Cintas sits further from the lens. Copying that number would
 have buried this chin. **Copy the shot list, re-derive the geometry.**
 
 There is no tween between the two states anywhere in the file. Every change is a `gsap.set` on a
@@ -78,7 +78,7 @@ were: the Claude app is titled `Dr Cintas` in four shots, the `.env` shows a liv
 `ANTHROPIC_API_KEY` in plaintext, the meeting notes belong to a third party, the inbox is a real
 person's, the launch **fails on screen** ("insufficient credit balance") under a voiceover saying
 it deployed, and the spec page reads `PLANNED . NOT LAUNCHED`. The last two matter most: the
-creator faked his own payoff, and lifting it would have put a contradiction on the beat the reel
+reference creator faked their own payoff, and lifting it would have put a contradiction on the beat the reel
 exists to sell.
 
 **The crops.** The reference burns its own captions into the picture at y924 to y975 (measured), so
@@ -102,14 +102,14 @@ Regenerate: `refs/fetch.sh` pulls `DbqcQUgxlyC.mp4` again, then
 
 ## Re-timing the reference, `remap.py` + `shotmap.json` + `broll-manifest.json`
 
-He recorded the reference's script **verbatim**, which is what made a shot-for-shot copy possible.
+The creator recorded the reference's script **verbatim**, which is what made a shot-for-shot copy possible.
 39.53s of reference onto 35.23s of delivery is **not** a linear squeeze. `remap.py` aligns the two
 normalised word sequences with difflib, anchors **136 of 148 words**, maps each reference cut
-through the piecewise-linear result, then snaps it to the nearest word onset in his take. Every
+through the piecewise-linear result, then snaps it to the nearest word onset in the take. Every
 boundary landed within 0.24s of an onset and most inside 0.10s. A ratio would have drifted a third
 of a second by the CTA.
 
-`shotmap.json` is the 28-row reference-time to his-time map. `broll-manifest.json` is the solved
+`shotmap.json` is the 28-row reference-time to take-time map. `broll-manifest.json` is the solved
 slot table (id, start, duration, source window, crop y).
 
 ---
@@ -134,7 +134,7 @@ Regenerate: `python3 build_chunks.py` then `python3 assemble.py`.
 
 ## Voiceover, `assets/vo.mp4`
 
-His A-roll's own audio, untouched. **-22.6 LUFS in, -22.5 LUFS out.** No grade, no filter chain.
+The creator's own A-roll audio, untouched. **-22.6 LUFS in, -22.5 LUFS out.** No grade, no filter chain.
 
 ---
 
@@ -162,7 +162,7 @@ hardest cuts (2.200 and 16.340).
 
 70 captions, 1 to 4 words each, on a dark pill, **every change on a word onset**. On `split` the
 pill sits at `top:548px`, in the band's lower edge, where the reference puts its own. On `full` it
-drops to `top:1246px`, below his chin.
+drops to `top:1246px`, below the presenter's chin.
 
 Two gate holes made these invisible to every caption rule for a whole film:
 
@@ -208,7 +208,7 @@ overlap** (face 107 to 113, UI 37 to 80). Requiring both in the same frame flags
 known-face cuts and passes all eleven UI lifts. That is `facecheck.py`.
 
 Vision itself found two full-bleed face segments in the reference. A skin-fraction sweep over the
-band found three. The one Vision missed, 19.40 to 20.10, is where only his forehead and eyes are in
+band found three. The one Vision missed, 19.40 to 20.10, is where only the presenter's forehead and eyes are in
 frame, and it is exactly the one that bled into two lifted clips.
 
 ---

@@ -202,11 +202,11 @@ Two placement rules learned here:
   the chunker extracted both files; the QA contact sheet was the only thing that showed it. New
   overlay videos go at the END of the video stack.
 - **A crossfade needs a real underlay on BOTH sides.** Fading a video in where the previous clip
-  has already ended dips to black. Fading a translucent panel over the presenter ghosts his face
+  has already ended dips to black. Fading a translucent panel over the presenter ghosts their face
   and was rejected twice. The only fades that work are footage over footage, graphic over footage,
   and clip over extended underlay, which is why `ar_a3` and `b1d` were re-cut WITH TAILS.
 - **A pane that arrives by tween across a cut doubles the subject.** The split's top panel slid in
-  over 7 frames while the full-bleed A-roll still showed his face above the pane's face, and the
+  over 7 frames while the full-bleed A-roll still showed the presenter's face above the pane's face, and the
   note was "frame is repeating". Same law as vid62's card: state changes at a cut, never tweened
   across it.
 
@@ -272,7 +272,7 @@ The route there is still worth keeping, because each step was a real measurement
 
 Mechanical notes:
 
-- VO is `assets/vo/aroll.m4a`, laid at 0, **unity gain, no filters**. It is his A-roll's own audio.
+- VO is `assets/vo/aroll.m4a`, laid at 0, **unity gain, no filters**. It is the presenter's own A-roll audio.
 - Music enters at 15.99s so the track's lift lands at 30.45s, at a static gain roughly 13 dB under
   the voice.
 - **With zero SFX inputs the mix graph's trailing bare `apad` spins ffmpeg forever** (the bounded

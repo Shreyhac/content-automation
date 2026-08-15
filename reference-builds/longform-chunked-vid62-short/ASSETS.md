@@ -77,7 +77,7 @@ y1920
 ```
 
 One camera for both band and card: `scale 1, x 0, y 838`, on a `#faceCam` of 1080x760. They differ
-**only by clip-path**, so his head is the same size in both and the change between them is a widen,
+**only by clip-path**, so the presenter's head is the same size in both and the change between them is a widen,
 not a resize.
 
 | State | clip-path |
@@ -90,7 +90,7 @@ not a resize.
 **`cardOff` is round 2's main repair, and it is the whole reason this build earns a slot.** A
 single shared `off` state collapsing to `inset(1574 0 346 0)` animated the left and right insets
 from 260 to 0, so a picture leaving a CARD **widened to full frame on the way down**, sliding a
-full-bleed strip of his neck out past an empty card border. That one fault was BOTH of the client's
+full-bleed strip of the presenter's neck out past an empty card border. That one fault was BOTH of the client's
 "glitchy / weird transition" notes. **A card has to collapse inside its own edges**, and the card
 frame (`#faceFx`) has to fade WITH the picture rather than outliving it as an empty rectangle.
 
@@ -100,33 +100,33 @@ outlives the wipe it is not hidden. `faceTo()` is for a move INSIDE a beat only.
 
 ### Solving the crop, `solve_short62.py`
 
-- **Solve over the spans he is VISIBLE in, not over the beat.** Five of nine beats show him for
+- **Solve over the spans the presenter is VISIBLE in, not over the beat.** Five of nine beats show the presenter for
   only part of their runtime, and a beat-wide median is a median over frames nobody sees.
-- **Centre on the MEDIAN head position, not the midpoint of his extremes.** Extremes-centring
-  maximises the smaller margin, which answers "will his face leave the rect" and not "does this
-  look centred". One 0.4s lean dragged a card 55px and he sat off-centre for the whole beat. His
+- **Centre on the MEDIAN head position, not the midpoint of the presenter's extremes.** Extremes-centring
+  maximises the smaller margin, which answers "will the presenter's face leave the rect" and not "does this
+  look centred". One 0.4s lean dragged a card 55px and the presenter sat off-centre for the whole beat. The presenter's
   note was "this is not centered aligned". If median centring then breaches `FACE_MARGIN`, the beat
   cannot be a CARD and plays as a BAND.
 
 ### b9, the close: `closew`, not a full-bleed
 
-He asked for "full screen". A true 1215px-wide 9:16 window put **43px of his cheek outside the
-frame on both sides with his chin at y1601**, inside the UI band. His head measures 1371x1110
-source px and he sways 274px over this beat. The first pass at scale 0.75 left only 44px between
-his face and the screen edge at his widest lean.
+The client asked for "full screen". A true 1215px-wide 9:16 window put **43px of the presenter's cheek outside the
+frame on both sides with the presenter's chin at y1601**, inside the UI band. The presenter's head measures 1371x1110
+source px and the presenter sways 274px over this beat. The first pass at scale 0.75 left only 44px between
+the presenter's face and the screen edge at the presenter's widest lean.
 
 Shipped instead as a full-WIDTH picture: **1588x2160 of the source, scale 0.68, to 1080x1468 at
-y106 to the same y1574 floor every other beat uses.** Whole head, caption under his chin. Cropping
-his head is the defect this client has raised most often.
+y106 to the same y1574 floor every other beat uses.** Whole head, caption under the presenter's chin. Cropping
+the presenter's head is the defect this client has raised most often.
 
 ### The lighting device, not a grade
 
-The set puts a lit "incogni" wordmark on the TV behind his head and the band crop cuts it into
+The set puts a lit "incogni" wordmark on the TV behind the presenter's head and the band crop cuts it into
 fragments ("ncog", "coa", "inco"), which read as broken type rather than as branding. `#faceCam
-.lift` is a radial centred on his face that pushes the fragments and the practical lamps at both
+.lift` is a radial centred on the presenter's face that pushes the fragments and the practical lamps at both
 edges down into ambient, plus a 34px `.wall` gradient at the top of the bake where the band edge
-crosses the bright wall. **His footage is baked with no curve, no eq and no saturation touch
-anywhere.** Never grade his A-roll.
+crosses the bright wall. **The presenter's footage is baked with no curve, no eq and no saturation touch
+anywhere.** Never grade the presenter's A-roll.
 
 ---
 
@@ -136,10 +136,10 @@ anywhere.** Never grade his A-roll.
 long-form's Incogni dashboard captures.
 
 Both dashboard placements **corroborate the line they sit under**: the request-status strip reads
-Jul 16 to Oct 14 2026, which is 90 days to the day and exactly the cadence he states in the same
+Jul 16 to Oct 14 2026, which is 90 days to the day and exactly the cadence the presenter states in the same
 sentence; the activity log scrolls named brokers each marked "has completed our removal request"
 under "over 245 million removal requests". The broker-overview panel the long-form uses at c8 is
-deliberately NOT here: it reads "37 brokers covered", his own account's count, twenty seconds away
+deliberately NOT here: it reads "37 brokers covered", the count from the presenter's own account, twenty seconds away
 from the short claiming "over 420 unique data brokers". On screen together that is a viewer's
 contradiction.
 
@@ -201,7 +201,7 @@ so the two cannot drift. It refuses to run unless the newest render is exactly 1
   the assembled VO it muted **46 of 61 seconds**. The assembler's own loudness print caught it:
   LRA 4.4 to 25.6 LU. Absolute-time filters belong on the segment, never on the assembled track.
 - **"The audio cuts weird here" is usually a script fault.** Transcribe 1.6s either side of the
-  join in isolation first. Both of his audio notes were clean at signal level: one cut his sentence
+  join in isolation first. Both of the client's audio notes were clean at signal level: one cut the presenter's sentence
   mid-list, the other opened a beat on a dangling "And" bridging topics 68 seconds apart. The fixes
   were editorial and they traded against each other, +3.7s and -2.8s.
 
@@ -218,7 +218,7 @@ at the close. Assert the delta. Never print unconditionally.
 
 **Read every on-screen string as a viewer before the delivery render.** Three eyebrows went through
 every gate as build notes to self ("One beat of price, at the end") and as third-person narration
-about the man in frame ("What he would tell a friend").
+about the presenter in frame ("What he would tell a friend").
 
 ---
 

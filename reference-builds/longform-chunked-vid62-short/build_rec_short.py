@@ -11,12 +11,12 @@ a 47-second short, and both of them CORROBORATE the line they sit under:
 
   b3b  the request-status strip — Request processed Jul 16, 2026 -> Next removal
        Oct 14, 2026. That is 90 days to the day, which is exactly the private-broker
-       cadence he states in the same sentence.
+       cadence the presenter states in the same sentence.
   b4   the activity log scrolling — named brokers, each "has completed our removal
        request", under "they've processed over 245 million removal requests".
 
 NOT the broker-overview panel, which the long-form uses at c8. It reads "37 brokers
-covered" — his own account's count — and the short's b2 claims "over 420 unique data
+covered" — the count from the presenter's own account — and the short's b2 claims "over 420 unique data
 brokers". On screen together, twenty seconds apart, that is a viewer's contradiction.
 
 THE LONG-FORM'S CROPS DO NOT WORK HERE AND THE REASON IS ARITHMETIC

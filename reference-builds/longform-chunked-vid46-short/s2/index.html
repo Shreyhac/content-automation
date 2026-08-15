@@ -54,7 +54,7 @@
      record or a figure on the bare ground; stripping the box everywhere else is
      exactly what lets this one read as the payoff instead of the default.
 
-     He does not say "30-day money-back guarantee" in this cut and the URL is not
+     The presenter does not say "30-day money-back guarantee" in this cut and the URL is not
      spoken, so both are on the card, and so is the paid-promotion line.
 
      The card is 880 wide, not 940: at 940 its right edge crossed x960 in the
@@ -93,7 +93,7 @@
      tween that runs everywhere else, so the language never breaks.
 
      The face leads the audio by nine frames (the gaze map is safe from 215.3) and
-     closes at 218.72, a fifth of a second before his gaze drops to his notes.
+     closes at 218.72, a fifth of a second before the presenter's gaze drops to their notes.
      The coupon holds as a chip below the picture the whole way through.
      ========================================================================== */
   #g6{position:absolute;inset:0;z-index:14;}
@@ -107,7 +107,7 @@
      do about it?"
 
      The gaze map is unambiguous: safe ends at 219.3 and does not resume until
-     221.7, so the closing question CANNOT carry his face. v1 solved that by cutting
+     221.7, so the closing question CANNOT carry the presenter's face. v1 solved that by cutting
      to a static offer card for the last 14 frames, mid-sentence, and the owner said
      "the ending seems very off" — because it amputated a sentence.
 
@@ -352,7 +352,7 @@
   slab("#sl2", 0.460);   /* "good"   */
   slab("#sl3", 0.820);   /* "paper," */
 
-  /* "don't you already have a VPN?" — the question lands on the slab he names.
+  /* "don't you already have a VPN?" — the question lands on the slab the presenter names.
      Nothing new arrives; the object already on screen is pointed at. */
   tl.fromTo("#sl1", {scale:1, transformOrigin:"50% 50%"},
     {scale:1.04, duration:.18, ease:"power2.out"}, 2.260);
@@ -454,13 +454,13 @@
              ox:0, oy:-560, scale:.9}, 9.300);
   tl.to(P, {alpha:.14, duration:.50, ease:"none"}, 9.300);
 
-  /* the chip is the only thing on the ground under him, and it holds: no exit, no
+  /* the chip is the only thing on the ground under the presenter, and it holds: no exit, no
      drift. v1's close flew it upward and left 0.47s of empty ground as the last
      thing on screen. */
   tl.to("#g6chip", {scale:1.035, duration:.50, ease:"power2.out"}, 11.900);
 
   /* THE FACE CLOSES on "like", 218.72 on the film's clock — a fifth of a second
-     before his gaze drops to his notes on 218.9. */
+     before the presenter's gaze drops to their notes on 218.9. */
   K.faceTo("off", 12.300, 0.30);
 
   /* =========================================================================

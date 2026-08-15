@@ -37,13 +37,13 @@ information from internet] [people search removal] [privacy tools 2026]
 | 3 | 14.18-20.52 | 6.34 | "All sitting on a data broker site… sold to anyone… with a credit card." | CARD, off for the last 0.4s |
 | 4 | 51.52-62.32 | 10.80 | "Privacy Rights Clearinghouse, working with the EFF… 750 unique data broker groups registered across the US" | BAND 2.3s, then off |
 | 5 | 234.32-242.82 | 8.50 | "…requests and re-requests removal from over 420 plus data broker sites that publish your home address," | CARD 2.5s, then off |
-| 6 | 260.28-267.08 | 6.80 | "Incogni searches broadly across the web… removed in a click or two." | off, he reads the whole line |
+| 6 | 260.28-267.08 | 6.80 | "Incogni searches broadly across the web… removed in a click or two." | off, the presenter reads the whole line |
 | 7 | 334.90-342.42 | 7.51 | "And on that specific outcome, on that price point, Incogni is what I would recommend to a friend…" | BAND, whole beat |
 | 8 | 342.64-346.80 | 4.17 | "You can use the code CODEWORD for 60% off Incogni's annual plan." | CARD 2.3s, then off |
 | 9 | 364.36-370.38 | 6.01 | "So the question is, are you going to let brokers keep profiting off it? Or are you going to do something about it?" | BAND, whole beat |
 
 Placement alternates **band · band · card · band · card · none · band · card · band**;
-his picture is on screen 38.6s of 60.0s.
+the presenter's picture is on screen 38.6s of 60.0s.
 
 ---
 
@@ -60,11 +60,11 @@ his picture is on screen 38.6s of 60.0s.
    runs ~20ms late, so cutting on it shaved the attack. Both cuts moved back into
    measured silence; the re-transcription now hears every word.
 3. **No full-bleed close.** vid58's client note asked for one and vid59's short had
-   one. On THIS take his head measures 1371×1110 source px, so a 1215px-wide 9:16
-   window holds 91% of his face before he moves, solved full-bleed, his contour ran
+   one. On THIS take the presenter's head measures 1371×1110 source px, so a 1215px-wide 9:16
+   window holds 91% of the presenter's face before the presenter moves, solved full-bleed, the presenter's contour ran
    x−13..1153 of 1080, both cheeks outside the frame, chin at y1574. The close plays
    as a band. Numbers are printed by `hf62s/solve_short62.py`.
-4. **Beat 3 keeps his full sentence** and the picture arrives 0.6s into the beat,
+4. **Beat 3 keeps the presenter's full sentence** and the picture arrives 0.6s into the beat,
    rather than cutting into "…a data broker site" and losing the connective.
 
 ## Ships with NO SFX
@@ -75,8 +75,8 @@ By design, matching the long-form. vid59's beds drew *"the SFX is very irritatin
 
 - **The middle 11.4s has no face** (end of the 420+ beat through the whole scanner
   beat). `hf62/camera-windows.json`, the hand-checked whitelist from the long-form's
-  round-3 rebuild, has no window anywhere inside those spans; he is reading for every
-  second of them. His dashboard owns that stretch instead, across four separate
+  round-3 rebuild, has no window anywhere inside those spans; the presenter is reading for every
+  second of them. The presenter's dashboard owns that stretch instead, across four separate
   recordings so it is never a held still.
 - **The client's email is not in the cut.** `p3-activity` carried `media@castellano.com` in the
   account nav; the clip is cropped at the source (`p3-activity-s.mp4`), verified across

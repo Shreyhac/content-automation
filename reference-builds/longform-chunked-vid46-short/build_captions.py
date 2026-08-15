@@ -9,7 +9,7 @@ Rules learned on the film:
   - A caption's POSITION follows the beat's mode. On SPLIT beats the face card owns
     y838-1574, so the caption moves up into the gap at y690-826 (class `hi`) - the
     same place vid39 puts it on its split beats. Anywhere else it sits low at
-    y1396. Leaving it low on a split beat would print it on his jaw, which is the
+    y1396. Leaving it low on a split beat would print it on the presenter's jaw, which is the
     exact defect v1 was rejected for.
   - Two lines max at 58px/1.2 in a 936px column, so a clip is capped by MEASURED
     width, not by word count. Width is estimated from a per-character table

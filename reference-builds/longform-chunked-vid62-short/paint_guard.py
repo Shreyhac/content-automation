@@ -10,7 +10,7 @@ The short shipped with no captions for 27 of its 43 seconds and every gate passe
 `.cs` carried no `z-index`, so it computed to `auto` (0) while `.face` sits at 2. The
 A-roll painted straight over every caption, and they only ever appeared on the
 graphics beats where no face video happened to be on top. The owner's note was "Has
-captions missing", and he was exactly right.
+captions missing", and the client was exactly right.
 
 Nothing caught it, and the reason is worth stating plainly:
 

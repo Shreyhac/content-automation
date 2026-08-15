@@ -179,7 +179,7 @@ window.chunkKit = function (tl, T0) {
      playhead sits exactly on 0 — whether GSAP treats it as already-run at time 0
      is implementation-dependent, so it painted in c4 and did NOT paint in c2.
      c2's frame 0 shipped as a single frame of raw full-bleed A-roll before the
-     card snapped in, with the record column illegible over his back wall. Every
+     card snapped in, with the record column illegible over the presenter's back wall. Every
      chunk boundary is a join in the assembled film, so a missed frame 0 is a
      one-frame flash at six of the seven joins.
 
@@ -201,7 +201,7 @@ window.chunkKit = function (tl, T0) {
   /* Card a window: ONE constant transform for the whole window.
 
      Round 1 tweened x along a smoothed per-window tracking curve, meant to read
-     as a camera operator following him as he swayed. The owner's read was
+     as a camera operator following the presenter as they swayed. The owner's read was
      "why is the presenter's frame always moving left-right, you have added some issue."
      A follow that slow is not legible as camera work — it is legible as drift.
      One constant tx (the window median) is correct at the median and never

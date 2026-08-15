@@ -341,7 +341,7 @@
           else if (P.colour === "exposed") { _c.copy(C.red); }
           else if (P.colour === "verified") { _c.copy(C.green); }
           /* Aura's side of every comparison is NEUTRAL — painting a competitor in
-             the alert colour would editorialise past what he actually says. */
+             the alert colour would editorialise past what the presenter actually says. */
           else if (P.colour === "aura") { _c.copy(C.grey); }
           else if (P.colour === "gap") {
             _c.copy(i < 420 ? C.blue : C.grey);

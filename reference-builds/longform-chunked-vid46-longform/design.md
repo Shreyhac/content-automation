@@ -46,7 +46,7 @@ Every downstream measurement was re-derived, not remapped: new word-level transc
 verified, the winner* and never decorates. Red means *exposed / for sale* and appears in exactly
 three places (the hook's exposed record, the broker-sale burst, the "paying twice" ledger).
 Aura's side of every comparison is **neutral**: `--fgMut` on `--ink2`, never red. Painting a
-competitor in the alert colour would be editorialising past what he actually says.
+competitor in the alert colour would be editorialising past what the presenter actually says.
 
 ## Type
 
@@ -64,7 +64,7 @@ different beats, the record card, the buyer tiles, the action rows, the "up for
 sale" panel, the module slabs, the ledger tiles, the price carriages, the router
 tokens, the reason cards, the coupon, were all the same rounded rectangle with the
 same fade-up entrance. The three.js field was the only device that was not a box,
-which is exactly why it was the only thing he liked.
+which is exactly why it was the only thing the client liked.
 
 So round 2 replaced the *carrier*, not the contents. Defined in `assets/base.css`:
 
@@ -91,7 +91,7 @@ within ~2% and locks, because round 1 ticked 750/245M/200 up from zero and so sp
 third of each beat displaying a figure that was simply wrong under an audited
 attribution line.
 
-**The two-mode layout rule.** Three of his eight complaints were "text/box on the
+**The two-mode layout rule.** Three of the client's eight complaints were "text/box on the
 face". Patching them individually would have kept producing more, so every beat is
 now either **CARD** (A-roll in the right-hand card, graphics own x180–2080, a 200px
 gutter, zero overlap by construction) or **FULL-BLEED** (the face is the whole
@@ -104,7 +104,7 @@ third mode.
 **R2: the ground was the other half of "cheap".** Round 1 filled the frame with
 `#09090B`, floated glows at .09–.20 over it, and then pushed the corners to 86% black.
 Net result: roughly 90% of every 4K frame sat within three RGB values of `#0A0A0C`. It
-read as a black slide, not a lit set, and he asked for "a little more premium with
+read as a black slide, not a lit set, and the client asked for "a little more premium with
 gradients" twice, the second time *"I beg you for this"*.
 
 It is now an actual light rig. Base dropped to `#06060A` so the key has somewhere to
@@ -135,7 +135,7 @@ tween a proxy that writes `backgroundPosition` by the same rule. Nothing resets 
 
 ## Face grammar: measured, tracked, and self-limiting
 
-Standing client rule: **never show his face while he reads off-camera.** See
+Standing client rule: **never show the presenter's face while the presenter reads off-camera.** See
 `vid46-breakdown.md` for how this take broke vid44's single-signal detector and why the
 classifier is now `eyeOpen < 0.30 OR faceAspect < 0.905`.
 
@@ -155,21 +155,21 @@ In `vid46/solve_card.py` → `card-transforms.json`:
    is only safe if every sub-boundary is also a cut, or the face jumps mid-shot.
 3. **A self-limiting card test, now measured against the constant.** `resid > 120px` (8.7% of
    card width) ⇒ that window is **never carded** and plays full-bleed, where the source framing
-   already holds him. Sway is read over a robust p05–p95 range, not min–max, so one bad contour
+   already holds the presenter. Sway is read over a robust p05–p95 range, not min–max, so one bad contour
    detection cannot veto a stable window. **12 of 17 windows card (73.9s); 5 are full-bleed only
    (14.1s).**
 
 Vertical: crown sits at 42% of the leftover slack, so there is more room below the chin than
 above the crown and the head never looks glued to the card's top edge.
 
-**Never crop the crown**: he has flagged that twice across previous productions.
+**Never crop the crown**: the client has flagged that twice across previous productions.
 
 ## Split and layout
 
 - A-roll **RIGHT** in the card, graphics/b-roll **LEFT**: the vid44 round-2 reversal, now the
   default. Graphics field is `x180 → x2080`, leaving a 200px gutter before the card.
 - **The hook plays on the clean full-bleed face** (W01–W03, 0→17.05s). Only a small kicker pill
-  and the engine chips may sit over him. The acted animation starts at the next beat.
+  and the engine chips may sit over the presenter. The acted animation starts at the next beat.
 - Full-frame graphics scenes (no face) use the whole 3840 width.
 
 ## The two duplicate takes: R2: CUT
@@ -188,7 +188,7 @@ rail and the *guarantee stamp* became c5's seal.
 
 ## Signature devices
 
-- **Exposure record**: a white data-broker record card that fills in with his own details as
+- **Exposure record**: a white data-broker record card that fills in with the presenter's own details as
   the hook lands, then multiplies into a wall of 750.
 - **The 750 wall**: 750 broker chips build on a grid, five state registries labelled; PRC+EFF
   credit line locked to the corner.
@@ -209,12 +209,12 @@ rail and the *guarantee stamp* became c5's seal.
   final scene, transitions handle exits.
 - Every field is **composed at frame 0** of its chunk and only settles; in a concatenated film
   each chunk's frame 0 is a hard cut, and vid44 shipped six near-empty ones before this rule.
-- **R2: SFX.** His note: *"why the fuck are you just using two or three SFX… reduce the
+- **R2: SFX.** The client's note: *"why the fuck are you just using two or three SFX… reduce the
   volume of ALL the SFX a bit, it's too loud… the Riser SFX is very weird. Same with the
   thud."* Round 1 measured 236 placements over what looked like 17 files, but
   `boom.mp3`/`cboom.mp3` were byte-identical and so were `riser.mp3`/`riser2.mp3`, so it
   was 15 distinct sounds, and boom alone carried 48 hits. The top four distinct sounds
-  were 55% of every transient in the film; his "two or three" was a fair description.
+  were 55% of every transient in the film; the client's "two or three" was a fair description.
 
   Now: **40 distinct sounds** curated from the repo's own `sfx-library/` (`curate_sfx.sh`),
   each peak-normalised to −3 dBFS and **head-trimmed**: several library files carried

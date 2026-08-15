@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Derive the shot table from the reference's real cuts, re-time onto his take,
+"""Derive the shot table from the reference's real cuts, re-time onto the take,
    and PROVE no lifted clip carries the reference creator's face.
 
 Three rounds of reading extracted clips full-frame produced these rules:
@@ -11,7 +11,7 @@ Three rounds of reading extracted clips full-frame produced these rules:
     still delivers frames from the other side of it.
  3. THE REFERENCE HAS THREE FULL-BLEED FACE SEGMENTS, not two. Vision's face
     detector found only the frames with a WHOLE face in the band and so missed
-    19.40-20.10, where only his forehead and eyes are in frame. A skin-fraction
+    19.40-20.10, where only the presenter's forehead and eyes are in frame. A skin-fraction
     measure over the band found all three. Those segments are played as FULL
     here, exactly as the reference plays them, and are never lifted.
  4. FOUR SHOTS CARRY "Dr Cintas" — the Claude app greeting and the sidebar
@@ -62,7 +62,7 @@ def snap(t):
 # (ref_in, ref_out, kind, id, cropY, note)
 SHOTS = [
  (0.033,  2.300, "lift", "b01_tree",   0, "the claude-code agent tree", None),
- (2.300,  3.600, "full", None,         0, "his face, as the reference plays it", None),
+ (2.300,  3.600, "full", None,         0, "the presenter's face, as the reference plays it", None),
  (3.600,  6.567, "lift", "b02_github", 300, "the launch-your-agent repo", None),
  (6.567,  9.333, "lift", "b03_arch",   240, "the managed-agent diagram", None),
  (9.333, 11.933, "mock", "m1_claude",    0, "reference shows the Claude app titled 'Dr Cintas'", None),
@@ -76,7 +76,7 @@ SHOTS = [
  (15.967,17.233, "lift", "b06_skills",   0, "the skills list", (16.45, 17.15)),
  (17.233,18.233, "lift", "b07_dash",   100, "dashboard", None),
  (18.233,19.400, "lift", "b08_dash2",  100, "dashboard + rubric tooltip", None),
- (19.400,20.100, "full", None,           0, "his face — the segment the first cut missed", None),
+ (19.400,20.100, "full", None,           0, "the presenter's face — the segment the first cut missed", None),
  (20.100,23.667, "lift", "b09_type",   300, "typing the agent's job", None),
  (23.667,24.900, "lift", "b10_type2",  300, "the prompt completed", None),
  (24.900,27.200, "lift", "b11_reply",  300, "Claude scopes the agent", None),
@@ -84,7 +84,7 @@ SHOTS = [
  (28.267,30.800, "mock", "m4_spec",      0, "reference shows PLANNED . NOT LAUNCHED", None),
  (30.800,32.067, "mock", "m5_meeting",   0, "reference shows a third party's meeting notes", None),
  (32.067,36.600, "mock", "m6_inbox",     0, "reference shows a real person's inbox", None),
- (36.600,39.460, "full", None,           0, "his face + the CTA", None),
+ (36.600,39.460, "full", None,           0, "the presenter's face + the CTA", None),
 ]
 
 rows, prev = [], 0.0
@@ -97,7 +97,7 @@ for i, (ri, ro, kind, name, cy, note, src_override) in enumerate(SHOTS):
                      slot=round(ho-hi,3), cropY=cy, note=note,
                      src=list(src_override) if src_override else None))
 
-print(f"{'#':>2} {'kind':5s} {'id':11s} {'ref in':>7} {'ref out':>7} {'his in':>7} {'his out':>7} {'slot':>6} {'src':>6} {'x':>5}")
+print(f"{'#':>2} {'kind':5s} {'id':11s} {'ref in':>7} {'ref out':>7} {'take in':>7} {'take out':>7} {'slot':>6} {'src':>6} {'x':>5}")
 for r in rows:
     assert r["cropY"] + H <= CAP_TOP, r["id"]
     ri, ro = r["ref"]

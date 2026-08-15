@@ -100,8 +100,8 @@ only resolves faces it can see in the document and otherwise silently falls back
 Drawn from `library/sfx/house/` and the creator's supplied pack. `sfx.py` is the single source of
 truth and **enforces** the share cap, the median, the ceiling and the retired list.
 
-Volumes for this creator after three rounds: **median 0.060, ceiling 0.096, bed 0.055.** He halves
-it every time he says "loud". See `docs/05-audio-and-sfx.md`.
+Volumes for this creator after three rounds: **median 0.060, ceiling 0.096, bed 0.055.** The client halves
+it every time the client says "loud". See `docs/05-audio-and-sfx.md`.
 
 ---
 

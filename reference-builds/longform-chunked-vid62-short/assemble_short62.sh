@@ -56,9 +56,9 @@ PY
 echo "--- 1b. word tails across the joins (vid58 round 2, notes 1 and 2) ---"
 python3 - "$WORK/tails.wav" "$DUR" <<'TAILPY'
 """A beat's out-point lands on a word ONSET, and a word's SOUND does not stop where
-whisper says the word stops. At the b2/b3 join his "every one" was still at 0.129 RMS
+whisper says the word stops. At the b2/b3 join the presenter's "every one" was still at 0.129 RMS
 on the last sample and hit digital silence on the next. The owner's note was "the word
-everyone has weird cut in the audio", and he was exactly right.
+everyone has weird cut in the audio", and the client was exactly right.
 
 The fix is not to move the cut — the picture is locked to it. It is an L-CUT: the tail
 of the outgoing beat carries a little way over the incoming one, faded, which is what

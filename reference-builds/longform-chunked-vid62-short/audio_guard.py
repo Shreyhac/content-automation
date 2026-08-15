@@ -9,7 +9,7 @@ A short is eight ranges cut out of a 352-second take, so every one of its seven 
 a place where a word can be damaged, in two opposite ways — and the repo has now
 shipped both of them, one round apart:
 
-  * THE OUT-POINT CHOPS A WORD. At b2/b3 his "every one" was still at 0.129 RMS on the
+  * THE OUT-POINT CHOPS A WORD. At b2/b3 the presenter's "every one" was still at 0.129 RMS on the
     last sample and hit digital silence on the next. The beat plan was careful about
     this and still missed it, because it capped its tail scan at whisper's next-word
     MARK, and whisper's marks undershoot.

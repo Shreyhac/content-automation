@@ -9,9 +9,9 @@
 @font-face{font-family:'Fraunces';src:url('assets/fonts/fraunces-italic.woff2')format('woff2');font-style:italic;font-weight:900;font-display:block}
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   vid67 · Dr Alvaro Cintas' `DbqcQUgxlyC` rebuilt shot for shot on his A-roll
+   vid67 · Dr Alvaro Cintas' `DbqcQUgxlyC` rebuilt shot for shot on the creator's A-roll
 
-   HIS INSTRUCTION  "can you do the exact same editing for me? You can use the
+   THE INSTRUCTION  "can you do the exact same editing for me? You can use the
    exact same visuals from the creator's video as well."
 
    So there are no invented graphics here. This is the reference's shot list,
@@ -28,7 +28,7 @@
      ANTHROPIC_API_KEY · the run FAILS on screen ("insufficient credit balance")
      under a VO saying it deployed · the spec page reads PLANNED . NOT LAUNCHED ·
      the meeting notes belong to a third party · the inbox is a real person's.
-   3 are his face full-bleed, exactly where the reference plays its own.
+   3 are the presenter's face full-bleed, exactly where the reference plays its own.
 
    ── THE CROPS ────────────────────────────────────────────────────────────
    The reference burns its captions into the picture at y924-975 (measured), so
@@ -37,19 +37,19 @@
    The reference is 1080x1920, so lifted footage carries half this composition's
    detail; the 6 rebuilds are the only shots at true resolution.
 
-   ── THE GEOMETRY IS HIS, NOT THE REFERENCE'S ─────────────────────────────
+   ── THE GEOMETRY IS THE TAKE'S, NOT THE REFERENCE'S ──────────────────────
    Measured over all 176 samples of the take (vid67/facebox.csv, Vision):
      crown y280-375 · chin y1003-1166 · head 886px worst case
-   The reference seams at y955 because Cintas sits further from his lens. Here
+   The reference seams at y955 because Cintas sits further from the lens. Here
    that would bury the chin. Solved instead:
      seam y620 · picture pushed down 380 · worst crown y660 (40px below the
      seam) · worst chin y1546 (54px above Instagram's bottom band)
 
-   LAYOUTS   SPLIT  B-roll y0-620 full width · his face below, scale 1, +380y
-             FULL   his face full-bleed, untouched
+   LAYOUTS   SPLIT  B-roll y0-620 full width · the presenter's face below, scale 1, +380y
+             FULL   the presenter's face full-bleed, untouched
    CAPTIONS  1-4 words on a dark pill, 70 of them, every change on a word
              onset. On SPLIT the pill sits in the band's lower edge, which is
-             where the reference puts its own; on FULL it drops below his chin.
+             where the reference puts its own; on FULL it drops below the presenter's chin.
    TRANSITIONS  hard cuts. The reference has none and neither does this. No CSS
              transform ever animates on a box containing a <video> — that is
              what deadlocked the capture engine on vid66b.
@@ -176,7 +176,7 @@ function cut(state, t){
 }
 
 cut("split",  0.000);   // the claude-code agent tree
-cut("full",  2.200);   // his face, as the reference plays it
+cut("full",  2.200);   // the presenter's face, as the reference plays it
 cut("split",  3.240);   // the launch-your-agent repo
 cut("split",  5.220);   // the managed-agent diagram
 cut("split",  7.869);   // reference shows the Claude app titled 'Dr Cintas'
@@ -186,7 +186,7 @@ cut("split", 11.540);   // reference shows a live ANTHROPIC_API_KEY
 cut("split", 13.840);   // the skills list
 cut("split", 14.720);   // dashboard
 cut("split", 15.360);   // dashboard + rubric tooltip
-cut("full", 16.340);   // his face — the segment the first cut missed
+cut("full", 16.340);   // the presenter's face — the segment the first cut missed
 cut("split", 17.000);   // typing the agent's job
 cut("split", 20.100);   // the prompt completed
 cut("split", 21.180);   // Claude scopes the agent
@@ -194,7 +194,7 @@ cut("split", 22.980);   // reference shows 'agent creation failed'
 cut("split", 24.119);   // reference shows PLANNED . NOT LAUNCHED
 cut("split", 26.220);   // reference shows a third party's meeting notes
 cut("split", 27.580);   // reference shows a real person's inbox
-cut("full", 31.820);   // his face + the CTA
+cut("full", 31.820);   // the presenter's face + the CTA
 
 /* ── CAPTIONS ───────────────────────────────────────────────────────────── */
 var CAPS = [

@@ -7,7 +7,7 @@ Built here, NOT in the renderer: HyperFrames leaks video tracks when <video> and
 WAV is muxed on afterwards.
 
 Three branches:
-  VO     assets/vo/aroll.m4a laid at 0, UNITY GAIN, NO FILTERS. His A-roll audio is
+  VO     assets/vo/aroll.m4a laid at 0, UNITY GAIN, NO FILTERS. The presenter's A-roll audio is
          not denoised, EQ'd or loudnormed — that is the standing rule and the plan's
          own commitment. The composition clock is the A-roll clock 1:1 (verified by
          frame-matching every shot back to the master), so it lands at 0 and stays.

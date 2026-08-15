@@ -5,13 +5,13 @@ TWO BAKES, NOT ONE — AND THAT IS A CHANGE FROM vid58
 ----------------------------------------------------
 vid58's short had three states off ONE bake, because its close was a pushed-in
 full-width panel that had to be able to TWEEN out of the band. vid59's close is a
-genuine full-bleed 9:16 crop of the source — b7's own 34 samples put his chin at
+genuine full-bleed 9:16 crop of the source — b7's own 34 samples put the presenter's chin at
 canvas y1465 against the y1600 band, where the whole take says y1538 — so it is its
 own shot, cut to on a hard cut, and it shares nothing with the band camera.
 
   BAND / CARD   scale the source by 0.460315, crop 1080x760 -> #faceCam, scale(1)
                 BAND is the full width of that crop; CARD is the same pixels clipped
-                to x260-820. ONE camera, so his head cannot change size between them
+                to x260-820. ONE camera, so the presenter's head cannot change size between them
                 and the change is a WIDEN rather than a resize.
   CLOSE         crop 1215x2160 of the source, lanczos to 1080x1920. Its own element.
 
@@ -35,9 +35,9 @@ WHY THE FRAMING IS PER-BEAT HORIZONTALLY AND CONSTANT VERTICALLY
 ----------------------------------------------------------------
 crop_x is a per-beat CONSTANT centred on that beat's own median head position — never
 a tracking tween, because a smoothed follow reads as a glitch (vid46 round 2, the
-owner's "why is the presenter's frame always moving left-right"). crop_y puts his crown on
+owner's "why is the presenter's frame always moving left-right"). crop_y puts the presenter's crown on
 the same bake row in every band beat, which is what lets one state transform serve
-all seven without his head jumping between cuts.
+all seven without the presenter's head jumping between cuts.
 
 FRAME-EXACT, PER BEAT
 ---------------------
@@ -97,7 +97,7 @@ def main():
             # has to be applied before anything is cut away.
             vf = ("scale=%d:%d:flags=lanczos,crop=%d:%d:%d:%d"
                   % (sw, sh, p["crop_w"], p["crop_h"], p["crop_x"], p["crop_y"]))
-        # NO grade, NO curve, NO saturation touch — his footage ships as shot.
+        # NO grade, NO curve, NO saturation touch — the presenter's footage ships as shot.
         subprocess.run(["ffmpeg", "-nostdin", "-y", "-v", "error",
                         "-ss", "%.6f" % p["a"], "-i", SRC,
                         "-frames:v", str(p["n"]), "-vf", vf, "-an",

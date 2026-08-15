@@ -14,7 +14,7 @@ Ships here: `index.html`, `package.json`, `transcript.json`, `caption.md`.
 
 The creator's delivered take, transcoded to 1080x1920 at 30fps.
 
-His head is large in frame: crown y45 to 85, glasses top y430 to 460, eyes y540, mouth y810 to 870,
+The presenter's head is large in frame: crown y45 to 85, glasses top y430 to 460, eyes y540, mouth y810 to 870,
 chin y980 to 1020 at native 1080x1920, so roughly a 940px head. **That is the fourth distinct set
 of numbers measured for the same person.** Re-measure every take.
 
@@ -23,7 +23,7 @@ As built: band top y920, video top 540, scale 1.0,
 scale < 1.0; there is no more room in the source frame to zoom out into.
 
 The floating card solved to **card top 960** (hair meets the card top at y960, chin y1540). Ported
-directly from the reference build's constants it sliced his hair off, because his head is about
+directly from the reference build's constants it sliced the hair off, because this head is about
 975px against that reference's 600px. See `playbooks/face-card-device.md`.
 
 ---
@@ -61,7 +61,7 @@ needed brightness .26 at opacity .42 where the others needed .44 and .52.
 | `assets/creative.png` | Newly captured for this cut | Playwright |
 
 Everything else was **reused verbatim** from the other creator's cut of the same launch. Two
-creators, one launch, one asset pool: the differentiation is theme (violet sampled from his own
+creators, one launch, one asset pool: the differentiation is theme (violet sampled from the presenter's own
 room lighting), type stack and scene grammar, not facts.
 
 The rebuilt X-post card uses real data from

@@ -15,7 +15,7 @@
       blue key, a violet mid to break the monochrome, a wide "stage" lift along
       the floor, and a shaped elliptical vignette. Luminance now travels roughly
       #05050A -> #1B2140 across the diagonal, which is what "gradient" means when
-      he asks for it. Grain carries the dither so none of it bands.
+      the client asks for it. Grain carries the dither so none of it bands.
 
    2. EVERY SCENE WAS A ROUNDED RECTANGLE. Ten different beats shared one carrier
       and one fade-up entrance. The card vocabulary below is deliberately NOT a
@@ -265,7 +265,7 @@ html,body{margin:0;padding:0;background:var(--ink);}
 .pkt.red{background:var(--red);box-shadow:0 0 34px rgba(229,55,43,.9);}
 
 /* --- 3. STACK. Real product icons on thin slabs that physically pile up, with
-   perspective, so the tower gets visibly top-heavy. His note: "proper icons,
+   perspective, so the tower gets visibly top-heavy. The client's note: "proper icons,
    logos, images or videos — videos preferably, or icons with animation." --- */
 .stack{position:absolute;perspective:2600px;perspective-origin:50% 40%;}
 .slab{position:absolute;left:0;height:150px;border-radius:18px;
@@ -382,7 +382,7 @@ html,body{margin:0;padding:0;background:var(--ink);}
   letter-spacing:.16em;text-transform:uppercase;white-space:nowrap;}
 
 /* ---------- captions. Band at y1790, BELOW the face card's y1720 bottom edge, so a
-     caption can never print over his chin no matter which side the card is on. */
+     caption can never print over the presenter's chin no matter which side the card is on. */
 .cap{position:absolute;left:340px;width:3160px;top:1790px;text-align:center;
   font-family:'DMSans',sans-serif;font-weight:800;font-size:82px;line-height:1.18;
   letter-spacing:-1px;color:var(--fg);text-shadow:0 3px 18px rgba(0,0,0,.8);z-index:20;}

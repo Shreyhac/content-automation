@@ -4,7 +4,7 @@
 WHY EACH NUMBER IS WHAT IT IS
   - The reference burns its word-captions into the picture at y924-975
     (measured, not guessed), so no crop may extend past y920.
-  - The band in this composition is 620px tall (solved from HIS crown/chin,
+  - The band in this composition is 620px tall (solved from THE PRESENTER'S crown/chin,
     see index.html), so every window is 1080x620 with a per-shot y offset in
     [0,300] chosen so that shot's payload survives.
   - Output is 2160x1240 = exactly 2x, which is the size the 1080x620 element
@@ -76,7 +76,7 @@ def main():
         man.append({"id": name, "start": hi, "dur": round(ho - hi, 3),
                     "ref": [ri, ro], "cropY": cy, "shot_len": round(have, 3),
                     "short_by": round(max(0.0, (ho - hi) - have), 3)})
-        print(f"{name:16s} his {hi:6.3f}-{ho:6.3f} ({ho-hi:5.3f}s)  "
+        print(f"{name:16s} take {hi:6.3f}-{ho:6.3f} ({ho-hi:5.3f}s)  "
               f"ref {ri:6.3f}-{ro:6.3f} ({have:5.3f}s)  cropY {cy:3d}"
               + ("   SHORT" if have < (ho - hi) - 1e-6 else ""))
     json.dump(man, open(os.path.join(HERE, "broll-manifest.json"), "w"), indent=1)

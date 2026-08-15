@@ -7,7 +7,7 @@
 # resolution and frame rate, so `-c copy` re-containers them without touching a
 # single pixel. That is the whole payoff of frame-exact boundaries.
 #
-# THE AUDIO IS NEVER CONCATENATED. bed.wav is one continuous 36.40s mix (his VO
+# THE AUDIO IS NEVER CONCATENATED. bed.wav is one continuous 36.40s mix (the presenter's VO
 # at unity gain + music + SFX, built by build_audio.py) laid over the finished
 # picture in one pass, so none of the seven joins can produce an AAC priming gap
 # or a click. This is vid44's rule and it is not negotiable.

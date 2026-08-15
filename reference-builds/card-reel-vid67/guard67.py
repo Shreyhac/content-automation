@@ -30,7 +30,7 @@ RAIL_X     = 960      # like/comment rail, x>960 between y900-1600
 RAIL_Y0, RAIL_Y1 = 900, 1600
 LEFT_PAD   = 60       # crop buffer
 
-FACE_SPLIT = (0, 620, 1080, 1920)   # his face owns everything below the seam
+FACE_SPLIT = (0, 620, 1080, 1920)   # the presenter's face owns everything below the seam
 CROWN_WORST = 660                   # crown lands here in SPLIT; captions stay above it
 
 

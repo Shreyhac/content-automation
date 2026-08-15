@@ -11,10 +11,10 @@ the spelled-out C-O-D-E-W-O-R-D collapse, and the bare-number price repairs that
 regeneration pass exposed. A hand-typed caption here would silently drop all of them.
 
 ONE BAND, NOT TWO. vid59's short needed a `.clo` band because its close was
-full-bleed and the caption had to live under his jaw. This short has no full-bleed
+full-bleed and the caption had to live under the presenter's jaw. This short has no full-bleed
 beat — solve_short62.py rules one out on this take's own measurements — so every cue
-sits in the middle band at y674-826, between the graphics zone and his crown at y838,
-including on b6 where the picture is off and his dashboard occupies the picture's own
+sits in the middle band at y674-826, between the graphics zone and the presenter's crown at y838,
+including on b6 where the picture is off and the presenter's dashboard occupies the picture's own
 rect rather than the whole frame.
 """
 import json, os, sys
@@ -63,7 +63,7 @@ def main():
                 continue
             if any(lo <= cs <= hi for lo, hi in MUTES):
                 continue
-            # SHORT CUES IN A ROW ARE A STROBE, NOT A CAPTION TRACK. His hook ends on
+            # SHORT CUES IN A ROW ARE A STROBE, NOT A CAPTION TRACK. The presenter's hook ends on
             # three sentence-final fragments — "It." / "Okay?" / "I'll wait." — and
             # the grouper breaks on every one of them, so the middle band flashed
             # three times in 1.2s. A cue under RUNT merges backwards into the cue it
