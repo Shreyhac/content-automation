@@ -25,8 +25,20 @@ About 9 seconds for a 20 second clip. That is genuinely their file edited, and i
 **not** the full system.
 
 The full system is an agent in this repo authoring a bespoke composition per video, running the
-pre-render gates, and rendering at 4K. It takes 10 to 25 minutes and it is what produced the four
-reels linked below. A web request cannot do that, so this repo does not pretend it can.
+pre-render gates, and rendering at 4K. **A real render takes about 40 to 50 minutes.** That is what
+produced the four reels linked below. A web request cannot do that, so this repo does not pretend
+it can.
+
+| | Cloned web app | Full pipeline, in your terminal |
+|---|---|---|
+| Time | About 9 seconds for a 20 second clip | **40 to 50 minutes** |
+| What you get | 9:16 crop, dead air cut, burned captions, loudness normalised | Bespoke graphics, solved face geometry, safe-zone gates, SFX bed, 4K master |
+| Runs on | Node alone | Claude Code plus ffmpeg, whisper, playwright, swift |
+| Good for | Seeing the flow end to end in a demo | Producing something you would actually post |
+
+Clone it and the UI does the basic job immediately. Point the agent at the same footage and it
+will eat 40 to 50 minutes and hand back a finished reel. Both paths are in this repo. Pick the one
+that matches how much time you have.
 
 ---
 
